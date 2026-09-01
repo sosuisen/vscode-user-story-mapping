@@ -150,6 +150,15 @@ suite('renderMap', () => {
 		assert.ok(/--border-shade:\s*0\.\d+/.test(html));
 	});
 
+	// デフォルトの基本色は、User Activityが緑、Walking Skeletonが赤、User Tasksが黄
+	test('has green, red, and yellow default base colors', () => {
+		const html = renderMap('- 活動A');
+
+		assert.ok(html.includes('--activity-color: #e0ffee'));
+		assert.ok(html.includes('--skeleton-color: #ffe0e9'));
+		assert.ok(html.includes('--tasks-color: #fff3e0'));
+	});
+
 	// カードには右下方向の影がある
 	test('casts a drop shadow toward the bottom right of cards', () => {
 		const html = renderMap('- 活動A');
