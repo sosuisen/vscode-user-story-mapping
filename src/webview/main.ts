@@ -13,6 +13,7 @@ document.querySelector('.save-png')?.addEventListener('click', () => {
 		backgroundColor: 'white',
 		width: map.scrollWidth,
 		height: map.scrollHeight,
+		pixelRatio: 2,
 	}).then(dataUrl => {
 		vscodeApi.postMessage({ type: 'savePng', dataUrl });
 	});
