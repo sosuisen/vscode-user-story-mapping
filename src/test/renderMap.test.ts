@@ -102,6 +102,13 @@ suite('renderMap', () => {
 		assert.ok(/<div class="activity" style="grid-column: 2[^"]*"/.test(html));
 	});
 
+	// カードには最低幅（120px）があり、狭くなりすぎない
+	test('gives cards a minimum width so they do not get too narrow', () => {
+		const html = renderMap('- 活動A');
+
+		assert.ok(/\.activity,\s*\.task\s*\{[^}]*min-width:\s*120px/.test(html));
+	});
+
 	// 最上段（レベル1）のグリッド行そのものに、Walking Skeletonを示す背景色が付く
 	test('paints the top grid row background to show the walking skeleton', () => {
 		const outline = '- 活動A\n\t- タスクA1\n\t\t- タスクA2';
