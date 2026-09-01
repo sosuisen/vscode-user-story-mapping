@@ -16,26 +16,26 @@ suite('dataUrlToPngBuffer', () => {
 suite('defaultPngFileName', () => {
 	// 最初の見出しが既定ファイル名になる
 	test('builds the default file name from the first heading', () => {
-		assert.strictEqual(defaultPngFileName('# マイマップ\n- 活動A'), 'マイマップ.png');
+		assert.strictEqual(defaultPngFileName('# My Map\n- Activity A'), 'My Map.png');
 	});
 
 	// 見出しがないときは storymap.png になる
 	test('falls back to storymap when there is no heading', () => {
-		assert.strictEqual(defaultPngFileName('- 活動A'), 'storymap.png');
+		assert.strictEqual(defaultPngFileName('- Activity A'), 'storymap.png');
 	});
 
 	// ファイル名に使えない文字（Windows/macOS/Linux）は _ に置換される
 	test('replaces characters not allowed in file names', () => {
-		assert.strictEqual(defaultPngFileName('# a\\b/c:d*e?f"g<h>i|j\n- 活動A'), 'a_b_c_d_e_f_g_h_i_j.png');
+		assert.strictEqual(defaultPngFileName('# a\\b/c:d*e?f"g<h>i|j\n- Activity A'), 'a_b_c_d_e_f_g_h_i_j.png');
 	});
 
 	// Windowsで不正になる末尾のドットは取り除かれる
 	test('trims trailing dots from the file name', () => {
-		assert.strictEqual(defaultPngFileName('# マップ..\n- 活動A'), 'マップ.png');
+		assert.strictEqual(defaultPngFileName('# Map..\n- Activity A'), 'Map.png');
 	});
 
 	// Windowsの予約名（CONなど）は末尾に _ を付けて回避する
 	test('escapes Windows reserved device names', () => {
-		assert.strictEqual(defaultPngFileName('# CON\n- 活動A'), 'CON_.png');
+		assert.strictEqual(defaultPngFileName('# CON\n- Activity A'), 'CON_.png');
 	});
 });

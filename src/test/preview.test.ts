@@ -14,38 +14,38 @@ suite('openPreview', () => {
 
 	// ドキュメントを渡すと、renderMapの結果がWebviewのHTMLに反映される
 	test('sets the rendered map as the webview html', async () => {
-		const document = await vscode.workspace.openTextDocument({ content: '- 活動A\n- 活動B' });
+		const document = await vscode.workspace.openTextDocument({ content: '- Activity A\n- Activity B' });
 		const panel = openPreview(document, getExtensionUri());
 
 		assert.ok(panel.webview.html.includes('class="map-grid"'));
-		assert.ok(panel.webview.html.includes('活動A'));
-		assert.ok(panel.webview.html.includes('活動B'));
+		assert.ok(panel.webview.html.includes('Activity A'));
+		assert.ok(panel.webview.html.includes('Activity B'));
 		panel.dispose();
 	});
 
 	// プレビュー中のドキュメントを編集すると、Webviewが新しい内容で更新される
 	test('updates the webview when the previewed document changes', async () => {
-		const document = await vscode.workspace.openTextDocument({ content: '- 活動A' });
+		const document = await vscode.workspace.openTextDocument({ content: '- Activity A' });
 		const panel = openPreview(document, getExtensionUri());
 
 		const edit = new vscode.WorkspaceEdit();
-		edit.insert(document.uri, document.positionAt(document.getText().length), '\n- 活動B');
+		edit.insert(document.uri, document.positionAt(document.getText().length), '\n- Activity B');
 		await vscode.workspace.applyEdit(edit);
 
-		assert.ok(panel.webview.html.includes('活動B'));
+		assert.ok(panel.webview.html.includes('Activity B'));
 		panel.dispose();
 	});
 
 	// プレビュー対象ではないドキュメントの編集では更新されない
 	// （注: 対象テキストのみで再描画するためHTMLは元々変わらず、このテストは仕様の記録としてRedを経ずに置いたもの）
 	test('does not update the webview when another document changes', async () => {
-		const previewed = await vscode.workspace.openTextDocument({ content: '- 活動A' });
-		const other = await vscode.workspace.openTextDocument({ content: '- 別の活動' });
+		const previewed = await vscode.workspace.openTextDocument({ content: '- Activity A' });
+		const other = await vscode.workspace.openTextDocument({ content: '- Another Activity' });
 		const panel = openPreview(previewed, getExtensionUri());
 		const before = panel.webview.html;
 
 		const edit = new vscode.WorkspaceEdit();
-		edit.insert(other.uri, other.positionAt(other.getText().length), '\n- 活動X');
+		edit.insert(other.uri, other.positionAt(other.getText().length), '\n- Activity X');
 		await vscode.workspace.applyEdit(edit);
 
 		assert.strictEqual(panel.webview.html, before);
@@ -56,7 +56,7 @@ suite('openPreview', () => {
 	test('loads the bundled webview script', async () => {
 		const extension = vscode.extensions.getExtension('hidekazu-kubota.user-story-mapping');
 		assert.ok(extension);
-		const document = await vscode.workspace.openTextDocument({ content: '- 活動A' });
+		const document = await vscode.workspace.openTextDocument({ content: '- Activity A' });
 		const panel = openPreview(document, extension.extensionUri);
 
 		assert.ok(/<script src="[^"]*webview\.js"><\/script>/.test(panel.webview.html));
@@ -65,7 +65,7 @@ suite('openPreview', () => {
 
 	// ズーム操作のスクリプトが動くよう、Webviewのスクリプトを有効にしている
 	test('enables scripts in the webview', async () => {
-		const document = await vscode.workspace.openTextDocument({ content: '- 活動A' });
+		const document = await vscode.workspace.openTextDocument({ content: '- Activity A' });
 		const panel = openPreview(document, getExtensionUri());
 
 		assert.strictEqual(panel.webview.options.enableScripts, true);
@@ -75,12 +75,12 @@ suite('openPreview', () => {
 	// パネルを閉じた後の編集でもエラーなく動く（監視は解除される）
 	// （注: 解除漏れの例外はVSCodeが握りつぶすため外から観測できず、このテストも仕様の記録としてRedを経ずに置いたもの）
 	test('keeps working after the panel is disposed', async () => {
-		const document = await vscode.workspace.openTextDocument({ content: '- 活動A' });
+		const document = await vscode.workspace.openTextDocument({ content: '- Activity A' });
 		const panel = openPreview(document, getExtensionUri());
 		panel.dispose();
 
 		const edit = new vscode.WorkspaceEdit();
-		edit.insert(document.uri, document.positionAt(document.getText().length), '\n- 活動B');
+		edit.insert(document.uri, document.positionAt(document.getText().length), '\n- Activity B');
 		const applied = await vscode.workspace.applyEdit(edit);
 
 		assert.ok(applied);
