@@ -79,10 +79,10 @@ body { background: white; color: black; }
 .task { background: hsl(from var(--tasks-color) h s calc(l * var(--card-shade))); border-color: hsl(from var(--tasks-color) h s calc(l * var(--border-shade))); }
 .task.skeleton { background: hsl(from var(--skeleton-color) h s calc(l * var(--card-shade))); border-color: hsl(from var(--skeleton-color) h s calc(l * var(--border-shade))); }
 .row-label { padding: 4px 8px; margin: 8px; color: #888; white-space: nowrap; }
-.row-band { align-self: stretch; justify-self: stretch; }
-.activity-band { background: var(--activity-color); }
-.skeleton-band { background: var(--skeleton-color); }
-.tasks-band { background: var(--tasks-color); }
+.row-band { align-self: stretch; justify-self: stretch; border-bottom: 2px dashed; }
+.activity-band { background: var(--activity-color); border-color: hsl(from var(--activity-color) h s calc(l * var(--card-shade))); }
+.skeleton-band { background: var(--skeleton-color); border-color: hsl(from var(--skeleton-color) h s calc(l * var(--card-shade))); }
+.tasks-band { background: var(--tasks-color); border-color: hsl(from var(--tasks-color) h s calc(l * var(--card-shade))); }
 .tasks-band.alt { background: hsl(from var(--tasks-color) h s calc(l * var(--alt-shade))); }
 </style>
 ${title}<div class="map-grid">${cells.join('')}</div>`;

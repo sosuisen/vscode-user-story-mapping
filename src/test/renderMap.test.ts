@@ -173,6 +173,21 @@ suite('renderMap', () => {
 		assert.ok(/\.tasks-band\.alt\s*\{[^}]*background:\s*hsl\(from var\(--tasks-color\)/.test(html));
 	});
 
+	// 各行の帯の下端には、その行のカード背景色と同じ色のdashed区切り線が入る
+	test('draws a dashed separator at the bottom of each row band', () => {
+		const html = renderMap('- 活動A\n\t- タスクA1');
+
+		// 帯共通でdashedの下線がある
+		assert.ok(/\.row-band\s*\{[^}]*border-bottom:\s*2px dashed/.test(html));
+		// 線の色は各行のカード背景色と同じ導出式
+		for (const colorVar of ['--activity-color', '--skeleton-color', '--tasks-color']) {
+			assert.ok(
+				new RegExp(`-band\\s*\\{[^}]*border-color:\\s*hsl\\(from var\\(${colorVar}\\) h s calc\\(l \\* var\\(--card-shade\\)\\)\\)`).test(html),
+				colorVar
+			);
+		}
+	});
+
 	// カードには右下方向の影がある
 	test('casts a drop shadow toward the bottom right of cards', () => {
 		const html = renderMap('- 活動A');
