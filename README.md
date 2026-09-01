@@ -16,16 +16,41 @@ Write your outline as a plain Markdown bullet list, and preview it as a user sto
 
 ### Outline Format
 
-- Time flows from top to bottom: list the user's main activities in the order they happen.
-- Importance is shown by nesting depth: put user tasks under each activity. More important tasks stay shallow; less important tasks go deeper.
+Two basic ideas:
+
+- Time flows from left to right: list the user's main activities in the order they happen. On the map, they appear in one horizontal row.
+- Importance is shown by nesting depth: put user tasks under each activity. More important tasks stay shallow; less important tasks go deeper. On the map, shallower tasks appear in higher rows.
 
 ```markdown
+# Map Title
+
 - Activity A
-	- Task 1 (most important)
-		- Task 2
+	- [ ] Task 1
+		+ Task 1b
+		- [x] Task 2
+	- Task 3
 - Activity B
-	- Task 3 (most important)
+	- 
+		- Task 4
 ```
+
+#### Syntax Reference
+
+| You write | The map shows |
+|---|---|
+| The first heading (`#` to `######`) | The map title at the top. If there is no heading, the title area is empty |
+| A top-level `- ` item | An activity. Activities appear in one row (User Activity, green band) |
+| A `- ` item nested one level | A most important task. It appears in the second row (Walking Skeleton, red band) |
+| A `- ` item nested two or more levels | A task. It appears in the third row or lower (User Tasks, yellow band); depth = row |
+| Two or more `- ` items at the same depth | The second and later items move to the next inner column on the right (Task 3 in the example) |
+| A `- ` line with no text | A blank level. No card is created; it only makes the level one step deeper (Task 4 starts at level 2) |
+| A `+ ` item | The card is stacked in the same cell as its parent task, one level up (Task 1b sits under Task 1) |
+| An item starting with `[ ] ` | An open task. The card shows ⬜ and has a drop shadow |
+| An item starting with `[x] ` or `[X] ` | A completed task. The card shows ✅ and has no border and no shadow |
+| An item with no checkbox | A card with a border only |
+
+- You can indent with tabs or spaces. Indentation follows Markdown (CommonMark) rules; one tab equals four spaces.
+- We recommend using one indent style within a single file.
 
 ## Recommended Setup
 
