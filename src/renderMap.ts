@@ -18,7 +18,9 @@ export function renderMap(outline: string): string {
 	return `<style>
 body { background: white; color: black; }
 .activity-row { display: flex; gap: 8px; }
+.activity-column { display: flex; flex-direction: column; gap: 8px; }
 .activity { border: 1px solid currentColor; padding: 4px 8px; }
+.task { border: 1px solid currentColor; padding: 4px 8px; }
 </style>
 <div class="activity-row">${cells}</div>`;
 }

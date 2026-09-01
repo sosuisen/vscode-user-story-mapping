@@ -77,4 +77,18 @@ suite('renderMap', () => {
 		assert.ok(html.includes('<div class="task">タスクA1</div>'));
 		assert.ok(html.includes('<div class="task">タスクA2</div>'));
 	});
+
+	// タスクのカードにも枠線が付いている
+	test('draws a border around each task', () => {
+		const html = renderMap('- 活動A\n\t- タスクA1');
+
+		assert.ok(/\.task\s*\{[^}]*border:/.test(html));
+	});
+
+	// 列の中のカード同士には縦の間隔があいている
+	test('puts a vertical gap between cards in a column', () => {
+		const html = renderMap('- 活動A\n\t- タスクA1');
+
+		assert.ok(/\.activity-column\s*\{[^}]*gap:/.test(html));
+	});
 });
