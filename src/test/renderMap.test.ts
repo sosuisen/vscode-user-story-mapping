@@ -3,24 +3,26 @@ import { renderMap } from '../renderMap';
 
 // マップの描画
 suite('renderMap', () => {
-	// アクティビティが、アウトラインの順で1つの行コンテナに横一列に並ぶ
-	test('renders activities in one row container in outline order', () => {
+	// アクティビティが、アウトラインの順でグリッドの1行目に横一列に並ぶ
+	test('renders activities in outline order on the first grid row', () => {
 		const outline = '- 活動A\n- 活動B\n- 活動C';
 
 		const html = renderMap(outline);
 
-		// 行コンテナは1つだけ
-		assert.strictEqual((html.match(/class="activity-row"/g) ?? []).length, 1);
+		// グリッドコンテナは1つだけ
+		assert.strictEqual((html.match(/class="map-grid"/g) ?? []).length, 1);
 		// アクティビティのカードが 活動A → 活動B → 活動C の順に並ぶ
-		const cards = [...html.matchAll(/<div class="activity">([^<]*)<\/div>/g)].map(m => m[1]);
+		const cards = [...html.matchAll(/<div class="activity"[^>]*>([^<]*)<\/div>/g)].map(m => m[1]);
 		assert.deepStrictEqual(cards, ['活動A', '活動B', '活動C']);
+		// すべてのアクティビティが1行目にある
+		assert.strictEqual((html.match(/<div class="activity"[^>]*grid-row: 1;/g) ?? []).length, 3);
 	});
 
-	// 行コンテナには横並び（flex）のスタイルが付いている
-	test('styles the activity row as a horizontal flex container', () => {
+	// マップ全体がグリッドとして配置される
+	test('lays out the map as a grid', () => {
 		const html = renderMap('- 活動A\n- 活動B');
 
-		assert.ok(/\.activity-row\s*\{[^}]*display:\s*flex/.test(html));
+		assert.ok(/\.map-grid\s*\{[^}]*display:\s*grid/.test(html));
 	});
 
 	// 各アクティビティの下に、そのタスクがアウトラインの順で縦に並ぶ
@@ -29,11 +31,13 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		// アクティビティごとに列コンテナがある
-		assert.strictEqual((html.match(/class="activity-column"/g) ?? []).length, 2);
 		// カードが 活動A → タスクA1 → タスクA2 → 活動B → タスクB1 の順に並ぶ
-		const cards = [...html.matchAll(/<div class="(?:activity|task)">([^<]*)<\/div>/g)].map(m => m[1]);
+		const cards = [...html.matchAll(/<div class="(?:activity|task)"[^>]*>([^<]*)<\/div>/g)].map(m => m[1]);
 		assert.deepStrictEqual(cards, ['活動A', 'タスクA1', 'タスクA2', '活動B', 'タスクB1']);
+		// タスクは自分のアクティビティと同じグリッド列に入る
+		assert.ok(html.includes('<div class="task" style="grid-column: 1; grid-row: 2;">タスクA1</div>'));
+		assert.ok(html.includes('<div class="task" style="grid-column: 1; grid-row: 3;">タスクA2</div>'));
+		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 2;">タスクB1</div>'));
 	});
 
 	// スペースでインデントされたタスクも、タブと同じくアクティビティの下に並ぶ
@@ -42,8 +46,8 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="task">タスクA1</div>'));
-		assert.ok(html.includes('<div class="task">タスクA2</div>'));
+		assert.ok(/<div class="task"[^>]*>タスクA1<\/div>/.test(html));
+		assert.ok(/<div class="task"[^>]*>タスクA2<\/div>/.test(html));
 	});
 
 	// マークダウンで最初に現れた見出しが、マップ冒頭にタイトルとして表示される
@@ -54,8 +58,8 @@ suite('renderMap', () => {
 
 		const titlePosition = html.indexOf('<h1 class="map-title">マップのタイトル</h1>');
 		assert.ok(titlePosition !== -1);
-		// タイトルは行コンテナより前にある
-		assert.ok(titlePosition < html.indexOf('class="activity-row"'));
+		// タイトルはグリッドコンテナより前にある
+		assert.ok(titlePosition < html.indexOf('class="map-grid"'));
 	});
 
 	// 見出しがない場合、空のタイトル領域が表示される
@@ -72,15 +76,27 @@ suite('renderMap', () => {
 		assert.ok(html.includes('<h1 class="map-title">マップのタイトル</h1>'));
 	});
 
-	// 同じアクティビティ内で同じレベルのタスクは、右どなりの内部カラムに分かれて並ぶ
-	test('puts same-level tasks into separate inner columns side by side', () => {
+	// 同じアクティビティ内で同じレベルのタスクは、右どなりのグリッド列に分かれて並ぶ
+	test('puts same-level tasks into adjacent grid columns', () => {
 		const outline = '- 活動A\n\t- タスクA1\n\t- タスクA2';
 
 		const html = renderMap(outline);
 
-		// 内部カラムが2つあり、それぞれに1つずつタスクが入る
-		assert.ok(html.includes('<div class="task-column"><div class="task">タスクA1</div></div>'));
-		assert.ok(html.includes('<div class="task-column"><div class="task">タスクA2</div></div>'));
+		// 同じレベルなので、同じ行のまま隣のグリッド列に分かれる
+		assert.ok(html.includes('<div class="task" style="grid-column: 1; grid-row: 2;">タスクA1</div>'));
+		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 2;">タスクA2</div>'));
+	});
+
+	// 同じレベルのタスクは、どのカラムにあっても同じグリッド行に置かれる
+	test('places tasks of the same level on the same grid row', () => {
+		const outline = '- 活動A\n\t- タスクA1\n- 活動B\n\t- タスクB1\n\t\t- タスクB2';
+
+		const html = renderMap(outline);
+
+		// レベル1は2行目、レベル2は3行目
+		assert.ok(html.includes('<div class="task" style="grid-column: 1; grid-row: 2;">タスクA1</div>'));
+		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 2;">タスクB1</div>'));
+		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 3;">タスクB2</div>'));
 	});
 
 	// タブ1個とスペース4個のインデントは同じレベルとして扱われる
@@ -89,8 +105,8 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		// 同じレベルなので、別々の内部カラムに分かれる
-		assert.ok(html.includes('<div class="task-column"><div class="task">タスクA1</div></div>'));
-		assert.ok(html.includes('<div class="task-column"><div class="task">タスクA2</div></div>'));
+		// 同じレベルなので、同じ行のまま隣のグリッド列に分かれる
+		assert.ok(html.includes('<div class="task" style="grid-column: 1; grid-row: 2;">タスクA1</div>'));
+		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 2;">タスクA2</div>'));
 	});
 });
