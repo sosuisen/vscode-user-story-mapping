@@ -71,4 +71,15 @@ suite('renderMap', () => {
 
 		assert.ok(html.includes('<h1 class="map-title">マップのタイトル</h1>'));
 	});
+
+	// 同じアクティビティ内で同じレベルのタスクは、右どなりの内部カラムに分かれて並ぶ
+	test('puts same-level tasks into separate inner columns side by side', () => {
+		const outline = '- 活動A\n\t- タスクA1\n\t- タスクA2';
+
+		const html = renderMap(outline);
+
+		// 内部カラムが2つあり、それぞれに1つずつタスクが入る
+		assert.ok(html.includes('<div class="task-column"><div class="task">タスクA1</div></div>'));
+		assert.ok(html.includes('<div class="task-column"><div class="task">タスクA2</div></div>'));
+	});
 });
