@@ -44,6 +44,15 @@ suite('openPreview', () => {
 		panel.dispose();
 	});
 
+	// ズーム操作のスクリプトが動くよう、Webviewのスクリプトを有効にしている
+	test('enables scripts in the webview', async () => {
+		const document = await vscode.workspace.openTextDocument({ content: '- 活動A' });
+		const panel = openPreview(document);
+
+		assert.strictEqual(panel.webview.options.enableScripts, true);
+		panel.dispose();
+	});
+
 	// パネルを閉じた後の編集でもエラーなく動く（監視は解除される）
 	// （注: 解除漏れの例外はVSCodeが握りつぶすため外から観測できず、このテストも仕様の記録としてRedを経ずに置いたもの）
 	test('keeps working after the panel is disposed', async () => {

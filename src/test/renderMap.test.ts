@@ -113,6 +113,19 @@ suite('renderMap', () => {
 		);
 	});
 
+	// フローティングの＋/−ボタンで、マップをズームイン・アウトできる
+	test('renders floating zoom buttons that change the map zoom', () => {
+		const html = renderMap('- 活動A');
+
+		// ＋と−のズームボタンがある
+		assert.ok(html.includes('<div class="zoom-controls">'));
+		assert.ok(html.includes('<button class="zoom-in">＋</button>'));
+		assert.ok(html.includes('<button class="zoom-out">－</button>'));
+		// クリックでズーム率を変えるスクリプトが配線されている
+		assert.ok(html.includes('<script>'));
+		assert.ok(html.includes('style.zoom'));
+	});
+
 	// マークダウンで最初に現れた見出しが、マップ冒頭にタイトルとして表示される
 	test('renders the first heading as the map title at the top', () => {
 		const outline = '# マップのタイトル\n- 活動A';

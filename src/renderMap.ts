@@ -140,6 +140,16 @@ body { background: white; color: black; }
 .skeleton-band { background: var(--skeleton-color); border-color: hsl(from var(--skeleton-color) h s calc(l * var(--card-shade))); }
 .tasks-band { background: var(--tasks-color); border-color: hsl(from var(--tasks-color) h s calc(l * var(--card-shade))); }
 .tasks-band.alt { background: hsl(from var(--tasks-color) h s calc(l * var(--alt-shade))); }
+.zoom-controls { position: fixed; right: 16px; bottom: 16px; display: flex; gap: 8px; }
+.zoom-controls button { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #888; background: white; color: black; font-size: 16px; cursor: pointer; }
 </style>
-${title}<div class="map-grid">${cells.join('')}</div>`;
+<div class="map-zoom">${title}<div class="map-grid">${cells.join('')}</div></div>
+<div class="zoom-controls"><button class="zoom-in">＋</button><button class="zoom-out">－</button></div>
+<script>
+let zoom = 1;
+const mapZoom = document.querySelector('.map-zoom');
+const applyZoom = () => { mapZoom.style.zoom = zoom; };
+document.querySelector('.zoom-in').addEventListener('click', () => { zoom *= 1.2; applyZoom(); });
+document.querySelector('.zoom-out').addEventListener('click', () => { zoom /= 1.2; applyZoom(); });
+</script>`;
 }

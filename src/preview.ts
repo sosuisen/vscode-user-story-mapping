@@ -6,7 +6,7 @@ export function openPreview(document: vscode.TextDocument): vscode.WebviewPanel 
 		'userStoryMapping.preview',
 		'User Story Map',
 		vscode.ViewColumn.Beside,
-		{}
+		{ enableScripts: true }
 	);
 	panel.webview.html = renderMap(document.getText());
 	const subscription = vscode.workspace.onDidChangeTextDocument(event => {
