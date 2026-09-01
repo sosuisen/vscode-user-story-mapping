@@ -18,8 +18,21 @@
 			{
 				"command": "user-story-mapping.helloWorld",
 				"title": "Hello World"
+			},
+			{
+				"command": "user-story-mapping.preview",
+				"title": "Preview as User Story Map"
 			}
-		]
+		],
+		"menus": {
+			"editor/title": [
+				{
+					"command": "user-story-mapping.preview",
+					"when": "resourceLangId == markdown",
+					"group": "navigation"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run package",

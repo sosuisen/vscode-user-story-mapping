@@ -1,0 +1,26 @@
+import * as assert from 'assert';
+import * as vscode from 'vscode';
+
+// Preview as User Story Map ボタン
+suite('Preview as User Story Map button', () => {
+	// mdファイルのとき、エディタ右上にPreview as User Story Mapボタンが表示される設定である
+	test('shows the Preview as User Story Map button in the editor title for md files', () => {
+		const extension = vscode.extensions.getExtension('hidekazu-kubota.user-story-mapping');
+		assert.ok(extension);
+		const contributes = extension.packageJSON.contributes;
+
+		const command = contributes.commands.find(
+			(c: { command: string }) => c.command === 'user-story-mapping.preview'
+		);
+		assert.ok(command);
+		assert.strictEqual(command.title, 'Preview as User Story Map');
+
+		const editorTitleMenus = contributes.menus?.['editor/title'] ?? [];
+		const entry = editorTitleMenus.find(
+			(m: { command: string }) => m.command === 'user-story-mapping.preview'
+		);
+		assert.ok(entry);
+		assert.strictEqual(entry.when, 'resourceLangId == markdown');
+		assert.strictEqual(entry.group, 'navigation');
+	});
+});
