@@ -1,4 +1,4 @@
-# User Story Mapping
+# User Story Mapping Extension for VSCode
 
 Japanese version: [README.ja.md](README.ja.md)
 

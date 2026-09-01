@@ -1,4 +1,4 @@
-# User Story Mapping
+# VSCode用 User Story Mapping 拡張機能
 
 English version: [README.md](README.md)
 
