@@ -82,4 +82,15 @@ suite('renderMap', () => {
 		assert.ok(html.includes('<div class="task-column"><div class="task">タスクA1</div></div>'));
 		assert.ok(html.includes('<div class="task-column"><div class="task">タスクA2</div></div>'));
 	});
+
+	// タブ1個とスペース4個のインデントは同じレベルとして扱われる
+	test('treats one tab and four spaces as the same level', () => {
+		const outline = '- 活動A\n\t- タスクA1\n    - タスクA2';
+
+		const html = renderMap(outline);
+
+		// 同じレベルなので、別々の内部カラムに分かれる
+		assert.ok(html.includes('<div class="task-column"><div class="task">タスクA1</div></div>'));
+		assert.ok(html.includes('<div class="task-column"><div class="task">タスクA2</div></div>'));
+	});
 });

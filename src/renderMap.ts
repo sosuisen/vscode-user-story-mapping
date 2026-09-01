@@ -12,7 +12,7 @@ export function renderMap(outline: string): string {
 		} else if (taskLinePattern.test(line)) {
 			const column = columns.at(-1);
 			if (column !== undefined) {
-				const indent = (line.match(/^[ \t]+/) ?? [''])[0].length;
+				const indent = (line.match(/^[ \t]+/) ?? [''])[0].replace(/\t/g, '    ').length;
 				if (column.taskColumns.length === 0 || indent <= column.lastIndent) {
 					column.taskColumns.push([]);
 				}
