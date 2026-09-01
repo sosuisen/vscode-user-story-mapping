@@ -102,44 +102,59 @@ suite('renderMap', () => {
 		assert.ok(/<div class="activity" style="grid-column: 2[^"]*"/.test(html));
 	});
 
-	// Walking Skeleton（レベル1）のカードは、帯の背景色から計算で導出した少し濃い色になる
-	test('paints walking skeleton cards with a darker shade derived from the row background', () => {
+	// Walking Skeletonの行（レベル1）のタスクカードだけがskeletonクラスを持つ
+	test('marks only level-1 task cards as skeleton', () => {
 		const outline = '- 活動A\n\t- タスクA1\n\t\t- タスクA2';
 
 		const html = renderMap(outline);
 
-		// レベル1のタスクだけがskeletonクラスを持つ
 		assert.ok(/<div class="task skeleton"[^>]*>タスクA1<\/div>/.test(html));
 		assert.ok(/<div class="task"[^>]*>タスクA2<\/div>/.test(html));
-		// 帯とカードの色は同じ変数（--skeleton-color）を源にする
-		assert.ok(/\.skeleton-band\s*\{[^}]*var\(--skeleton-color\)/.test(html));
-		// カードの色は相対色構文で帯の色から導出される（色相・彩度は保持）
-		assert.ok(/\.task\.skeleton\s*\{[^}]*background:\s*hsl\(from var\(--skeleton-color\) h s /.test(html));
 	});
 
-	// User Activity行は緑、User tasks行は黄色の帯になり、カードは各帯の色から導出される
-	test('paints activity and task rows with green and yellow bands like the skeleton row', () => {
-		const outline = '- 活動A\n\t- タスクA1\n\t\t- タスクA2\n\t\t\t- タスクA3';
+	// 色のルール（全行共通）: 横軸ごとに基本色の変数があり、帯は基本色で塗られ、
+	// カード背景は基本色の明度だけ下げた濃い色（色相・彩度は保持）、枠色はさらに明度を下げた色として導出される
+	test('derives band, card, and border colors from each row base color', () => {
+		const outline = '- 活動A\n\t- タスクA1\n\t\t- タスクA2';
 
 		const html = renderMap(outline);
 
-		// 1行目に緑の帯、3行目から最下行まで黄色の帯
-		assert.ok(/<div class="row-band activity-band" style="grid-column: 1 \/ \d+; grid-row: 1;"><\/div>/.test(html));
-		assert.ok(/<div class="row-band tasks-band" style="grid-column: 1 \/ \d+; grid-row: 3 \/ 5;"><\/div>/.test(html));
-		assert.ok(/\.activity-band\s*\{[^}]*var\(--activity-color\)/.test(html));
-		assert.ok(/\.tasks-band\s*\{[^}]*var\(--tasks-color\)/.test(html));
-		// カードは各帯の色から導出される
-		assert.ok(/\.activity\s*\{[^}]*background:\s*hsl\(from var\(--activity-color\)/.test(html));
-		assert.ok(/\.task\s*\{[^}]*background:\s*hsl\(from var\(--tasks-color\)/.test(html));
+		const rows = [
+			{ colorVar: '--activity-color', bandClass: 'activity-band', cardSelector: '\\.activity', gridRow: '1;' },
+			{ colorVar: '--skeleton-color', bandClass: 'skeleton-band', cardSelector: '\\.task\\.skeleton', gridRow: '2;' },
+			{ colorVar: '--tasks-color', bandClass: 'tasks-band', cardSelector: '\\.task', gridRow: '3 / 4;' },
+		];
+		for (const row of rows) {
+			// 基本色の変数が定義されている
+			assert.ok(html.includes(`${row.colorVar}:`), row.colorVar);
+			// 帯の要素が行の全列に敷かれる
+			assert.ok(
+				new RegExp(`<div class="row-band ${row.bandClass}" style="grid-column: 1 / \\d+; grid-row: ${row.gridRow.replace('/', '\\/')}"></div>`).test(html),
+				`${row.bandClass} element`
+			);
+			// 帯は基本色で塗られる
+			assert.ok(new RegExp(`\\.${row.bandClass}\\s*\\{[^}]*background:\\s*var\\(${row.colorVar}\\)`).test(html), `${row.bandClass} background`);
+			// カード背景は基本色の明度だけ下げた濃い色
+			assert.ok(
+				new RegExp(`${row.cardSelector}\\s*\\{[^}]*background:\\s*hsl\\(from var\\(${row.colorVar}\\) h s calc\\(l \\* var\\(--card-shade\\)\\)\\)`).test(html),
+				`${row.cardSelector} background`
+			);
+			// 枠色はさらに明度を下げた色
+			assert.ok(
+				new RegExp(`${row.cardSelector}\\s*\\{[^}]*border-color:\\s*hsl\\(from var\\(${row.colorVar}\\) h s calc\\(l \\* var\\(--border-shade\\)\\)\\)`).test(html),
+				`${row.cardSelector} border`
+			);
+		}
+		// 導出係数は1未満（明度を下げる＝濃くなる）で、枠のほうが暗い
+		assert.ok(/--card-shade:\s*0\.\d+/.test(html));
+		assert.ok(/--border-shade:\s*0\.\d+/.test(html));
 	});
 
-	// カードの枠色は、カードの背景色をさらに暗くした色として導出される
-	test('derives card border color as a darker shade of the card background', () => {
-		const html = renderMap('- 活動A\n\t- タスクA1');
+	// カードには右下方向の影がある
+	test('casts a drop shadow toward the bottom right of cards', () => {
+		const html = renderMap('- 活動A');
 
-		assert.ok(/\.activity\s*\{[^}]*border-color:\s*hsl\(from var\(--activity-color\)/.test(html));
-		assert.ok(/\.task\s*\{[^}]*border-color:\s*hsl\(from var\(--tasks-color\)/.test(html));
-		assert.ok(/\.task\.skeleton\s*\{[^}]*border-color:\s*hsl\(from var\(--skeleton-color\)/.test(html));
+		assert.ok(/\.activity, \.task\s*\{[^}]*box-shadow:\s*[1-9]\d*px [1-9]\d*px/.test(html));
 	});
 
 	// カードには最低幅（120px）があり、狭くなりすぎない
@@ -147,18 +162,6 @@ suite('renderMap', () => {
 		const html = renderMap('- 活動A');
 
 		assert.ok(/\.activity,\s*\.task\s*\{[^}]*min-width:\s*120px/.test(html));
-	});
-
-	// 最上段（レベル1）のグリッド行そのものに、Walking Skeletonを示す背景色が付く
-	test('paints the top grid row background to show the walking skeleton', () => {
-		const outline = '- 活動A\n\t- タスクA1\n\t\t- タスクA2';
-
-		const html = renderMap(outline);
-
-		// 2行目（レベル1）の全列に広がる背景要素がある
-		assert.ok(/<div class="row-band skeleton-band" style="grid-column: 1 \/ \d+; grid-row: 2;"><\/div>/.test(html));
-		// 背景色が指定されている
-		assert.ok(/\.skeleton-band\s*\{[^}]*background:/.test(html));
 	});
 
 	// 同じレベルのタスクは、どのカラムにあっても同じグリッド行に置かれる
