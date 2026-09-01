@@ -1,0 +1,51 @@
+{
+	"name": "user-story-mapping",
+	"displayName": "User Story Mapping",
+	"description": "Preview your outline notes as a user story map.",
+	"version": "0.1.0",
+	"publisher": "hidekazu-kubota",
+	"license": "MIT",
+	"engines": {
+		"vscode": "^1.95.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [],
+	"main": "./dist/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "user-story-mapping.helloWorld",
+				"title": "Hello World"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run package",
+		"compile": "npm run check-types && npm run lint && node esbuild.js",
+		"watch": "npm-run-all -p watch:*",
+		"watch:esbuild": "node esbuild.js --watch",
+		"watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+		"package": "npm run check-types && npm run lint && node esbuild.js --production",
+		"compile-tests": "tsc -p . --outDir out",
+		"watch-tests": "tsc -p . -w --outDir out",
+		"check-types": "tsc --noEmit",
+		"lint": "eslint src",
+		"pretest": "npm run compile-tests && npm run compile && npm run lint",
+		"test": "vscode-test"
+	},
+	"devDependencies": {
+		"@types/mocha": "^10.0.10",
+		"@types/node": "22.x",
+		"@types/vscode": "^1.95.0",
+		"@typescript-eslint/eslint-plugin": "^8.17.0",
+		"@typescript-eslint/parser": "^8.17.0",
+		"@vscode/test-cli": "^0.0.10",
+		"@vscode/test-electron": "^2.4.1",
+		"esbuild": "^0.24.0",
+		"eslint": "^9.16.0",
+		"npm-run-all": "^4.1.5",
+		"typescript": "^5.7.2"
+	}
+}
