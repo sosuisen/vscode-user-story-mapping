@@ -57,4 +57,18 @@ suite('renderMap', () => {
 		// タイトルは行コンテナより前にある
 		assert.ok(titlePosition < html.indexOf('class="activity-row"'));
 	});
+
+	// 見出しがない場合、空のタイトル領域が表示される
+	test('renders an empty title area when there is no heading', () => {
+		const html = renderMap('- 活動A');
+
+		assert.ok(html.includes('<h1 class="map-title"></h1>'));
+	});
+
+	// ## の見出しでも、最初に現れたものがタイトルになる
+	test('renders a level-2 heading as the map title too', () => {
+		const html = renderMap('## マップのタイトル\n- 活動A');
+
+		assert.ok(html.includes('<h1 class="map-title">マップのタイトル</h1>'));
+	});
 });

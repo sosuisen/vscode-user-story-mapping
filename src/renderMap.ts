@@ -3,7 +3,8 @@ const headingLinePattern = /^#+ /;
 
 export function renderMap(outline: string): string {
 	const headingLine = outline.split('\n').find(line => headingLinePattern.test(line));
-	const title = headingLine === undefined ? '' : `<h1 class="map-title">${headingLine.replace(headingLinePattern, '')}</h1>`;
+	const titleText = headingLine === undefined ? '' : headingLine.replace(headingLinePattern, '');
+	const title = `<h1 class="map-title">${titleText}</h1>`;
 	const columns: { activity: string; tasks: string[] }[] = [];
 	for (const line of outline.split('\n')) {
 		if (line.startsWith('- ')) {
