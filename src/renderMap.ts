@@ -10,6 +10,7 @@ export function renderMap(outline: string): string {
 	let titleFound = false;
 	const columns: { activity: string; taskColumns: Task[][]; lastDepth: number }[] = [];
 	let listDepth = 0;
+	let maxDepth = 0;
 	for (let i = 0; i < tokens.length; i++) {
 		const token = tokens[i];
 		if (token === undefined) {
@@ -34,6 +35,7 @@ export function renderMap(outline: string): string {
 					}
 					column.taskColumns.at(-1)?.push({ text: token.content, depth });
 					column.lastDepth = depth;
+					maxDepth = Math.max(maxDepth, depth);
 				}
 			}
 		}
@@ -57,16 +59,25 @@ export function renderMap(outline: string): string {
 	rowLabels.forEach((label, index) => {
 		cells.unshift(`<div class="row-label" style="grid-column: 1; grid-row: ${index + 1};">${label}</div>`);
 	});
-	// 背面に敷くため、カードより先（DOM順で前）に置く
-	cells.unshift(`<div class="skeleton-row" style="grid-column: 1 / ${nextColumn}; grid-row: 2;"></div>`);
+	// 帯は背面に敷くため、カードより先（DOM順で前）に置く
+	if (maxDepth >= 2) {
+		cells.unshift(`<div class="row-band tasks-band" style="grid-column: 1 / ${nextColumn}; grid-row: 3 / ${maxDepth + 2};"></div>`);
+	}
+	cells.unshift(`<div class="row-band skeleton-band" style="grid-column: 1 / ${nextColumn}; grid-row: 2;"></div>`);
+	cells.unshift(`<div class="row-band activity-band" style="grid-column: 1 / ${nextColumn}; grid-row: 1;"></div>`);
 	return `<style>
-:root { --skeleton-color: #ffe0e9; }
+:root { --activity-color: #e0ffee; --skeleton-color: #ffe0e9; --tasks-color: #fff3e0; --card-shade: 0.93; --border-shade: 0.6; }
 body { background: white; color: black; }
 .map-grid { display: grid; gap: 0; justify-content: start; align-items: start; }
-.activity, .task { border: 1px solid currentColor; padding: 4px 8px; margin: 8px; background: white; border-radius: 6px; min-width: 120px; box-sizing: border-box; }
+.activity, .task { border: 1px solid; padding: 4px 8px; margin: 8px; border-radius: 6px; min-width: 120px; box-sizing: border-box; }
+.activity { background: hsl(from var(--activity-color) h s calc(l * var(--card-shade))); border-color: hsl(from var(--activity-color) h s calc(l * var(--border-shade))); }
+.task { background: hsl(from var(--tasks-color) h s calc(l * var(--card-shade))); border-color: hsl(from var(--tasks-color) h s calc(l * var(--border-shade))); }
+.task.skeleton { background: hsl(from var(--skeleton-color) h s calc(l * var(--card-shade))); border-color: hsl(from var(--skeleton-color) h s calc(l * var(--border-shade))); }
 .row-label { padding: 4px 8px; margin: 8px; color: #888; white-space: nowrap; }
-.skeleton-row { background: var(--skeleton-color); align-self: stretch; justify-self: stretch; }
-.task.skeleton { background: hsl(from var(--skeleton-color) h s calc(l * 0.93)); }
+.row-band { align-self: stretch; justify-self: stretch; }
+.activity-band { background: var(--activity-color); }
+.skeleton-band { background: var(--skeleton-color); }
+.tasks-band { background: var(--tasks-color); }
 </style>
 ${title}<div class="map-grid">${cells.join('')}</div>`;
 }

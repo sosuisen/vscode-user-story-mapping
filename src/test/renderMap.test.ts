@@ -112,9 +112,34 @@ suite('renderMap', () => {
 		assert.ok(/<div class="task skeleton"[^>]*>タスクA1<\/div>/.test(html));
 		assert.ok(/<div class="task"[^>]*>タスクA2<\/div>/.test(html));
 		// 帯とカードの色は同じ変数（--skeleton-color）を源にする
-		assert.ok(/\.skeleton-row\s*\{[^}]*var\(--skeleton-color\)/.test(html));
+		assert.ok(/\.skeleton-band\s*\{[^}]*var\(--skeleton-color\)/.test(html));
 		// カードの色は相対色構文で帯の色から導出される（色相・彩度は保持）
 		assert.ok(/\.task\.skeleton\s*\{[^}]*background:\s*hsl\(from var\(--skeleton-color\) h s /.test(html));
+	});
+
+	// User Activity行は緑、User tasks行は黄色の帯になり、カードは各帯の色から導出される
+	test('paints activity and task rows with green and yellow bands like the skeleton row', () => {
+		const outline = '- 活動A\n\t- タスクA1\n\t\t- タスクA2\n\t\t\t- タスクA3';
+
+		const html = renderMap(outline);
+
+		// 1行目に緑の帯、3行目から最下行まで黄色の帯
+		assert.ok(/<div class="row-band activity-band" style="grid-column: 1 \/ \d+; grid-row: 1;"><\/div>/.test(html));
+		assert.ok(/<div class="row-band tasks-band" style="grid-column: 1 \/ \d+; grid-row: 3 \/ 5;"><\/div>/.test(html));
+		assert.ok(/\.activity-band\s*\{[^}]*var\(--activity-color\)/.test(html));
+		assert.ok(/\.tasks-band\s*\{[^}]*var\(--tasks-color\)/.test(html));
+		// カードは各帯の色から導出される
+		assert.ok(/\.activity\s*\{[^}]*background:\s*hsl\(from var\(--activity-color\)/.test(html));
+		assert.ok(/\.task\s*\{[^}]*background:\s*hsl\(from var\(--tasks-color\)/.test(html));
+	});
+
+	// カードの枠色は、カードの背景色をさらに暗くした色として導出される
+	test('derives card border color as a darker shade of the card background', () => {
+		const html = renderMap('- 活動A\n\t- タスクA1');
+
+		assert.ok(/\.activity\s*\{[^}]*border-color:\s*hsl\(from var\(--activity-color\)/.test(html));
+		assert.ok(/\.task\s*\{[^}]*border-color:\s*hsl\(from var\(--tasks-color\)/.test(html));
+		assert.ok(/\.task\.skeleton\s*\{[^}]*border-color:\s*hsl\(from var\(--skeleton-color\)/.test(html));
 	});
 
 	// カードには最低幅（120px）があり、狭くなりすぎない
@@ -131,9 +156,9 @@ suite('renderMap', () => {
 		const html = renderMap(outline);
 
 		// 2行目（レベル1）の全列に広がる背景要素がある
-		assert.ok(/<div class="skeleton-row" style="grid-column: 1 \/ \d+; grid-row: 2;"><\/div>/.test(html));
+		assert.ok(/<div class="row-band skeleton-band" style="grid-column: 1 \/ \d+; grid-row: 2;"><\/div>/.test(html));
 		// 背景色が指定されている
-		assert.ok(/\.skeleton-row\s*\{[^}]*background:/.test(html));
+		assert.ok(/\.skeleton-band\s*\{[^}]*background:/.test(html));
 	});
 
 	// 同じレベルのタスクは、どのカラムにあっても同じグリッド行に置かれる
