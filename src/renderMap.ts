@@ -36,6 +36,13 @@ function cardOf(content: string): Card {
 	return { text: withCheckboxEmoji(content), done: isDone(content), todo: isTodo(content) };
 }
 
+// アウトラインの最初の見出しをマップのタイトルとして返す（なければ空文字）
+export function mapTitle(outline: string): string {
+	const tokens = markdown.parse(fillBlankItems(outline), {});
+	const headingIndex = tokens.findIndex(token => token.type === 'heading_open');
+	return headingIndex === -1 ? '' : (tokens[headingIndex + 1]?.content ?? '');
+}
+
 export function renderMap(outline: string): string {
 	const tokens = markdown.parse(fillBlankItems(outline), {});
 	let titleText = '';
