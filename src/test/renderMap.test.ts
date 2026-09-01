@@ -56,7 +56,7 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(/<div class="task skeleton"[^>]*>✅ タスクA1<\/div>/.test(html));
+		assert.ok(/<div class="task skeleton done"[^>]*>✅ タスクA1<\/div>/.test(html));
 		assert.ok(/<div class="task"[^>]*>⬜ タスクA2<\/div>/.test(html));
 		// 生の [x] / [ ] は表示されない
 		assert.ok(!html.includes('[x]'));
@@ -67,7 +67,21 @@ suite('renderMap', () => {
 	test('renders an uppercase checkbox marker as emoji too', () => {
 		const html = renderMap('- 活動A\n\t- [X] タスクA1');
 
-		assert.ok(/<div class="task skeleton"[^>]*>✅ タスクA1<\/div>/.test(html));
+		assert.ok(/<div class="task skeleton done"[^>]*>✅ タスクA1<\/div>/.test(html));
+	});
+
+	// 完了済み（[x]）のカードは枠なし・影なしになる
+	test('removes the border and shadow from completed cards', () => {
+		const outline = '- 活動A\n\t- [x] タスクA1\n\t\t- [ ] タスクA2';
+
+		const html = renderMap(outline);
+
+		// 完了カードにはdoneクラスが付き、未完了カードには付かない
+		assert.ok(/<div class="task skeleton done"[^>]*>✅ タスクA1<\/div>/.test(html));
+		assert.ok(/<div class="task"[^>]*>⬜ タスクA2<\/div>/.test(html));
+		// doneのカードは枠なし・影なし
+		assert.ok(/\.done\s*\{[^}]*border:\s*none/.test(html));
+		assert.ok(/\.done\s*\{[^}]*box-shadow:\s*none/.test(html));
 	});
 
 	// マークダウンで最初に現れた見出しが、マップ冒頭にタイトルとして表示される

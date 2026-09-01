@@ -2,18 +2,23 @@ import MarkdownIt = require('markdown-it');
 
 const markdown = new MarkdownIt();
 
-type Task = { text: string; depth: number };
+type Task = { text: string; depth: number; done: boolean };
 
 // 行頭の [x] / [ ] をチェックボックス絵文字にする
 function withCheckboxEmoji(text: string): string {
 	return text.replace(/^\[[xX]\] /, '✅ ').replace(/^\[ \] /, '⬜ ');
 }
 
+// 行頭に完了チェック [x] があるか
+function isDone(text: string): boolean {
+	return /^\[[xX]\] /.test(text);
+}
+
 export function renderMap(outline: string): string {
 	const tokens = markdown.parse(outline, {});
 	let titleText = '';
 	let titleFound = false;
-	const columns: { activity: string; taskColumns: Task[][]; lastDepth: number }[] = [];
+	const columns: { activity: string; done: boolean; taskColumns: Task[][]; lastDepth: number }[] = [];
 	let listDepth = 0;
 	let maxDepth = 0;
 	for (let i = 0; i < tokens.length; i++) {
@@ -31,14 +36,14 @@ export function renderMap(outline: string): string {
 		} else if (token.type === 'inline' && listDepth > 0) {
 			const depth = listDepth - 1;
 			if (depth === 0) {
-				columns.push({ activity: withCheckboxEmoji(token.content), taskColumns: [], lastDepth: 0 });
+				columns.push({ activity: withCheckboxEmoji(token.content), done: isDone(token.content), taskColumns: [], lastDepth: 0 });
 			} else {
 				const column = columns.at(-1);
 				if (column !== undefined) {
 					if (column.taskColumns.length === 0 || depth <= column.lastDepth) {
 						column.taskColumns.push([]);
 					}
-					column.taskColumns.at(-1)?.push({ text: withCheckboxEmoji(token.content), depth });
+					column.taskColumns.at(-1)?.push({ text: withCheckboxEmoji(token.content), depth, done: isDone(token.content) });
 					column.lastDepth = depth;
 					maxDepth = Math.max(maxDepth, depth);
 				}
@@ -51,10 +56,11 @@ export function renderMap(outline: string): string {
 	let nextColumn = 2;
 	for (const column of columns) {
 		const width = Math.max(column.taskColumns.length, 1);
-		cells.push(`<div class="activity" style="grid-column: ${nextColumn} / span ${width}; grid-row: 1;">${column.activity}</div>`);
+		const activityClasses = column.done ? 'activity done' : 'activity';
+		cells.push(`<div class="${activityClasses}" style="grid-column: ${nextColumn} / span ${width}; grid-row: 1;">${column.activity}</div>`);
 		column.taskColumns.forEach((tasks, columnOffset) => {
 			for (const task of tasks) {
-				const classes = task.depth === 1 ? 'task skeleton' : 'task';
+				const classes = (task.depth === 1 ? 'task skeleton' : 'task') + (task.done ? ' done' : '');
 				cells.push(`<div class="${classes}" style="grid-column: ${nextColumn + columnOffset}; grid-row: ${task.depth + 1};">${task.text}</div>`);
 			}
 		});
@@ -83,6 +89,7 @@ body { background: white; color: black; }
 .activity { background: hsl(from var(--activity-color) h s calc(l * var(--card-shade))); border-color: hsl(from var(--activity-color) h s calc(l * var(--border-shade))); }
 .task { background: hsl(from var(--tasks-color) h s calc(l * var(--card-shade))); border-color: hsl(from var(--tasks-color) h s calc(l * var(--border-shade))); }
 .task.skeleton { background: hsl(from var(--skeleton-color) h s calc(l * var(--card-shade))); border-color: hsl(from var(--skeleton-color) h s calc(l * var(--border-shade))); }
+.done { border: none; box-shadow: none; }
 .row-label { padding: 4px 8px; margin: 8px; color: #888; white-space: nowrap; }
 .row-band { align-self: stretch; justify-self: stretch; border-bottom: 2px dashed; }
 .activity-band { background: var(--activity-color); border-color: hsl(from var(--activity-color) h s calc(l * var(--card-shade))); }
