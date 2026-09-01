@@ -4,10 +4,18 @@ import { openPreview } from '../preview';
 
 // パネルとの配線
 suite('openPreview', () => {
+	function getExtensionUri(): vscode.Uri {
+		const extension = vscode.extensions.getExtension('hidekazu-kubota.user-story-mapping');
+		if (extension === undefined) {
+			throw new Error('Extension not found');
+		}
+		return extension.extensionUri;
+	}
+
 	// ドキュメントを渡すと、renderMapの結果がWebviewのHTMLに反映される
 	test('sets the rendered map as the webview html', async () => {
 		const document = await vscode.workspace.openTextDocument({ content: '- 活動A\n- 活動B' });
-		const panel = openPreview(document);
+		const panel = openPreview(document, getExtensionUri());
 
 		assert.ok(panel.webview.html.includes('class="map-grid"'));
 		assert.ok(panel.webview.html.includes('活動A'));
@@ -18,7 +26,7 @@ suite('openPreview', () => {
 	// プレビュー中のドキュメントを編集すると、Webviewが新しい内容で更新される
 	test('updates the webview when the previewed document changes', async () => {
 		const document = await vscode.workspace.openTextDocument({ content: '- 活動A' });
-		const panel = openPreview(document);
+		const panel = openPreview(document, getExtensionUri());
 
 		const edit = new vscode.WorkspaceEdit();
 		edit.insert(document.uri, document.positionAt(document.getText().length), '\n- 活動B');
@@ -33,7 +41,7 @@ suite('openPreview', () => {
 	test('does not update the webview when another document changes', async () => {
 		const previewed = await vscode.workspace.openTextDocument({ content: '- 活動A' });
 		const other = await vscode.workspace.openTextDocument({ content: '- 別の活動' });
-		const panel = openPreview(previewed);
+		const panel = openPreview(previewed, getExtensionUri());
 		const before = panel.webview.html;
 
 		const edit = new vscode.WorkspaceEdit();
@@ -44,10 +52,21 @@ suite('openPreview', () => {
 		panel.dispose();
 	});
 
+	// PNG保存を行うWebview用スクリプト（バンドル済み）が読み込まれる
+	test('loads the bundled webview script', async () => {
+		const extension = vscode.extensions.getExtension('hidekazu-kubota.user-story-mapping');
+		assert.ok(extension);
+		const document = await vscode.workspace.openTextDocument({ content: '- 活動A' });
+		const panel = openPreview(document, extension.extensionUri);
+
+		assert.ok(/<script src="[^"]*webview\.js"><\/script>/.test(panel.webview.html));
+		panel.dispose();
+	});
+
 	// ズーム操作のスクリプトが動くよう、Webviewのスクリプトを有効にしている
 	test('enables scripts in the webview', async () => {
 		const document = await vscode.workspace.openTextDocument({ content: '- 活動A' });
-		const panel = openPreview(document);
+		const panel = openPreview(document, getExtensionUri());
 
 		assert.strictEqual(panel.webview.options.enableScripts, true);
 		panel.dispose();
@@ -57,7 +76,7 @@ suite('openPreview', () => {
 	// （注: 解除漏れの例外はVSCodeが握りつぶすため外から観測できず、このテストも仕様の記録としてRedを経ずに置いたもの）
 	test('keeps working after the panel is disposed', async () => {
 		const document = await vscode.workspace.openTextDocument({ content: '- 活動A' });
-		const panel = openPreview(document);
+		const panel = openPreview(document, getExtensionUri());
 		panel.dispose();
 
 		const edit = new vscode.WorkspaceEdit();

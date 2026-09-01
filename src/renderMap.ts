@@ -127,6 +127,7 @@ export function renderMap(outline: string): string {
 	return `<style>
 :root { --activity-color: #e0ffee; --skeleton-color: #ffe0e9; --tasks-color: #fff3e0; --card-shade: 0.93; --border-shade: 0.6; --alt-shade: 1.04; }
 body { background: white; color: black; }
+.map-zoom { width: fit-content; display: flow-root; padding: 16px; }
 .map-grid { display: grid; gap: 0; justify-content: start; align-items: start; }
 .activity, .task { border: 2px solid; padding: 4px 8px; margin: 8px; border-radius: 6px; min-width: 120px; box-sizing: border-box; }
 .todo { box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); }
@@ -144,7 +145,7 @@ body { background: white; color: black; }
 .zoom-controls button { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #888; background: white; color: black; font-size: 16px; cursor: pointer; }
 </style>
 <div class="map-zoom">${title}<div class="map-grid">${cells.join('')}</div></div>
-<div class="zoom-controls"><button class="zoom-in">＋</button><button class="zoom-out">－</button></div>
+<div class="zoom-controls"><button class="zoom-in">＋</button><button class="zoom-out">－</button><button class="save-png">📷</button></div>
 <script>
 let zoom = 1;
 const mapZoom = document.querySelector('.map-zoom');

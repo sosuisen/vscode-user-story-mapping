@@ -126,6 +126,13 @@ suite('renderMap', () => {
 		assert.ok(html.includes('style.zoom'));
 	});
 
+	// フローティングの保存ボタンが表示される
+	test('renders a floating save button', () => {
+		const html = renderMap('- 活動A');
+
+		assert.ok(html.includes('<button class="save-png">📷</button>'));
+	});
+
 	// マークダウンで最初に現れた見出しが、マップ冒頭にタイトルとして表示される
 	test('renders the first heading as the map title at the top', () => {
 		const outline = '# マップのタイトル\n- 活動A';
