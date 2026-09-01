@@ -122,7 +122,7 @@ suite('renderMap', () => {
 		const rows = [
 			{ colorVar: '--activity-color', bandClass: 'activity-band', cardSelector: '\\.activity', gridRow: '1;' },
 			{ colorVar: '--skeleton-color', bandClass: 'skeleton-band', cardSelector: '\\.task\\.skeleton', gridRow: '2;' },
-			{ colorVar: '--tasks-color', bandClass: 'tasks-band', cardSelector: '\\.task', gridRow: '3 / 4;' },
+			{ colorVar: '--tasks-color', bandClass: 'tasks-band', cardSelector: '\\.task', gridRow: '3;' },
 		];
 		for (const row of rows) {
 			// 基本色の変数が定義されている
@@ -157,6 +157,20 @@ suite('renderMap', () => {
 		assert.ok(html.includes('--activity-color: #e0ffee'));
 		assert.ok(html.includes('--skeleton-color: #ffe0e9'));
 		assert.ok(html.includes('--tasks-color: #fff3e0'));
+	});
+
+	// User Tasksの帯は、1行ごとに基本色と少し明るい色が交互になる
+	test('alternates task row bands between the base color and a lighter shade', () => {
+		const outline = '- 活動A\n\t- タスクA1\n\t\t- タスクA2\n\t\t\t- タスクA3\n\t\t\t\t- タスクA4';
+
+		const html = renderMap(outline);
+
+		// タスク行（3〜5行目）に1行ずつ帯があり、偶数番目の行はaltクラスを持つ
+		assert.ok(html.includes('<div class="row-band tasks-band" style="grid-column: 1 / 3; grid-row: 3;"></div>'));
+		assert.ok(html.includes('<div class="row-band tasks-band alt" style="grid-column: 1 / 3; grid-row: 4;"></div>'));
+		assert.ok(html.includes('<div class="row-band tasks-band" style="grid-column: 1 / 3; grid-row: 5;"></div>'));
+		// altの帯の色は基本色から明度を変えて導出される
+		assert.ok(/\.tasks-band\.alt\s*\{[^}]*background:\s*hsl\(from var\(--tasks-color\)/.test(html));
 	});
 
 	// カードには右下方向の影がある
