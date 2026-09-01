@@ -4,6 +4,11 @@ const markdown = new MarkdownIt();
 
 type Task = { text: string; depth: number };
 
+// 行頭の [x] / [ ] をチェックボックス絵文字にする
+function withCheckboxEmoji(text: string): string {
+	return text.replace(/^\[[xX]\] /, '✅ ').replace(/^\[ \] /, '⬜ ');
+}
+
 export function renderMap(outline: string): string {
 	const tokens = markdown.parse(outline, {});
 	let titleText = '';
@@ -26,14 +31,14 @@ export function renderMap(outline: string): string {
 		} else if (token.type === 'inline' && listDepth > 0) {
 			const depth = listDepth - 1;
 			if (depth === 0) {
-				columns.push({ activity: token.content, taskColumns: [], lastDepth: 0 });
+				columns.push({ activity: withCheckboxEmoji(token.content), taskColumns: [], lastDepth: 0 });
 			} else {
 				const column = columns.at(-1);
 				if (column !== undefined) {
 					if (column.taskColumns.length === 0 || depth <= column.lastDepth) {
 						column.taskColumns.push([]);
 					}
-					column.taskColumns.at(-1)?.push({ text: token.content, depth });
+					column.taskColumns.at(-1)?.push({ text: withCheckboxEmoji(token.content), depth });
 					column.lastDepth = depth;
 					maxDepth = Math.max(maxDepth, depth);
 				}

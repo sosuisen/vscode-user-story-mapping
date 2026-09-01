@@ -50,6 +50,26 @@ suite('renderMap', () => {
 		assert.ok(/<div class="task"[^>]*>タスクA2<\/div>/.test(html));
 	});
 
+	// [ ] と [x] は、チェックボックス絵文字として表示される
+	test('renders checkbox markers as emoji', () => {
+		const outline = '- 活動A\n\t- [x] タスクA1\n\t\t- [ ] タスクA2';
+
+		const html = renderMap(outline);
+
+		assert.ok(/<div class="task skeleton"[^>]*>✅ タスクA1<\/div>/.test(html));
+		assert.ok(/<div class="task"[^>]*>⬜ タスクA2<\/div>/.test(html));
+		// 生の [x] / [ ] は表示されない
+		assert.ok(!html.includes('[x]'));
+		assert.ok(!html.includes('[ ]'));
+	});
+
+	// 大文字の [X] も完了として絵文字になる
+	test('renders an uppercase checkbox marker as emoji too', () => {
+		const html = renderMap('- 活動A\n\t- [X] タスクA1');
+
+		assert.ok(/<div class="task skeleton"[^>]*>✅ タスクA1<\/div>/.test(html));
+	});
+
 	// マークダウンで最初に現れた見出しが、マップ冒頭にタイトルとして表示される
 	test('renders the first heading as the map title at the top', () => {
 		const outline = '# マップのタイトル\n- 活動A';
