@@ -11,13 +11,9 @@ suite('renderMap', () => {
 
 		// 行コンテナは1つだけ
 		assert.strictEqual((html.match(/class="activity-row"/g) ?? []).length, 1);
-		// 各アクティビティがカードとして含まれる
-		assert.ok(html.includes('<div class="activity">活動A</div>'));
-		assert.ok(html.includes('<div class="activity">活動B</div>'));
-		assert.ok(html.includes('<div class="activity">活動C</div>'));
-		// アウトラインの順序が保たれている
-		const positions = ['活動A', '活動B', '活動C'].map(name => html.indexOf(name));
-		assert.deepStrictEqual(positions, [...positions].sort((a, b) => a - b));
+		// アクティビティのカードが 活動A → 活動B → 活動C の順に並ぶ
+		const cards = [...html.matchAll(/<div class="activity">([^<]*)<\/div>/g)].map(m => m[1]);
+		assert.deepStrictEqual(cards, ['活動A', '活動B', '活動C']);
 	});
 
 	// 行コンテナには横並び（flex）のスタイルが付いている
@@ -35,13 +31,9 @@ suite('renderMap', () => {
 
 		// アクティビティごとに列コンテナがある
 		assert.strictEqual((html.match(/class="activity-column"/g) ?? []).length, 2);
-		// タスクがカードとして含まれる
-		assert.ok(html.includes('<div class="task">タスクA1</div>'));
-		assert.ok(html.includes('<div class="task">タスクA2</div>'));
-		assert.ok(html.includes('<div class="task">タスクB1</div>'));
-		// 活動A → タスクA1 → タスクA2 → 活動B → タスクB1 の順に現れる
-		const positions = ['活動A', 'タスクA1', 'タスクA2', '活動B', 'タスクB1'].map(name => html.indexOf(name));
-		assert.deepStrictEqual(positions, [...positions].sort((a, b) => a - b));
+		// カードが 活動A → タスクA1 → タスクA2 → 活動B → タスクB1 の順に並ぶ
+		const cards = [...html.matchAll(/<div class="(?:activity|task)">([^<]*)<\/div>/g)].map(m => m[1]);
+		assert.deepStrictEqual(cards, ['活動A', 'タスクA1', 'タスクA2', '活動B', 'タスクB1']);
 	});
 
 	// スペースでインデントされたタスクも、タブと同じくアクティビティの下に並ぶ
