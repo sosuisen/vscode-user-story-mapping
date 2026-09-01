@@ -87,6 +87,18 @@ suite('renderMap', () => {
 		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 2;">タスクA2</div>'));
 	});
 
+	// 最上段（レベル1）のグリッド行そのものに、Walking Skeletonを示す背景色が付く
+	test('paints the top grid row background to show the walking skeleton', () => {
+		const outline = '- 活動A\n\t- タスクA1\n\t\t- タスクA2';
+
+		const html = renderMap(outline);
+
+		// 2行目（レベル1）の全列に広がる背景要素がある
+		assert.ok(/<div class="skeleton-row" style="grid-column: 1 \/ \d+; grid-row: 2;"><\/div>/.test(html));
+		// 背景色が指定されている
+		assert.ok(/\.skeleton-row\s*\{[^}]*background:/.test(html));
+	});
+
 	// 同じレベルのタスクは、どのカラムにあっても同じグリッド行に置かれる
 	test('places tasks of the same level on the same grid row', () => {
 		const outline = '- 活動A\n\t- タスクA1\n- 活動B\n\t- タスクB1\n\t\t- タスクB2';

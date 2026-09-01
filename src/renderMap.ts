@@ -51,11 +51,14 @@ export function renderMap(outline: string): string {
 		});
 		nextColumn += width;
 	}
+	// 背面に敷くため、カードより先（DOM順で前）に置く
+	cells.unshift(`<div class="skeleton-row" style="grid-column: 1 / ${nextColumn}; grid-row: 2;"></div>`);
 	return `<style>
 body { background: white; color: black; }
-.map-grid { display: grid; gap: 8px; justify-content: start; align-items: start; }
-.activity { border: 1px solid currentColor; padding: 4px 8px; }
-.task { border: 1px solid currentColor; padding: 4px 8px; }
+.map-grid { display: grid; gap: 0; justify-content: start; align-items: start; }
+.activity { border: 1px solid currentColor; padding: 4px 8px; margin: 8px; background: white; }
+.task { border: 1px solid currentColor; padding: 4px 8px; margin: 8px; background: white; }
+.skeleton-row { background: #ffe0e9; align-self: stretch; justify-self: stretch; }
 </style>
 ${title}<div class="map-grid">${cells.join('')}</div>`;
 }
