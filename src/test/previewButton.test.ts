@@ -23,4 +23,15 @@ suite('Preview as User Story Map button', () => {
 		assert.strictEqual(entry.when, 'resourceLangId == markdown');
 		assert.strictEqual(entry.group, 'navigation');
 	});
+
+	// previewコマンドにmapアイコンが設定されている（標準のプレビューアイコンと区別するため）
+	test('has the map icon on the preview command', () => {
+		const extension = vscode.extensions.getExtension('hidekazu-kubota.user-story-mapping');
+		assert.ok(extension);
+		const command = extension.packageJSON.contributes.commands.find(
+			(c: { command: string }) => c.command === 'user-story-mapping.preview'
+		);
+		assert.ok(command);
+		assert.strictEqual(command.icon, '$(map)');
+	});
 });

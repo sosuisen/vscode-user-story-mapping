@@ -21,7 +21,8 @@
 			},
 			{
 				"command": "user-story-mapping.preview",
-				"title": "Preview as User Story Map"
+				"title": "Preview as User Story Map",
+				"icon": "$(map)"
 			}
 		],
 		"menus": {
