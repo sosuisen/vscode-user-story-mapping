@@ -32,13 +32,8 @@ function fillBlankItems(outline: string): string {
 		.join('\n');
 }
 
-// アイテムのテキストを「 - 」区切りで、同じセルに縦積みされるカード群にする
-function parseCards(content: string): Card[] {
-	return content.split(' - ').map(segment => ({
-		text: withCheckboxEmoji(segment),
-		done: isDone(segment),
-		todo: isTodo(segment),
-	}));
+function cardOf(content: string): Card {
+	return { text: withCheckboxEmoji(content), done: isDone(content), todo: isTodo(content) };
 }
 
 export function renderMap(outline: string): string {
@@ -48,6 +43,7 @@ export function renderMap(outline: string): string {
 	const columns: { activity: string; done: boolean; todo: boolean; taskColumns: Task[][]; lastDepth: number }[] = [];
 	let listDepth = 0;
 	let maxDepth = 0;
+	let itemMarkup = '-';
 	for (let i = 0; i < tokens.length; i++) {
 		const token = tokens[i];
 		if (token === undefined) {
@@ -55,6 +51,8 @@ export function renderMap(outline: string): string {
 		}
 		if (token.type === 'bullet_list_open') {
 			listDepth++;
+		} else if (token.type === 'list_item_open') {
+			itemMarkup = token.markup;
 		} else if (token.type === 'bullet_list_close') {
 			listDepth--;
 		} else if (token.type === 'heading_open' && !titleFound) {
@@ -71,10 +69,16 @@ export function renderMap(outline: string): string {
 			} else {
 				const column = columns.at(-1);
 				if (column !== undefined) {
+					// 「+」のアイテムは、1つ上のレベル（親タスクのセル）にカードとして積む
+					const parentTask = column.taskColumns.at(-1)?.at(-1);
+					if (itemMarkup === '+' && parentTask !== undefined) {
+						parentTask.cards.push(cardOf(token.content));
+						continue;
+					}
 					if (column.taskColumns.length === 0 || depth <= column.lastDepth) {
 						column.taskColumns.push([]);
 					}
-					column.taskColumns.at(-1)?.push({ cards: parseCards(token.content), depth });
+					column.taskColumns.at(-1)?.push({ cards: [cardOf(token.content)], depth });
 					column.lastDepth = depth;
 					maxDepth = Math.max(maxDepth, depth);
 				}

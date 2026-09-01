@@ -96,9 +96,9 @@ suite('renderMap', () => {
 		assert.ok(!/<div class="(?:activity|task)[^"]*"[^>]*><\/div>/.test(html));
 	});
 
-	// アイテムを「 - 」で繋げると、同じレベルのセルに縦に積まれる
-	test('stacks chained tasks vertically in one cell', () => {
-		const outline = '- 活動A\n\t- タスクA1 - タスクA1b - [ ] タスクA1c';
+	// 「+」のアイテムは、1つ上のレベル（親タスクのセル）に縦に積まれる
+	test('stacks plus-marked items into the parent task cell', () => {
+		const outline = '- 活動A\n\t- タスクA1\n\t\t+ タスクA1b\n\t\t+ [ ] タスクA1c';
 
 		const html = renderMap(outline);
 
