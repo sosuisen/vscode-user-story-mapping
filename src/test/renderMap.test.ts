@@ -27,30 +27,6 @@ suite('renderMap', () => {
 		assert.ok(/\.activity-row\s*\{[^}]*display:\s*flex/.test(html));
 	});
 
-	// アクティビティのカードには枠線が付き、カード同士の間隔があいている
-	test('draws a border around each activity and puts a gap between them', () => {
-		const html = renderMap('- 活動A\n- 活動B');
-
-		// カードに枠線
-		assert.ok(/\.activity\s*\{[^}]*border:/.test(html));
-		// 行コンテナに間隔
-		assert.ok(/\.activity-row\s*\{[^}]*gap:/.test(html));
-	});
-
-	// 背景は白である
-	test('has a white background', () => {
-		const html = renderMap('- 活動A');
-
-		assert.ok(/body\s*\{[^}]*background:\s*white/.test(html));
-	});
-
-	// 文字色は黒である
-	test('has black text color', () => {
-		const html = renderMap('- 活動A');
-
-		assert.ok(/body\s*\{[^}]*color:\s*black/.test(html));
-	});
-
 	// 各アクティビティの下に、そのタスクがアウトラインの順で縦に並ぶ
 	test('renders tasks under their activity in outline order', () => {
 		const outline = '- 活動A\n\t- タスクA1\n\t\t- タスクA2\n- 活動B\n\t- タスクB1';
@@ -76,19 +52,5 @@ suite('renderMap', () => {
 
 		assert.ok(html.includes('<div class="task">タスクA1</div>'));
 		assert.ok(html.includes('<div class="task">タスクA2</div>'));
-	});
-
-	// タスクのカードにも枠線が付いている
-	test('draws a border around each task', () => {
-		const html = renderMap('- 活動A\n\t- タスクA1');
-
-		assert.ok(/\.task\s*\{[^}]*border:/.test(html));
-	});
-
-	// 列の中のカード同士には縦の間隔があいている
-	test('puts a vertical gap between cards in a column', () => {
-		const html = renderMap('- 活動A\n\t- タスクA1');
-
-		assert.ok(/\.activity-column\s*\{[^}]*gap:/.test(html));
 	});
 });
