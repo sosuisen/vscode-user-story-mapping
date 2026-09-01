@@ -57,7 +57,7 @@ suite('renderMap', () => {
 		const html = renderMap(outline);
 
 		assert.ok(/<div class="task skeleton done"[^>]*>✅ タスクA1<\/div>/.test(html));
-		assert.ok(/<div class="task"[^>]*>⬜ タスクA2<\/div>/.test(html));
+		assert.ok(/<div class="task todo"[^>]*>⬜ タスクA2<\/div>/.test(html));
 		// 生の [x] / [ ] は表示されない
 		assert.ok(!html.includes('[x]'));
 		assert.ok(!html.includes('[ ]'));
@@ -78,7 +78,7 @@ suite('renderMap', () => {
 
 		// 完了カードにはdoneクラスが付き、未完了カードには付かない
 		assert.ok(/<div class="task skeleton done"[^>]*>✅ タスクA1<\/div>/.test(html));
-		assert.ok(/<div class="task"[^>]*>⬜ タスクA2<\/div>/.test(html));
+		assert.ok(/<div class="task todo"[^>]*>⬜ タスクA2<\/div>/.test(html));
 		// doneのカードは枠なし・影なし
 		assert.ok(/\.done\s*\{[^}]*border:\s*none/.test(html));
 		assert.ok(/\.done\s*\{[^}]*box-shadow:\s*none/.test(html));
@@ -222,11 +222,18 @@ suite('renderMap', () => {
 		}
 	});
 
-	// カードには右下方向の影がある
-	test('casts a drop shadow toward the bottom right of cards', () => {
-		const html = renderMap('- 活動A');
+	// [ ] のあるカードには影があり、チェックボックスのないカードには影がない
+	test('casts a shadow only on cards with an open checkbox', () => {
+		const outline = '- 活動A\n\t- [ ] タスクA1\n\t\t- タスクA2';
 
-		assert.ok(/\.activity, \.task\s*\{[^}]*box-shadow:\s*[1-9]\d*px [1-9]\d*px/.test(html));
+		const html = renderMap(outline);
+
+		// 未完了チェックのカードにはtodoクラスが付き、チェックボックスなしには付かない
+		assert.ok(/<div class="task skeleton todo"[^>]*>⬜ タスクA1<\/div>/.test(html));
+		assert.ok(/<div class="task"[^>]*>タスクA2<\/div>/.test(html));
+		// 影はtodoのカードだけに付く（右下方向）
+		assert.ok(/\.todo\s*\{[^}]*box-shadow:\s*[1-9]\d*px [1-9]\d*px/.test(html));
+		assert.ok(!/\.activity,\s*\.task\s*\{[^}]*box-shadow:/.test(html));
 	});
 
 	// カードには最低幅（120px）があり、狭くなりすぎない
