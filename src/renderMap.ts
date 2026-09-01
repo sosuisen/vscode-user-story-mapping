@@ -1,6 +1,9 @@
 const taskLinePattern = /^[ \t]+- /;
+const headingLinePattern = /^#+ /;
 
 export function renderMap(outline: string): string {
+	const headingLine = outline.split('\n').find(line => headingLinePattern.test(line));
+	const title = headingLine === undefined ? '' : `<h1 class="map-title">${headingLine.replace(headingLinePattern, '')}</h1>`;
 	const columns: { activity: string; tasks: string[] }[] = [];
 	for (const line of outline.split('\n')) {
 		if (line.startsWith('- ')) {
@@ -22,5 +25,5 @@ body { background: white; color: black; }
 .activity { border: 1px solid currentColor; padding: 4px 8px; }
 .task { border: 1px solid currentColor; padding: 4px 8px; }
 </style>
-<div class="activity-row">${cells}</div>`;
+${title}<div class="activity-row">${cells}</div>`;
 }

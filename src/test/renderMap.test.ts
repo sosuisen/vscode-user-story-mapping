@@ -45,4 +45,16 @@ suite('renderMap', () => {
 		assert.ok(html.includes('<div class="task">タスクA1</div>'));
 		assert.ok(html.includes('<div class="task">タスクA2</div>'));
 	});
+
+	// マークダウンで最初に現れた見出しが、マップ冒頭にタイトルとして表示される
+	test('renders the first heading as the map title at the top', () => {
+		const outline = '# マップのタイトル\n- 活動A';
+
+		const html = renderMap(outline);
+
+		const titlePosition = html.indexOf('<h1 class="map-title">マップのタイトル</h1>');
+		assert.ok(titlePosition !== -1);
+		// タイトルは行コンテナより前にある
+		assert.ok(titlePosition < html.indexOf('class="activity-row"'));
+	});
 });
