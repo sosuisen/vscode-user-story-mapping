@@ -1,26 +1,42 @@
-const taskLinePattern = /^[ \t]+- /;
-const headingLinePattern = /^#+ /;
+import MarkdownIt = require('markdown-it');
+
+const markdown = new MarkdownIt();
 
 export function renderMap(outline: string): string {
-	const headingLine = outline.split('\n').find(line => headingLinePattern.test(line));
-	const titleText = headingLine === undefined ? '' : headingLine.replace(headingLinePattern, '');
-	const title = `<h1 class="map-title">${titleText}</h1>`;
-	const columns: { activity: string; taskColumns: string[][]; lastIndent: number }[] = [];
-	for (const line of outline.split('\n')) {
-		if (line.startsWith('- ')) {
-			columns.push({ activity: line.slice(2), taskColumns: [], lastIndent: 0 });
-		} else if (taskLinePattern.test(line)) {
-			const column = columns.at(-1);
-			if (column !== undefined) {
-				const indent = (line.match(/^[ \t]+/) ?? [''])[0].replace(/\t/g, '    ').length;
-				if (column.taskColumns.length === 0 || indent <= column.lastIndent) {
-					column.taskColumns.push([]);
+	const tokens = markdown.parse(outline, {});
+	let titleText = '';
+	let titleFound = false;
+	const columns: { activity: string; taskColumns: string[][]; lastDepth: number }[] = [];
+	let listDepth = 0;
+	for (let i = 0; i < tokens.length; i++) {
+		const token = tokens[i];
+		if (token === undefined) {
+			continue;
+		}
+		if (token.type === 'bullet_list_open') {
+			listDepth++;
+		} else if (token.type === 'bullet_list_close') {
+			listDepth--;
+		} else if (token.type === 'heading_open' && !titleFound) {
+			titleText = tokens[i + 1]?.content ?? '';
+			titleFound = true;
+		} else if (token.type === 'inline' && listDepth > 0) {
+			const depth = listDepth - 1;
+			if (depth === 0) {
+				columns.push({ activity: token.content, taskColumns: [], lastDepth: 0 });
+			} else {
+				const column = columns.at(-1);
+				if (column !== undefined) {
+					if (column.taskColumns.length === 0 || depth <= column.lastDepth) {
+						column.taskColumns.push([]);
+					}
+					column.taskColumns.at(-1)?.push(token.content);
+					column.lastDepth = depth;
 				}
-				column.taskColumns.at(-1)?.push(line.replace(taskLinePattern, ''));
-				column.lastIndent = indent;
 			}
 		}
 	}
+	const title = `<h1 class="map-title">${titleText}</h1>`;
 	const cells = columns
 		.map(column => {
 			const taskColumns = column.taskColumns
