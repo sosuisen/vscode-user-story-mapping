@@ -32,12 +32,12 @@ suite('renderMap', () => {
 		const html = renderMap(outline);
 
 		// カードが 活動A → タスクA1 → タスクA2 → 活動B → タスクB1 の順に並ぶ
-		const cards = [...html.matchAll(/<div class="(?:activity|task)"[^>]*>([^<]*)<\/div>/g)].map(m => m[1]);
+		const cards = [...html.matchAll(/<div class="(?:activity|task)(?: skeleton)?"[^>]*>([^<]*)<\/div>/g)].map(m => m[1]);
 		assert.deepStrictEqual(cards, ['活動A', 'タスクA1', 'タスクA2', '活動B', 'タスクB1']);
 		// タスクは自分のアクティビティと同じグリッド列に入る
-		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 2;">タスクA1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">タスクA1</div>'));
 		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 3;">タスクA2</div>'));
-		assert.ok(html.includes('<div class="task" style="grid-column: 3; grid-row: 2;">タスクB1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 3; grid-row: 2;">タスクB1</div>'));
 	});
 
 	// スペースでインデントされたタスクも、タブと同じくアクティビティの下に並ぶ
@@ -46,7 +46,7 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(/<div class="task"[^>]*>タスクA1<\/div>/.test(html));
+		assert.ok(/<div class="task skeleton"[^>]*>タスクA1<\/div>/.test(html));
 		assert.ok(/<div class="task"[^>]*>タスクA2<\/div>/.test(html));
 	});
 
@@ -83,8 +83,8 @@ suite('renderMap', () => {
 		const html = renderMap(outline);
 
 		// 同じレベルなので、同じ行のまま隣のグリッド列に分かれる
-		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 2;">タスクA1</div>'));
-		assert.ok(html.includes('<div class="task" style="grid-column: 3; grid-row: 2;">タスクA2</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">タスクA1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 3; grid-row: 2;">タスクA2</div>'));
 	});
 
 	// 一番左のカラムに、行の説明（User Activity / Walking skeleton / User tasks）が表示される。4行目以降にラベルはない
@@ -100,6 +100,21 @@ suite('renderMap', () => {
 		assert.strictEqual((html.match(/class="row-label"/g) ?? []).length, 3);
 		// アクティビティのカードは2列目から始まる
 		assert.ok(/<div class="activity" style="grid-column: 2[^"]*"/.test(html));
+	});
+
+	// Walking Skeleton（レベル1）のカードは、帯の背景色から計算で導出した少し濃い色になる
+	test('paints walking skeleton cards with a darker shade derived from the row background', () => {
+		const outline = '- 活動A\n\t- タスクA1\n\t\t- タスクA2';
+
+		const html = renderMap(outline);
+
+		// レベル1のタスクだけがskeletonクラスを持つ
+		assert.ok(/<div class="task skeleton"[^>]*>タスクA1<\/div>/.test(html));
+		assert.ok(/<div class="task"[^>]*>タスクA2<\/div>/.test(html));
+		// 帯とカードの色は同じ変数（--skeleton-color）を源にする
+		assert.ok(/\.skeleton-row\s*\{[^}]*var\(--skeleton-color\)/.test(html));
+		// カードの色は相対色構文で帯の色から導出される（色相・彩度は保持）
+		assert.ok(/\.task\.skeleton\s*\{[^}]*background:\s*hsl\(from var\(--skeleton-color\) h s /.test(html));
 	});
 
 	// カードには最低幅（120px）があり、狭くなりすぎない
@@ -128,8 +143,8 @@ suite('renderMap', () => {
 		const html = renderMap(outline);
 
 		// レベル1は2行目、レベル2は3行目
-		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 2;">タスクA1</div>'));
-		assert.ok(html.includes('<div class="task" style="grid-column: 3; grid-row: 2;">タスクB1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">タスクA1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 3; grid-row: 2;">タスクB1</div>'));
 		assert.ok(html.includes('<div class="task" style="grid-column: 3; grid-row: 3;">タスクB2</div>'));
 	});
 
@@ -140,7 +155,7 @@ suite('renderMap', () => {
 		const html = renderMap(outline);
 
 		// 同じレベルなので、同じ行のまま隣のグリッド列に分かれる
-		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 2;">タスクA1</div>'));
-		assert.ok(html.includes('<div class="task" style="grid-column: 3; grid-row: 2;">タスクA2</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">タスクA1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 3; grid-row: 2;">タスクA2</div>'));
 	});
 });
