@@ -36,4 +36,18 @@ suite('renderMap', () => {
 		// 行コンテナに間隔
 		assert.ok(/\.activity-row\s*\{[^}]*gap:/.test(html));
 	});
+
+	// 背景は白である
+	test('has a white background', () => {
+		const html = renderMap('- 活動A');
+
+		assert.ok(/body\s*\{[^}]*background:\s*white/.test(html));
+	});
+
+	// 文字色は黒である
+	test('has black text color', () => {
+		const html = renderMap('- 活動A');
+
+		assert.ok(/body\s*\{[^}]*color:\s*black/.test(html));
+	});
 });
