@@ -84,6 +84,18 @@ suite('renderMap', () => {
 		assert.ok(/\.done\s*\{[^}]*box-shadow:\s*none/.test(html));
 	});
 
+	// 空のリスト項目は空白レベルとして扱われ、カードにはならない
+	test('treats an empty list item as a blank level without a card', () => {
+		const outline = '- 活動A\n\t- \n\t\t- タスクA2';
+
+		const html = renderMap(outline);
+
+		// 空白レベルの下のタスクはレベル2（3行目）に置かれる
+		assert.ok(/<div class="task" style="grid-column: 2; grid-row: 3;">タスクA2<\/div>/.test(html));
+		// 空のカードは作られない
+		assert.ok(!/<div class="(?:activity|task)[^"]*"[^>]*><\/div>/.test(html));
+	});
+
 	// マークダウンで最初に現れた見出しが、マップ冒頭にタイトルとして表示される
 	test('renders the first heading as the map title at the top', () => {
 		const outline = '# マップのタイトル\n- 活動A';

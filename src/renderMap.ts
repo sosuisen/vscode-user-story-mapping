@@ -19,8 +19,20 @@ function isTodo(text: string): boolean {
 	return /^\[ \] /.test(text);
 }
 
+// 空白レベルの印（CommonMarkでは空のリスト項目が段落に割り込めないため、
+// パース前にゼロ幅スペースを補ってリストとして成立させる）
+const blankMarker = '​';
+const blankItemPattern = /^([ \t]*)-[ \t]*$/;
+
+function fillBlankItems(outline: string): string {
+	return outline
+		.split('\n')
+		.map(line => line.replace(blankItemPattern, `$1- ${blankMarker}`))
+		.join('\n');
+}
+
 export function renderMap(outline: string): string {
-	const tokens = markdown.parse(outline, {});
+	const tokens = markdown.parse(fillBlankItems(outline), {});
 	let titleText = '';
 	let titleFound = false;
 	const columns: { activity: string; done: boolean; todo: boolean; taskColumns: Task[][]; lastDepth: number }[] = [];
@@ -39,6 +51,10 @@ export function renderMap(outline: string): string {
 			titleText = tokens[i + 1]?.content ?? '';
 			titleFound = true;
 		} else if (token.type === 'inline' && listDepth > 0) {
+			// 空白レベルの項目はカードにしない（ネストの深さだけに寄与する）
+			if (token.content === blankMarker) {
+				continue;
+			}
 			const depth = listDepth - 1;
 			if (depth === 0) {
 				columns.push({ activity: withCheckboxEmoji(token.content), done: isDone(token.content), todo: isTodo(token.content), taskColumns: [], lastDepth: 0 });
