@@ -1,9 +1,18 @@
 export function renderMap(outline: string): string {
-	const activities = outline
-		.split('\n')
-		.filter(line => line.startsWith('- '))
-		.map(line => line.slice(2));
-	const cells = activities.map(name => `<div class="activity">${name}</div>`).join('');
+	const columns: { activity: string; tasks: string[] }[] = [];
+	for (const line of outline.split('\n')) {
+		if (line.startsWith('- ')) {
+			columns.push({ activity: line.slice(2), tasks: [] });
+		} else if (/^\t+- /.test(line)) {
+			columns.at(-1)?.tasks.push(line.replace(/^\t+- /, ''));
+		}
+	}
+	const cells = columns
+		.map(column => {
+			const tasks = column.tasks.map(task => `<div class="task">${task}</div>`).join('');
+			return `<div class="activity-column"><div class="activity">${column.activity}</div>${tasks}</div>`;
+		})
+		.join('');
 	return `<style>
 body { background: white; color: black; }
 .activity-row { display: flex; gap: 8px; }
