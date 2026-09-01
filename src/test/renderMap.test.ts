@@ -67,4 +67,14 @@ suite('renderMap', () => {
 		const positions = ['活動A', 'タスクA1', 'タスクA2', '活動B', 'タスクB1'].map(name => html.indexOf(name));
 		assert.deepStrictEqual(positions, [...positions].sort((a, b) => a - b));
 	});
+
+	// スペースでインデントされたタスクも、タブと同じくアクティビティの下に並ぶ
+	test('renders space-indented tasks the same as tab-indented ones', () => {
+		const outline = '- 活動A\n  - タスクA1\n    - タスクA2';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<div class="task">タスクA1</div>'));
+		assert.ok(html.includes('<div class="task">タスクA2</div>'));
+	});
 });

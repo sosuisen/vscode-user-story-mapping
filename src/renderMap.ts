@@ -1,10 +1,12 @@
+const taskLinePattern = /^[ \t]+- /;
+
 export function renderMap(outline: string): string {
 	const columns: { activity: string; tasks: string[] }[] = [];
 	for (const line of outline.split('\n')) {
 		if (line.startsWith('- ')) {
 			columns.push({ activity: line.slice(2), tasks: [] });
-		} else if (/^\t+- /.test(line)) {
-			columns.at(-1)?.tasks.push(line.replace(/^\t+- /, ''));
+		} else if (taskLinePattern.test(line)) {
+			columns.at(-1)?.tasks.push(line.replace(taskLinePattern, ''));
 		}
 	}
 	const cells = columns
