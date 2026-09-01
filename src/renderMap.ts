@@ -4,5 +4,8 @@ export function renderMap(outline: string): string {
 		.filter(line => line.startsWith('- '))
 		.map(line => line.slice(2));
 	const cells = activities.map(name => `<div class="activity">${name}</div>`).join('');
-	return `<div class="activity-row">${cells}</div>`;
+	return `<style>
+.activity-row { display: flex; }
+</style>
+<div class="activity-row">${cells}</div>`;
 }
