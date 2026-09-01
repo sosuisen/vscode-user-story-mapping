@@ -56,8 +56,7 @@ export function renderMap(outline: string): string {
 	return `<style>
 body { background: white; color: black; }
 .map-grid { display: grid; gap: 0; justify-content: start; align-items: start; }
-.activity { border: 1px solid currentColor; padding: 4px 8px; margin: 8px; background: white; }
-.task { border: 1px solid currentColor; padding: 4px 8px; margin: 8px; background: white; }
+.activity, .task { border: 1px solid currentColor; padding: 4px 8px; margin: 8px; background: white; border-radius: 6px; }
 .skeleton-row { background: #ffe0e9; align-self: stretch; justify-self: stretch; }
 </style>
 ${title}<div class="map-grid">${cells.join('')}</div>`;
