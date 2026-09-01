@@ -96,6 +96,23 @@ suite('renderMap', () => {
 		assert.ok(!/<div class="(?:activity|task)[^"]*"[^>]*><\/div>/.test(html));
 	});
 
+	// アイテムを「 - 」で繋げると、同じレベルのセルに縦に積まれる
+	test('stacks chained tasks vertically in one cell', () => {
+		const outline = '- 活動A\n\t- タスクA1 - タスクA1b - [ ] タスクA1c';
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="task-stack" style="grid-column: 2; grid-row: 2;">' +
+					'<div class="task skeleton">タスクA1</div>' +
+					'<div class="task skeleton">タスクA1b</div>' +
+					'<div class="task skeleton todo">⬜ タスクA1c</div>' +
+					'</div>'
+			)
+		);
+	});
+
 	// マークダウンで最初に現れた見出しが、マップ冒頭にタイトルとして表示される
 	test('renders the first heading as the map title at the top', () => {
 		const outline = '# マップのタイトル\n- 活動A';

@@ -2,7 +2,8 @@ import MarkdownIt = require('markdown-it');
 
 const markdown = new MarkdownIt();
 
-type Task = { text: string; depth: number; done: boolean; todo: boolean };
+type Card = { text: string; done: boolean; todo: boolean };
+type Task = { cards: Card[]; depth: number };
 
 // 行頭の [x] / [ ] をチェックボックス絵文字にする
 function withCheckboxEmoji(text: string): string {
@@ -29,6 +30,15 @@ function fillBlankItems(outline: string): string {
 		.split('\n')
 		.map(line => line.replace(blankItemPattern, `$1- ${blankMarker}`))
 		.join('\n');
+}
+
+// アイテムのテキストを「 - 」区切りで、同じセルに縦積みされるカード群にする
+function parseCards(content: string): Card[] {
+	return content.split(' - ').map(segment => ({
+		text: withCheckboxEmoji(segment),
+		done: isDone(segment),
+		todo: isTodo(segment),
+	}));
 }
 
 export function renderMap(outline: string): string {
@@ -64,7 +74,7 @@ export function renderMap(outline: string): string {
 					if (column.taskColumns.length === 0 || depth <= column.lastDepth) {
 						column.taskColumns.push([]);
 					}
-					column.taskColumns.at(-1)?.push({ text: withCheckboxEmoji(token.content), depth, done: isDone(token.content), todo: isTodo(token.content) });
+					column.taskColumns.at(-1)?.push({ cards: parseCards(token.content), depth });
 					column.lastDepth = depth;
 					maxDepth = Math.max(maxDepth, depth);
 				}
@@ -81,8 +91,16 @@ export function renderMap(outline: string): string {
 		cells.push(`<div class="${activityClasses}" style="grid-column: ${nextColumn} / span ${width}; grid-row: 1;">${column.activity}</div>`);
 		column.taskColumns.forEach((tasks, columnOffset) => {
 			for (const task of tasks) {
-				const classes = (task.depth === 1 ? 'task skeleton' : 'task') + (task.done ? ' done' : '') + (task.todo ? ' todo' : '');
-				cells.push(`<div class="${classes}" style="grid-column: ${nextColumn + columnOffset}; grid-row: ${task.depth + 1};">${task.text}</div>`);
+				const classesOf = (card: Card) =>
+					(task.depth === 1 ? 'task skeleton' : 'task') + (card.done ? ' done' : '') + (card.todo ? ' todo' : '');
+				const position = `grid-column: ${nextColumn + columnOffset}; grid-row: ${task.depth + 1};`;
+				const first = task.cards[0];
+				if (task.cards.length === 1 && first !== undefined) {
+					cells.push(`<div class="${classesOf(first)}" style="${position}">${first.text}</div>`);
+				} else {
+					const stacked = task.cards.map(card => `<div class="${classesOf(card)}">${card.text}</div>`).join('');
+					cells.push(`<div class="task-stack" style="${position}">${stacked}</div>`);
+				}
 			}
 		});
 		nextColumn += width;
