@@ -26,4 +26,14 @@ suite('renderMap', () => {
 
 		assert.ok(/\.activity-row\s*\{[^}]*display:\s*flex/.test(html));
 	});
+
+	// アクティビティのカードには枠線が付き、カード同士の間隔があいている
+	test('draws a border around each activity and puts a gap between them', () => {
+		const html = renderMap('- 活動A\n- 活動B');
+
+		// カードに枠線
+		assert.ok(/\.activity\s*\{[^}]*border:/.test(html));
+		// 行コンテナに間隔
+		assert.ok(/\.activity-row\s*\{[^}]*gap:/.test(html));
+	});
 });
