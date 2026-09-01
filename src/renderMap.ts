@@ -40,7 +40,8 @@ export function renderMap(outline: string): string {
 	}
 	const title = `<h1 class="map-title">${titleText}</h1>`;
 	const cells: string[] = [];
-	let nextColumn = 1;
+	// 1列目は行の説明ラベル。データのカラムは2列目から始まる
+	let nextColumn = 2;
 	for (const column of columns) {
 		const width = Math.max(column.taskColumns.length, 1);
 		cells.push(`<div class="activity" style="grid-column: ${nextColumn} / span ${width}; grid-row: 1;">${column.activity}</div>`);
@@ -51,12 +52,17 @@ export function renderMap(outline: string): string {
 		});
 		nextColumn += width;
 	}
+	const rowLabels = ['User Activity', 'Walking skeleton', 'User tasks'];
+	rowLabels.forEach((label, index) => {
+		cells.unshift(`<div class="row-label" style="grid-column: 1; grid-row: ${index + 1};">${label}</div>`);
+	});
 	// 背面に敷くため、カードより先（DOM順で前）に置く
 	cells.unshift(`<div class="skeleton-row" style="grid-column: 1 / ${nextColumn}; grid-row: 2;"></div>`);
 	return `<style>
 body { background: white; color: black; }
 .map-grid { display: grid; gap: 0; justify-content: start; align-items: start; }
 .activity, .task { border: 1px solid currentColor; padding: 4px 8px; margin: 8px; background: white; border-radius: 6px; }
+.row-label { padding: 4px 8px; margin: 8px; color: #888; white-space: nowrap; }
 .skeleton-row { background: #ffe0e9; align-self: stretch; justify-self: stretch; }
 </style>
 ${title}<div class="map-grid">${cells.join('')}</div>`;
