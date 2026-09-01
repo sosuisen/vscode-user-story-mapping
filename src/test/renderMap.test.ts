@@ -87,15 +87,15 @@ suite('renderMap', () => {
 		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 3; grid-row: 2;">タスクA2</div>'));
 	});
 
-	// 一番左のカラムに、行の説明（User Activity / Walking skeleton / User tasks）が表示される。4行目以降にラベルはない
+	// 一番左のカラムに、行の説明（User Activity / Walking Skeleton / User Tasks）が表示される。4行目以降にラベルはない
 	test('renders row labels in the leftmost column', () => {
 		const outline = '- 活動A\n\t- タスクA1\n\t\t- タスクA2\n\t\t\t- タスクA3';
 
 		const html = renderMap(outline);
 
 		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 1;">User Activity</div>'));
-		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 2;">Walking skeleton</div>'));
-		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 3;">User tasks</div>'));
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 2;">Walking Skeleton</div>'));
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 3;">User Tasks</div>'));
 		// ラベルは3つだけ（4行目以降にはない）
 		assert.strictEqual((html.match(/class="row-label"/g) ?? []).length, 3);
 		// アクティビティのカードは2列目から始まる

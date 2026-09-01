@@ -55,7 +55,7 @@ export function renderMap(outline: string): string {
 		});
 		nextColumn += width;
 	}
-	const rowLabels = ['User Activity', 'Walking skeleton', 'User tasks'];
+	const rowLabels = ['User Activity', 'Walking Skeleton', 'User Tasks'];
 	rowLabels.forEach((label, index) => {
 		cells.unshift(`<div class="row-label" style="grid-column: 1; grid-row: ${index + 1};">${label}</div>`);
 	});
