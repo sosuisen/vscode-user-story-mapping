@@ -150,9 +150,10 @@ body { background: white; color: black; }
 .tasks-band.alt { background: hsl(from var(--tasks-color) h s calc(l * var(--alt-shade))); }
 .zoom-controls { position: fixed; right: 16px; bottom: 16px; display: flex; gap: 8px; }
 .zoom-controls button { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #888; background: white; color: black; font-size: 16px; cursor: pointer; }
+.zoom-controls .save-png { width: auto; padding: 0 12px; border-radius: 16px; font-size: 12px; font-weight: bold; }
 </style>
 <div class="map-zoom">${title}<div class="map-grid">${cells.join('')}</div></div>
-<div class="zoom-controls"><button class="zoom-in">＋</button><button class="zoom-out">－</button><button class="save-png">📷</button></div>
+<div class="zoom-controls"><button class="zoom-in">＋</button><button class="zoom-out">－</button><button class="save-png">PNG</button></div>
 <script>
 let zoom = 1;
 const mapZoom = document.querySelector('.map-zoom');

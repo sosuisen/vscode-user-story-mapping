@@ -130,7 +130,7 @@ suite('renderMap', () => {
 	test('renders a floating save button', () => {
 		const html = renderMap('- 活動A');
 
-		assert.ok(html.includes('<button class="save-png">📷</button>'));
+		assert.ok(html.includes('<button class="save-png">PNG</button>'));
 	});
 
 	// マークダウンで最初に現れた見出しが、マップ冒頭にタイトルとして表示される
