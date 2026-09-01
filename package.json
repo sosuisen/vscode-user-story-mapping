@@ -16,10 +16,6 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "user-story-mapping.helloWorld",
-				"title": "Hello World"
-			},
-			{
 				"command": "user-story-mapping.preview",
 				"title": "Preview as User Story Map",
 				"icon": "$(map)"
