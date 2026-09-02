@@ -18,7 +18,7 @@ This VSCode extension lets you use that method with a plain Markdown outline. Wr
 
 Two basic ideas:
 
-- Time flows from left to right: list the user's main activities in the order they happen. On the map, they appear in one horizontal row.
+- Time flows from left to right: list the user's main activities in the order they happen. On the map, they appear in one horizontal row. The same rule applies inside an activity: tasks at the same depth are placed left to right in the order you write them.
 - Priority is shown by nesting depth: put user tasks under each activity. Tasks you need to start first stay shallow; tasks that can wait go deeper. On the map, shallower tasks appear in higher rows.
 
 For example, write this outline:
@@ -62,7 +62,7 @@ The table below refers to this example:
 | A top-level `- ` item | An activity. Activities appear in one row (User Activity, green band) |
 | A `- ` item nested one level | A task to start first. It appears in the second row (Walking Skeleton, red band) |
 | A `- ` item nested two or more levels | A task. It appears in the third row or lower (User Tasks, yellow band); depth = row |
-| Two or more `- ` items at the same depth | The second and later items move to the next inner column on the right (Task 3 in the example) |
+| Two or more `- ` items at the same depth | The second and later items move to the next inner column on the right (Task 3 in the example). Inner columns also follow time order, left to right |
 | A `- ` line with no text | A blank level. No card is created; it only makes the level one step deeper (Task 4 starts at level 2) |
 | A `+ ` item | The card is stacked in the same cell as its parent task, one level up (Task 1b sits under Task 1) |
 | An item starting with `[ ] ` | An open task. The card shows ⬜ and has a drop shadow |
