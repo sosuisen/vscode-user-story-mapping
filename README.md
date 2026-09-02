@@ -2,11 +2,9 @@
 
 Japanese version: [README.ja.md](README.ja.md)
 
-A VSCode extension that turns your Markdown outline into a user story map.
+[User Story Mapping](https://jpattonassociates.com/story-mapping/) is a method by Jeff Patton for seeing the whole product from the user's point of view and deciding what to build first. User stories are arranged along the user's activities from left to right, with the stories to build first at the top.
 
-[User Story Mapping](https://jpattonassociates.com/story-mapping/) is a method by Jeff Patton for seeing the whole product from the user's point of view and deciding what to build first: user stories are arranged along the user's activities from left to right, with the most important stories at the top.
-
-Write your outline as a plain Markdown bullet list, and preview it as a user story map. You do not need a separate diagram tool to place cards one by one. The outline you already know how to write is all you need.
+This VSCode extension lets you use that method with a plain Markdown outline. Write your outline as a bullet list, and preview it as a user story map. You do not need a separate diagram tool to place cards one by one. The outline you already know how to write is all you need.
 
 ## How to Use
 
@@ -21,9 +19,9 @@ Write your outline as a plain Markdown bullet list, and preview it as a user sto
 Two basic ideas:
 
 - Time flows from left to right: list the user's main activities in the order they happen. On the map, they appear in one horizontal row.
-- Importance is shown by nesting depth: put user tasks under each activity. More important tasks stay shallow; less important tasks go deeper. On the map, shallower tasks appear in higher rows.
+- Priority is shown by nesting depth: put user tasks under each activity. Tasks you need to start first stay shallow; tasks that can wait go deeper. On the map, shallower tasks appear in higher rows.
 
-For example, this outline:
+For example, write this outline:
 
 ```markdown
 # Map Title
@@ -37,11 +35,13 @@ For example, this outline:
 	- Task 5
 ```
 
-renders as this map:
+It renders as this map:
 
 ![The outline on the left and the story map it renders on the right](images/outline-to-map-basic.svg)
 
-A fuller example, used by the syntax reference below:
+#### Syntax Reference
+
+The table below refers to this example:
 
 ```markdown
 # Map Title
@@ -56,13 +56,11 @@ A fuller example, used by the syntax reference below:
 		- Task 4
 ```
 
-#### Syntax Reference
-
 | You write | The map shows |
 |---|---|
 | The first heading (`#` to `######`) | The map title at the top. If there is no heading, the title area is empty |
 | A top-level `- ` item | An activity. Activities appear in one row (User Activity, green band) |
-| A `- ` item nested one level | A most important task. It appears in the second row (Walking Skeleton, red band) |
+| A `- ` item nested one level | A task to start first. It appears in the second row (Walking Skeleton, red band) |
 | A `- ` item nested two or more levels | A task. It appears in the third row or lower (User Tasks, yellow band); depth = row |
 | Two or more `- ` items at the same depth | The second and later items move to the next inner column on the right (Task 3 in the example) |
 | A `- ` line with no text | A blank level. No card is created; it only makes the level one step deeper (Task 4 starts at level 2) |
@@ -71,8 +69,12 @@ A fuller example, used by the syntax reference below:
 | An item starting with `[x] ` or `[X] ` | A completed task. The card shows ✅ and has no border and no shadow |
 | An item with no checkbox | A card with a border only |
 
+Notes on indentation:
+
 - You can indent with tabs or spaces. Indentation follows Markdown (CommonMark) rules; one tab equals four spaces.
 - We recommend using one indent style within a single file.
+
+The next two sections show, with figures, the two rules in the table that are easiest to misread: stacking cards with `+`, and blank levels.
 
 #### Stacking Cards with `+`
 
@@ -89,13 +91,13 @@ A `+ ` item is stacked in the same cell as its parent task, one level up. Use it
 	- Task 3
 ```
 
-renders as this map:
+It renders as this map:
 
 ![The plus items Task 1b and Task 1c stacked under Task 1 in one cell, while Task 2 goes to the next row](images/outline-to-map-plus.svg)
 
 #### Blank Levels
 
-A `- ` line with no text creates no card. It only makes the level one step deeper. Use it to push a less important task down to a lower row. In the example, Task 2 goes one row lower than Task 4 because of the blank level above it.
+A `- ` line with no text creates no card. It only makes the level one step deeper. Use it to push a task that can wait down to a lower row. In the example, Task 2 goes one row lower than Task 4 because of the blank level above it.
 
 ```markdown
 # Map Title
@@ -109,7 +111,7 @@ A `- ` line with no text creates no card. It only makes the level one step deepe
 		- Task 4
 ```
 
-renders as this map:
+It renders as this map:
 
 ![Task 2 placed one row below Task 4 because of the blank level above it](images/outline-to-map-blank.svg)
 
