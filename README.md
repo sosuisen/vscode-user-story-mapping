@@ -11,7 +11,9 @@ Write your outline as a plain Markdown bullet list, and preview it as a user sto
 ## How to Use
 
 1. Open the Markdown file (.md) you want to view as a story map.
-2. Click the map icon "Preview as User Story Map" at the top right of the editor.
+2. Open the preview in either of these two ways:
+   - Click the map icon "Preview as User Story Map" at the top right of the editor.
+   - Right-click inside the editor and choose "Preview as User Story Map" from the menu.
 3. The preview opens beside the editor.
 
 ### Outline Format
