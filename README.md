@@ -6,8 +6,6 @@ A VSCode extension that turns your Markdown outline into a user story map.
 
 Write your outline as a plain Markdown bullet list, and preview it as a user story map. You do not need a separate diagram tool to place cards one by one. The outline you already know how to write is all you need.
 
-**Under active development.** Features will be added step by step.
-
 ## How to Use
 
 1. Open the Markdown file (.md) you want to view as a story map.
