@@ -32,6 +32,12 @@
 					"when": "resourceLangId == markdown",
 					"group": "navigation"
 				}
+			],
+			"editor/context": [
+				{
+					"command": "user-story-mapping.preview",
+					"when": "resourceLangId == markdown"
+				}
 			]
 		}
 	},

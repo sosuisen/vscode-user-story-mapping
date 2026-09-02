@@ -24,6 +24,19 @@ suite('Preview as User Story Map button', () => {
 		assert.strictEqual(entry.group, 'navigation');
 	});
 
+	// mdファイルのエディタ内右クリックメニューに、Preview as User Story Mapが表示される設定である
+	test('shows Preview as User Story Map in the editor context menu for md files', () => {
+		const extension = vscode.extensions.getExtension('hidekazu-kubota.user-story-mapping');
+		assert.ok(extension);
+
+		const editorContextMenus = extension.packageJSON.contributes.menus?.['editor/context'] ?? [];
+		const entry = editorContextMenus.find(
+			(m: { command: string }) => m.command === 'user-story-mapping.preview'
+		);
+		assert.ok(entry);
+		assert.strictEqual(entry.when, 'resourceLangId == markdown');
+	});
+
 	// previewコマンドにmapアイコンが設定されている（標準のプレビューアイコンと区別するため）
 	test('has the map icon on the preview command', () => {
 		const extension = vscode.extensions.getExtension('hidekazu-kubota.user-story-mapping');

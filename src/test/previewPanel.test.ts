@@ -4,6 +4,7 @@ import * as vscode from 'vscode';
 // プレビューパネル
 suite('Preview panel', () => {
 	// previewコマンドを実行すると、プレビューパネルがエディタの横に表示される
+	// （エディタ右上のボタンとエディタ内の右クリックメニューは同じコマンドを実行するため、どちらの経路もこのテストが記録している）
 	test('opens the preview panel beside the editor when the preview command runs', async () => {
 		const document = await vscode.workspace.openTextDocument({
 			language: 'markdown',
