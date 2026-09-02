@@ -12,6 +12,25 @@ suite('openPreview', () => {
 		return extension.extensionUri;
 	}
 
+	// Webviewからのメッセージをテストから流し込める偽パネル
+	function createFakePanel() {
+		const listeners: ((message: unknown) => void)[] = [];
+		return {
+			webview: {
+				html: '',
+				options: { enableScripts: true },
+				asWebviewUri: (uri: vscode.Uri) => uri,
+				onDidReceiveMessage: (listener: (message: unknown) => void) => {
+					listeners.push(listener);
+					return { dispose() {} };
+				},
+			},
+			onDidDispose: () => ({ dispose() {} }),
+			dispose() {},
+			receiveMessage: (message: unknown) => listeners.forEach(listener => listener(message)),
+		};
+	}
+
 	// ドキュメントを渡すと、renderMapの結果がWebviewのHTMLに反映される
 	test('sets the rendered map as the webview html', async () => {
 		const document = await vscode.workspace.openTextDocument({ content: '- Activity A\n- Activity B' });
@@ -34,6 +53,54 @@ suite('openPreview', () => {
 
 		assert.ok(panel.webview.html.includes('Activity B'));
 		panel.dispose();
+	});
+
+	// Webviewからズーム値の変更が通知された後にドキュメントを編集すると、再描画後のHTMLにもそのズーム値が反映されている
+	test('keeps the zoom reported by the webview when the document changes', async () => {
+		const document = await vscode.workspace.openTextDocument({ content: '- Activity A' });
+		const panel = createFakePanel();
+		openPreview(document, getExtensionUri(), panel);
+		panel.receiveMessage({ type: 'zoom', zoom: 1.44 });
+
+		const edit = new vscode.WorkspaceEdit();
+		edit.insert(document.uri, document.positionAt(document.getText().length), '\n- Activity B');
+		await vscode.workspace.applyEdit(edit);
+
+		assert.ok(panel.webview.html.includes('<div class="map-zoom" style="zoom: 1.44;">'));
+	});
+
+	// ズーム値の通知を受けていなければ、再描画後のズームは等倍のまま
+	// （注: 初期値1はズーム維持の実装と同時に入ったため、このテストは仕様の記録としてRedを経ずに置いたもの）
+	test('renders at zoom 1 after the document changes when the webview has not reported a zoom', async () => {
+		const document = await vscode.workspace.openTextDocument({ content: '- Activity A' });
+		const panel = createFakePanel();
+		openPreview(document, getExtensionUri(), panel);
+
+		const edit = new vscode.WorkspaceEdit();
+		edit.insert(document.uri, document.positionAt(document.getText().length), '\n- Activity B');
+		await vscode.workspace.applyEdit(edit);
+
+		assert.ok(panel.webview.html.includes('<div class="map-zoom" style="zoom: 1;">'));
+	});
+
+	// 2つのドキュメントをそれぞれプレビューし、片方のズーム値を変更しても、もう片方の再描画後のズームは変わらない
+	// （注: ズーム値はパネルごとのクロージャに持つため元々独立しており、このテストはモジュール変数化を防ぐ仕様の記録としてRedを経ずに置いたもの）
+	test('keeps the zoom of each preview independent', async () => {
+		const zoomed = await vscode.workspace.openTextDocument({ content: '- Activity A' });
+		const other = await vscode.workspace.openTextDocument({ content: '- Another Activity' });
+		const zoomedPanel = createFakePanel();
+		const otherPanel = createFakePanel();
+		openPreview(zoomed, getExtensionUri(), zoomedPanel);
+		openPreview(other, getExtensionUri(), otherPanel);
+		zoomedPanel.receiveMessage({ type: 'zoom', zoom: 1.44 });
+
+		const edit = new vscode.WorkspaceEdit();
+		edit.insert(zoomed.uri, zoomed.positionAt(zoomed.getText().length), '\n- Activity B');
+		edit.insert(other.uri, other.positionAt(other.getText().length), '\n- Activity X');
+		await vscode.workspace.applyEdit(edit);
+
+		assert.ok(zoomedPanel.webview.html.includes('<div class="map-zoom" style="zoom: 1.44;">'));
+		assert.ok(otherPanel.webview.html.includes('<div class="map-zoom" style="zoom: 1;">'));
 	});
 
 	// プレビュー対象ではないドキュメントの編集では更新されない

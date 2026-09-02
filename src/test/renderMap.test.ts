@@ -113,17 +113,28 @@ suite('renderMap', () => {
 		);
 	});
 
-	// フローティングの＋/−ボタンで、マップをズームイン・アウトできる
-	test('renders floating zoom buttons that change the map zoom', () => {
+	// フローティングの＋/−ボタンが表示される（クリック時の動作はWebviewスクリプト側が担う）
+	test('renders floating zoom buttons', () => {
 		const html = renderMap('- Activity A');
 
-		// ＋と−のズームボタンがある
 		assert.ok(html.includes('<div class="zoom-controls">'));
 		assert.ok(html.includes('<button class="zoom-in">＋</button>'));
 		assert.ok(html.includes('<button class="zoom-out">－</button>'));
-		// クリックでズーム率を変えるスクリプトが配線されている
-		assert.ok(html.includes('<script>'));
-		assert.ok(html.includes('style.zoom'));
+	});
+
+	// ズーム値を渡すと、マップ要素がそのズーム値で描画される
+	test('renders the map element at the given zoom', () => {
+		const html = renderMap('- Activity A', { zoom: 1.44 });
+
+		assert.ok(html.includes('<div class="map-zoom" style="zoom: 1.44;">'));
+	});
+
+	// ズーム値を渡さないと、マップは等倍で描画される
+	// （注: 既定値1はズーム値対応と同時に入ったため、このテストは仕様の記録としてRedを経ずに置いたもの）
+	test('renders the map at zoom 1 when no zoom is given', () => {
+		const html = renderMap('- Activity A');
+
+		assert.ok(html.includes('<div class="map-zoom" style="zoom: 1;">'));
 	});
 
 	// フローティングの保存ボタンが表示される

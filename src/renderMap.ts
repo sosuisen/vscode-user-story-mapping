@@ -43,7 +43,10 @@ export function mapTitle(outline: string): string {
 	return headingIndex === -1 ? '' : (tokens[headingIndex + 1]?.content ?? '');
 }
 
-export function renderMap(outline: string): string {
+export type RenderMapOptions = { zoom?: number };
+
+export function renderMap(outline: string, options: RenderMapOptions = {}): string {
+	const zoom = options.zoom ?? 1;
 	const tokens = markdown.parse(fillBlankItems(outline), {});
 	let titleText = '';
 	let titleFound = false;
@@ -152,13 +155,6 @@ body { background: white; color: black; }
 .zoom-controls button { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #888; background: white; color: black; font-size: 16px; cursor: pointer; }
 .zoom-controls .save-png { width: auto; padding: 0 12px; border-radius: 16px; font-size: 12px; font-weight: bold; }
 </style>
-<div class="map-zoom">${title}<div class="map-grid">${cells.join('')}</div></div>
-<div class="zoom-controls"><button class="zoom-in">＋</button><button class="zoom-out">－</button><button class="save-png">PNG</button></div>
-<script>
-let zoom = 1;
-const mapZoom = document.querySelector('.map-zoom');
-const applyZoom = () => { mapZoom.style.zoom = zoom; };
-document.querySelector('.zoom-in').addEventListener('click', () => { zoom *= 1.2; applyZoom(); });
-document.querySelector('.zoom-out').addEventListener('click', () => { zoom /= 1.2; applyZoom(); });
-</script>`;
+<div class="map-zoom" style="zoom: ${zoom};">${title}<div class="map-grid">${cells.join('')}</div></div>
+<div class="zoom-controls"><button class="zoom-in">＋</button><button class="zoom-out">－</button><button class="save-png">PNG</button></div>`;
 }
