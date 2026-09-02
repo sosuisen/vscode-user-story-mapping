@@ -4,6 +4,8 @@ Japanese version: [README.ja.md](README.ja.md)
 
 A VSCode extension that turns your Markdown outline into a user story map.
 
+[User Story Mapping](https://jpattonassociates.com/story-mapping/) is a method by Jeff Patton for seeing the whole product from the user's point of view and deciding what to build first: user stories are arranged along the user's activities from left to right, with the most important stories at the top.
+
 Write your outline as a plain Markdown bullet list, and preview it as a user story map. You do not need a separate diagram tool to place cards one by one. The outline you already know how to write is all you need.
 
 ## How to Use
