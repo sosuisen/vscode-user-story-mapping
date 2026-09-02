@@ -21,6 +21,26 @@ Two basic ideas:
 - Time flows from left to right: list the user's main activities in the order they happen. On the map, they appear in one horizontal row.
 - Importance is shown by nesting depth: put user tasks under each activity. More important tasks stay shallow; less important tasks go deeper. On the map, shallower tasks appear in higher rows.
 
+For example, this outline:
+
+```markdown
+# Map Title
+
+- Activity A
+	- Task 1
+		- Task 2
+			- Task 3
+	- Task 4
+- Activity B
+	- Task 5
+```
+
+renders as this map:
+
+![The outline on the left and the story map it renders on the right](images/outline-to-map-basic.svg)
+
+A fuller example, used by the syntax reference below:
+
 ```markdown
 # Map Title
 
@@ -51,6 +71,45 @@ Two basic ideas:
 
 - You can indent with tabs or spaces. Indentation follows Markdown (CommonMark) rules; one tab equals four spaces.
 - We recommend using one indent style within a single file.
+
+#### Stacking Cards with `+`
+
+A `+ ` item is stacked in the same cell as its parent task, one level up. Use it to keep closely related cards together. A `- ` item at the same depth goes to the next row instead.
+
+```markdown
+# Map Title
+
+- Activity A
+	- Task 1
+		+ Task 1b
+		+ Task 1c
+		- Task 2
+	- Task 3
+```
+
+renders as this map:
+
+![The plus items Task 1b and Task 1c stacked under Task 1 in one cell, while Task 2 goes to the next row](images/outline-to-map-plus.svg)
+
+#### Blank Levels
+
+A `- ` line with no text creates no card. It only makes the level one step deeper. Use it to push a less important task down to a lower row. In the example, Task 2 goes one row lower than Task 4 because of the blank level above it.
+
+```markdown
+# Map Title
+
+- Activity A
+	- Task 1
+		- 
+			- Task 2
+- Activity B
+	- Task 3
+		- Task 4
+```
+
+renders as this map:
+
+![Task 2 placed one row below Task 4 because of the blank level above it](images/outline-to-map-blank.svg)
 
 ## Recommended Setup
 
