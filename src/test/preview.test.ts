@@ -5,7 +5,7 @@ import { openPreview } from '../preview';
 // パネルとの配線
 suite('openPreview', () => {
 	function getExtensionUri(): vscode.Uri {
-		const extension = vscode.extensions.getExtension('hidekazu-kubota.user-story-mapping');
+		const extension = vscode.extensions.getExtension('sosuisha.user-story-mapping');
 		if (extension === undefined) {
 			throw new Error('Extension not found');
 		}
@@ -121,7 +121,7 @@ suite('openPreview', () => {
 
 	// PNG保存を行うWebview用スクリプト（バンドル済み）が読み込まれる
 	test('loads the bundled webview script', async () => {
-		const extension = vscode.extensions.getExtension('hidekazu-kubota.user-story-mapping');
+		const extension = vscode.extensions.getExtension('sosuisha.user-story-mapping');
 		assert.ok(extension);
 		const document = await vscode.workspace.openTextDocument({ content: '- Activity A' });
 		const panel = openPreview(document, extension.extensionUri);

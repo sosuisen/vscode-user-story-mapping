@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 // （注: Webview内のDOM操作はテストランナーから観測できないため、このsuiteは配線の記録としてRedを経ずに置いたもの。動作は手動で確認する）
 suite('Webview script', () => {
 	function readBundledScript(): string {
-		const extension = vscode.extensions.getExtension('hidekazu-kubota.user-story-mapping');
+		const extension = vscode.extensions.getExtension('sosuisha.user-story-mapping');
 		if (extension === undefined) {
 			throw new Error('Extension not found');
 		}
