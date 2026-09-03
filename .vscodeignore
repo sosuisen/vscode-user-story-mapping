@@ -13,3 +13,4 @@ esbuild.js
 **/*.map
 **/*.ts
 images/*.clip
+images/*.svg

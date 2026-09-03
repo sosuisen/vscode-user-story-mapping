@@ -37,7 +37,7 @@ For example, write this outline:
 
 It renders as this map:
 
-![The outline on the left and the story map it renders on the right](images/outline-to-map-basic.svg)
+![The outline on the left and the story map it renders on the right](images/outline-to-map-basic.png)
 
 #### Syntax Reference
 
@@ -94,7 +94,7 @@ A `+ ` item is stacked in the same cell as its parent task, one level up. Use it
 
 It renders as this map:
 
-![The plus items Task 2b and Task 2c stacked under Task 2 in one cell, while Task 3 goes to the next row](images/outline-to-map-plus.svg)
+![The plus items Task 2b and Task 2c stacked under Task 2 in one cell, while Task 3 goes to the next row](images/outline-to-map-plus.png)
 
 #### Blank Levels
 
@@ -114,7 +114,7 @@ A `- ` line with no text creates no card. It only makes the level one step deepe
 
 It renders as this map:
 
-![Task 2 placed one row below Task 4 because of the blank level above it](images/outline-to-map-blank.svg)
+![Task 2 placed one row below Task 4 because of the blank level above it](images/outline-to-map-blank.png)
 
 ## Recommended Setup
 

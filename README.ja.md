@@ -37,7 +37,7 @@ English version: [README.md](README.md)
 
 このようなマップが描かれます。
 
-![左がアウトライン、右がそれを描いたストーリーマップ](images/outline-to-map-basic.svg)
+![左がアウトライン、右がそれを描いたストーリーマップ](images/outline-to-map-basic.png)
 
 #### 文法の一覧
 
@@ -94,7 +94,7 @@ English version: [README.md](README.md)
 
 このようなマップが描かれます。
 
-![+ のアイテム Task 2b と Task 2c が Task 2 と同じセルに積まれ、Task 3 は次の行に置かれる](images/outline-to-map-plus.svg)
+![+ のアイテム Task 2b と Task 2c が Task 2 と同じセルに積まれ、Task 3 は次の行に置かれる](images/outline-to-map-plus.png)
 
 #### 空白レベル
 
@@ -114,7 +114,7 @@ English version: [README.md](README.md)
 
 このようなマップが描かれます。
 
-![空白レベルのために Task 2 が Task 4 より1行下に置かれる](images/outline-to-map-blank.svg)
+![空白レベルのために Task 2 が Task 4 より1行下に置かれる](images/outline-to-map-blank.png)
 
 ## おすすめの設定
 
