@@ -34,7 +34,7 @@ function fillBlankItems(outline: string): string {
 }
 
 function cardOf(content: string): Card {
-	return { text: withCheckboxEmoji(content), done: isDone(content), todo: isTodo(content) };
+	return { text: markdown.renderInline(withCheckboxEmoji(content)), done: isDone(content), todo: isTodo(content) };
 }
 
 // アウトラインの最初の見出しをマップのタイトルとして返す（なければ空文字）
@@ -76,7 +76,8 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 			}
 			const depth = listDepth - 1;
 			if (depth === 0) {
-				columns.push({ activity: withCheckboxEmoji(token.content), done: isDone(token.content), todo: isTodo(token.content), taskColumns: [], lastDepth: 0 });
+				const card = cardOf(token.content);
+				columns.push({ activity: card.text, done: card.done, todo: card.todo, taskColumns: [], lastDepth: 0 });
 			} else {
 				const column = columns.at(-1);
 				if (column !== undefined) {

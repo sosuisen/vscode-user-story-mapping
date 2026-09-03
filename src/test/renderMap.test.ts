@@ -113,6 +113,28 @@ suite('renderMap', () => {
 		);
 	});
 
+	// アイテム行内のインライン記法（強調など）がカードに反映される
+	test('renders inline markdown such as emphasis inside a card', () => {
+		const html = renderMap('- Activity A\n\t- **Task 1**');
+
+		assert.ok(/<div class="task skeleton"[^>]*><strong>Task 1<\/strong><\/div>/.test(html));
+	});
+
+	// アクティビティのカードにもインライン記法が反映される
+	test('renders inline markdown inside an activity card too', () => {
+		const html = renderMap('- **Activity A**');
+
+		assert.ok(/<div class="activity"[^>]*><strong>Activity A<\/strong><\/div>/.test(html));
+	});
+
+	// 行内の生のHTMLタグは解釈されず、文字としてエスケープ表示される
+	// （注: markdown-it の既定（html: false）で既に通るため、仕様の記録としてRedを経ずに置いたもの）
+	test('escapes raw html tags in an item instead of rendering them', () => {
+		const html = renderMap('- Activity A\n\t- <b>Task 1</b>');
+
+		assert.ok(/<div class="task skeleton"[^>]*>&lt;b&gt;Task 1&lt;\/b&gt;<\/div>/.test(html));
+	});
+
 	// ズームUIは画面の左下端にある
 	test('places the zoom controls at the bottom-left corner of the screen', () => {
 		const html = renderMap('- Activity A');
