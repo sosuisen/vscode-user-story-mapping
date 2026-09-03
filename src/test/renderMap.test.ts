@@ -122,6 +122,13 @@ suite('renderMap', () => {
 		assert.ok(html.includes('<button class="zoom-out">－</button>'));
 	});
 
+	// ズームUIは画面の左下端にある
+	test('places the zoom controls at the bottom-left corner of the screen', () => {
+		const html = renderMap('- Activity A');
+
+		assert.ok(html.includes('.zoom-controls { position: fixed; left: 16px; bottom: 16px;'));
+	});
+
 	// ズーム値を渡すと、マップ要素がそのズーム値で描画される
 	test('renders the map element at the given zoom', () => {
 		const html = renderMap('- Activity A', { zoom: 1.44 });
@@ -142,6 +149,13 @@ suite('renderMap', () => {
 		const html = renderMap('- Activity A');
 
 		assert.ok(html.includes('<button class="save-png">PNG</button>'));
+	});
+
+	// 画像保存ボタンは画面の右下端にある
+	test('places the save button at the bottom-right corner of the screen', () => {
+		const html = renderMap('- Activity A');
+
+		assert.ok(html.includes('.save-png { position: fixed; right: 16px; bottom: 16px;'));
 	});
 
 	// マークダウンで最初に現れた見出しが、マップ冒頭にタイトルとして表示される
