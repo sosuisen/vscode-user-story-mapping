@@ -30,4 +30,12 @@ suite('Webview script', () => {
 
 		assert.ok(/parseFloat\([^)]*style\.zoom\)/.test(script));
 	});
+
+	// ズームボタン（＋/－）を押すと、表示される倍率が新しい倍率に更新される
+	test('updates the shown zoom level when a zoom button is clicked', () => {
+		const script = readBundledScript();
+
+		assert.ok(script.includes('.zoom-level'));
+		assert.ok(/textContent\s*=/.test(script));
+	});
 });

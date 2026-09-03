@@ -1,4 +1,5 @@
 import MarkdownIt = require('markdown-it');
+import { formatZoomLevel } from './zoomLevel';
 
 const markdown = new MarkdownIt();
 
@@ -151,11 +152,11 @@ body { background: white; color: black; }
 .skeleton-band { background: var(--skeleton-color); border-color: hsl(from var(--skeleton-color) h s calc(l * var(--card-shade))); }
 .tasks-band { background: var(--tasks-color); border-color: hsl(from var(--tasks-color) h s calc(l * var(--card-shade))); }
 .tasks-band.alt { background: hsl(from var(--tasks-color) h s calc(l * var(--alt-shade))); }
-.zoom-controls { position: fixed; left: 16px; bottom: 16px; display: flex; gap: 8px; }
+.zoom-controls { position: fixed; left: 16px; bottom: 16px; display: flex; align-items: center; gap: 8px; }
 .zoom-controls button, .save-png { height: 32px; border: 2px solid #888; background: white; color: black; cursor: pointer; }
 .zoom-controls button { width: 32px; border-radius: 50%; font-size: 16px; }
 .save-png { position: fixed; right: 16px; bottom: 16px; padding: 0 12px; border-radius: 16px; font-size: 12px; font-weight: bold; }
 </style>
 <div class="map-zoom" style="zoom: ${zoom};">${title}<div class="map-grid">${cells.join('')}</div></div>
-<div class="zoom-controls"><button class="zoom-in">＋</button><button class="zoom-out">－</button></div><button class="save-png">PNG</button>`;
+<div class="zoom-controls"><button class="zoom-out">－</button><span class="zoom-level">${formatZoomLevel(zoom)}</span><button class="zoom-in">＋</button></div><button class="save-png">PNG</button>`;
 }

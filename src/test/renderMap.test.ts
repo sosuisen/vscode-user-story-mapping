@@ -113,20 +113,43 @@ suite('renderMap', () => {
 		);
 	});
 
-	// フローティングの＋/−ボタンが表示される（クリック時の動作はWebviewスクリプト側が担う）
-	test('renders floating zoom buttons', () => {
-		const html = renderMap('- Activity A');
-
-		assert.ok(html.includes('<div class="zoom-controls">'));
-		assert.ok(html.includes('<button class="zoom-in">＋</button>'));
-		assert.ok(html.includes('<button class="zoom-out">－</button>'));
-	});
-
 	// ズームUIは画面の左下端にある
 	test('places the zoom controls at the bottom-left corner of the screen', () => {
 		const html = renderMap('- Activity A');
 
 		assert.ok(html.includes('.zoom-controls { position: fixed; left: 16px; bottom: 16px;'));
+	});
+
+	// ズームコントロールは「－ボタン」「現在の倍率」「＋ボタン」の順に並ぶ
+	test('orders the zoom controls as minus button, current zoom, plus button', () => {
+		const html = renderMap('- Activity A');
+
+		assert.ok(
+			/<div class="zoom-controls"><button class="zoom-out">－<\/button><span class="zoom-level">[^<]*<\/span><button class="zoom-in">＋<\/button><\/div>/.test(
+				html
+			)
+		);
+	});
+
+	// 現在の倍率は整数のパーセントで表示される（ズーム値1.44なら 144%）
+	test('shows the current zoom as a whole-number percent', () => {
+		const html = renderMap('- Activity A', { zoom: 1.44 });
+
+		assert.ok(html.includes('<span class="zoom-level">144%</span>'));
+	});
+
+	// ズーム値を渡さないと 100% と表示される
+	test('shows 100% when no zoom is given', () => {
+		const html = renderMap('- Activity A');
+
+		assert.ok(html.includes('<span class="zoom-level">100%</span>'));
+	});
+
+	// 端数のあるズーム値は四捨五入して表示される（ズーム値1.728なら 173%）
+	test('rounds a fractional zoom to the nearest percent', () => {
+		const html = renderMap('- Activity A', { zoom: 1.728 });
+
+		assert.ok(html.includes('<span class="zoom-level">173%</span>'));
 	});
 
 	// ズーム値を渡すと、マップ要素がそのズーム値で描画される
