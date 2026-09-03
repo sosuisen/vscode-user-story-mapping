@@ -85,15 +85,16 @@ A `+ ` item is stacked in the same cell as its parent task, one level up. Use it
 
 - Activity A
 	- Task 1
-		+ Task 1b
-		+ Task 1c
 		- Task 2
-	- Task 3
+			+ Task 2b
+			+ Task 2c
+			- Task 3
+	- Task 4
 ```
 
 It renders as this map:
 
-![The plus items Task 1b and Task 1c stacked under Task 1 in one cell, while Task 2 goes to the next row](images/outline-to-map-plus.svg)
+![The plus items Task 2b and Task 2c stacked under Task 2 in one cell, while Task 3 goes to the next row](images/outline-to-map-plus.svg)
 
 #### Blank Levels
 

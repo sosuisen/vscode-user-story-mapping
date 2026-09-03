@@ -85,15 +85,16 @@ English version: [README.md](README.md)
 
 - Activity A
 	- Task 1
-		+ Task 1b
-		+ Task 1c
 		- Task 2
-	- Task 3
+			+ Task 2b
+			+ Task 2c
+			- Task 3
+	- Task 4
 ```
 
 このようなマップが描かれます。
 
-![+ のアイテム Task 1b と Task 1c が Task 1 と同じセルに積まれ、Task 2 は次の行に置かれる](images/outline-to-map-plus.svg)
+![+ のアイテム Task 2b と Task 2c が Task 2 と同じセルに積まれ、Task 3 は次の行に置かれる](images/outline-to-map-plus.svg)
 
 #### 空白レベル
 
