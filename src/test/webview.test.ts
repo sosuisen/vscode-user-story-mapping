@@ -38,4 +38,13 @@ suite('Webview script', () => {
 		assert.ok(script.includes('.zoom-level'));
 		assert.ok(/textContent\s*=/.test(script));
 	});
+
+	// ズームボタン（＋/－）を押すと、倍率は zoomIn / zoomOut が返す段階の値になる
+	// （マップの表示倍率・倍率表示・拡張機能への通知がすべてその値になる）
+	test('moves the zoom to the step returned by zoomIn or zoomOut when a zoom button is clicked', () => {
+		const script = readBundledScript();
+
+		assert.ok(/zoomIn\(/.test(script));
+		assert.ok(/zoomOut\(/.test(script));
+	});
 });

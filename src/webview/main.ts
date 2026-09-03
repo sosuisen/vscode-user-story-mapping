@@ -1,5 +1,5 @@
 import { toPng } from 'html-to-image';
-import { formatZoomLevel } from '../zoomLevel';
+import { formatZoomLevel, zoomIn, zoomOut } from '../zoomLevel';
 
 declare function acquireVsCodeApi(): { postMessage(message: unknown): void };
 
@@ -10,16 +10,16 @@ const mapZoom = document.querySelector('.map-zoom');
 const zoomLevel = document.querySelector('.zoom-level');
 if (mapZoom instanceof HTMLElement) {
 	let zoom = parseFloat(mapZoom.style.zoom) || 1;
-	const changeZoom = (factor: number) => {
-		zoom *= factor;
+	const setZoom = (newZoom: number) => {
+		zoom = newZoom;
 		mapZoom.style.zoom = String(zoom);
 		if (zoomLevel !== null) {
 			zoomLevel.textContent = formatZoomLevel(zoom);
 		}
 		vscodeApi.postMessage({ type: 'zoom', zoom });
 	};
-	document.querySelector('.zoom-in')?.addEventListener('click', () => changeZoom(1.2));
-	document.querySelector('.zoom-out')?.addEventListener('click', () => changeZoom(1 / 1.2));
+	document.querySelector('.zoom-in')?.addEventListener('click', () => setZoom(zoomIn(zoom)));
+	document.querySelector('.zoom-out')?.addEventListener('click', () => setZoom(zoomOut(zoom)));
 }
 
 document.querySelector('.save-png')?.addEventListener('click', () => {
