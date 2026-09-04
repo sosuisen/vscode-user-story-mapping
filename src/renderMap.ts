@@ -23,12 +23,13 @@ function isTodo(text: string): boolean {
 
 // 空白レベルの印（CommonMarkでは空のリスト項目が段落に割り込めないため、
 // パース前にゼロ幅スペースを補ってリストとして成立させる）
+// 改行はCRLFも受け付け、LFに正規化する
 const blankMarker = '​';
 const blankItemPattern = /^([ \t]*)-[ \t]*$/;
 
 function fillBlankItems(outline: string): string {
 	return outline
-		.split('\n')
+		.split(/\r?\n/)
 		.map(line => line.replace(blankItemPattern, `$1- ${blankMarker}`))
 		.join('\n');
 }

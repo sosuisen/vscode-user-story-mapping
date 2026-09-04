@@ -96,6 +96,16 @@ suite('renderMap', () => {
 		assert.ok(!/<div class="(?:activity|task)[^"]*"[^>]*><\/div>/.test(html));
 	});
 
+	// CRLF改行のアウトラインでも、空のリスト項目は空白レベルとして扱われ、その下のタスクが描画される
+	test('treats an empty list item as a blank level in a CRLF outline', () => {
+		const outline = '- Activity A\r\n\t- \r\n\t\t- Task A2\r\n';
+
+		const html = renderMap(outline);
+
+		// 空白レベルの下のタスクはレベル2（3行目）に置かれる
+		assert.ok(/<div class="task" style="grid-column: 2; grid-row: 3;">Task A2<\/div>/.test(html));
+	});
+
 	// 「+」のアイテムは、1つ上のレベル（親タスクのセル）に縦に積まれる
 	test('stacks plus-marked items into the parent task cell', () => {
 		const outline = '- Activity A\n\t- Task A1\n\t\t+ Task A1b\n\t\t+ [ ] Task A1c';
