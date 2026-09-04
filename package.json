@@ -2,7 +2,7 @@
 	"name": "user-story-mapping",
 	"displayName": "User Story Mapping",
 	"description": "Preview your outline notes as a user story map.",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"publisher": "sosuisha",
 	"license": "MIT",
 	"icon": "images/icon.png",
