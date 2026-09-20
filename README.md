@@ -46,11 +46,13 @@ The table below refers to this example:
 ```markdown
 # Map Title
 
+This map covers the first release.
+
 - Activity A
-	- [ ] Task 1
-		+ Task 1b
-		- [x] Task 2
-	- Task 3
+	- [ ] Task 1 +
+		- Task 1b
+	- [x] Task 2
+		- Task 3
 - Activity B
 	- 
 		- Task 4
@@ -59,12 +61,13 @@ The table below refers to this example:
 | You write | The map shows |
 |---|---|
 | The first heading (`#` to `######`) | The map title at the top. If there is no heading, the title area is empty |
+| A paragraph above the first list item | A note under the title. Use it for remarks about the map |
 | A top-level `- ` item | An activity. Activities appear in one row (User Activity, green band) |
-| A `- ` item nested one level | A task to start first. It appears in the second row (Walking Skeleton, red band) |
-| A `- ` item nested two or more levels | A task. It appears in the third row or lower (User Tasks, yellow band); depth = row |
-| Two or more `- ` items at the same depth | The second and later items move to the next inner column on the right (Task 3 in the example). Inner columns also follow time order, left to right |
+| A `- ` item nested one level | A task to start first. It appears in the second band (Walking Skeleton, red) |
+| A `- ` item nested two or more levels | A task. It appears in the third band or lower (User Tasks, yellow). Each extra level of nesting is one band lower |
+| Two or more `- ` items at the same depth | The second and later items move to the next inner column on the right (Task 2 in the example). Inner columns also follow time order, left to right |
 | A `- ` line with no text | A blank level. No card is created; it only makes the level one step deeper (Task 4 starts at level 2) |
-| A `+ ` item | The card is stacked in the same cell as its parent task, one level up (Task 1b sits under Task 1) |
+| An item ending with `+` | Its children stay in the same band as the item, on the row below it (Task 1b stays in the red band, under Task 1). The `+` is not shown on the card |
 | An item starting with `[ ] ` | An open task. The card shows ⬜ and has a drop shadow |
 | An item starting with `[x] ` or `[X] ` | A completed task. The card shows ✅ and has no border and no shadow |
 | An item with no checkbox | A card with a border only |
@@ -74,27 +77,39 @@ Notes on indentation:
 - You can indent with tabs or spaces. Indentation follows Markdown (CommonMark) rules; one tab equals four spaces.
 - We recommend using one indent style within a single file.
 
-The next two sections show, with figures, the two rules in the table that are easiest to misread: stacking cards with `+`, and blank levels.
+The next two sections show, with figures, the two rules in the table that are easiest to misread: keeping children in the same band with `+`, and blank levels.
 
-#### Stacking Cards with `+`
+#### Keeping Children in the Same Band with `+`
 
-A `+ ` item is stacked in the same cell as its parent task, one level up. Use it to keep closely related cards together. A `- ` item at the same depth goes to the next row instead.
+Normally, each level of nesting moves a task one band lower. When an item ends with `+`, its children stay in the same band as the item. They are placed on the row below it inside that band, side by side from left to right. Use it when several tasks share the same priority but you want to write them under one parent.
 
 ```markdown
 # Map Title
 
 - Activity A
-	- Task 1
-		- Task 2
-			+ Task 2b
-			+ Task 2c
-			- Task 3
-	- Task 4
+	- Task 1 +
+		- Task 1b
+		- Task 1c
+	- Task 2
+- Activity B
+	- Task 3
 ```
 
 It renders as this map:
 
-![The plus items Task 2b and Task 2c stacked under Task 2 in one cell, while Task 3 goes to the next row](images/outline-to-map-plus.png)
+![Task 1b and Task 1c placed in the red band under Task 1, side by side, while Task 2 starts a new column](images/outline-to-map-plus.png)
+
+Task 1b and Task 1c are in the red Walking Skeleton band, on the row under Task 1. The band grows to two rows for every column, so Task 3 under Activity B stays on the first row of the band.
+
+The same rule works for activities. When an activity ends with `+`, its children are sub-activities in the green band, each with its own column:
+
+```markdown
+- Activity A +
+	- Activity A1
+		- Task 1
+	- Activity A2
+		- Task 2
+```
 
 #### Blank Levels
 
@@ -130,7 +145,9 @@ For comfortable outline editing, we recommend:
 
 ## Install
 
-For now, download the `.vsix` file from the GitHub releases page and install it by hand. Publishing to the VSCode Marketplace is planned once the extension is stable.
+Search for "User Story Mapping" in the Extensions view of VSCode and install it from the VSCode Marketplace.
+
+You can also download the `.vsix` file from the GitHub releases page and install it by hand.
 
 ## Development
 
