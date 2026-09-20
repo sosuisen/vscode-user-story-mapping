@@ -84,26 +84,59 @@ suite('renderMap', () => {
 		assert.ok(/\.done\s*\{[^}]*box-shadow:\s*none/.test(html));
 	});
 
-	// 空のリスト項目は空白レベルとして扱われ、カードにはならない
-	test('treats an empty list item as a blank level without a card', () => {
+	// 「_」だけのリスト項目は空白レベルとして扱われ、カードにはならない
+	test('treats an underscore-only list item as a blank level without a card', () => {
+		const outline = '- Activity A\n\t- _\n\t\t- Task A2';
+
+		const html = renderMap(outline);
+
+		// 空白レベルの下のタスクはレベル2（3行目）に置かれる
+		assert.ok(/<div class="task" style="grid-column: 2; grid-row: 3;">Task A2<\/div>/.test(html));
+		// 「_」のカードは作られない
+		assert.ok(!/<div class="(?:activity|task)[^"]*"[^>]*>_<\/div>/.test(html));
+	});
+
+	// CRLF改行のアウトラインでも、「_」だけのリスト項目は空白レベルとして扱われ、その下のタスクが描画される
+	test('treats an underscore-only list item as a blank level in a CRLF outline', () => {
+		const outline = '- Activity A\r\n\t- _\r\n\t\t- Task A2\r\n';
+
+		const html = renderMap(outline);
+
+		// 空白レベルの下のタスクはレベル2（3行目）に置かれる
+		assert.ok(/<div class="task" style="grid-column: 2; grid-row: 3;">Task A2<\/div>/.test(html));
+		// 「_」のカードは作られない
+		assert.ok(!/<div class="(?:activity|task)[^"]*"[^>]*>_<\/div>/.test(html));
+	});
+
+	// 内容のない「- 」だけの行は空白レベルにならない。その解釈はCommonMarkに任せる（ADR 003）
+	test('does not treat an empty list item as a blank level', () => {
 		const outline = '- Activity A\n\t- \n\t\t- Task A2';
 
 		const html = renderMap(outline);
 
-		// 空白レベルの下のタスクはレベル2（3行目）に置かれる
-		assert.ok(/<div class="task" style="grid-column: 2; grid-row: 3;">Task A2<\/div>/.test(html));
-		// 空のカードは作られない
-		assert.ok(!/<div class="(?:activity|task)[^"]*"[^>]*><\/div>/.test(html));
+		// 空白レベルではないので、Task A2はレベル2（3行目）には置かれない
+		assert.ok(!/<div class="task" style="grid-column: 2; grid-row: 3;">Task A2<\/div>/.test(html));
 	});
 
-	// CRLF改行のアウトラインでも、空のリスト項目は空白レベルとして扱われ、その下のタスクが描画される
-	test('treats an empty list item as a blank level in a CRLF outline', () => {
-		const outline = '- Activity A\r\n\t- \r\n\t\t- Task A2\r\n';
+	// 「_」の前後に半角スペースがあっても、空白レベルとして扱われる
+	test('treats an underscore with surrounding spaces as a blank level', () => {
+		const outline = '- Activity A\n\t-  _  \n\t\t- Task A2';
 
 		const html = renderMap(outline);
 
 		// 空白レベルの下のタスクはレベル2（3行目）に置かれる
 		assert.ok(/<div class="task" style="grid-column: 2; grid-row: 3;">Task A2<\/div>/.test(html));
+		// 「_」のカードは作られない
+		assert.ok(!/<div class="(?:activity|task)[^"]*"[^>]*>_<\/div>/.test(html));
+	});
+
+	// テキストに「_」を含むだけのアイテムは、空白レベルではなく通常のカードになる
+	test('renders an item that merely contains an underscore as a normal card', () => {
+		const outline = '- Activity A\n\t- snake_case\n\t\t- Task A2';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">snake_case</div>'));
 	});
 
 	// 行末に「+」があるアイテムの子は、次のCSS行に置かれ、親と同じ帯のクラス（skeleton）を持つ。表示テキストから「+」は消える

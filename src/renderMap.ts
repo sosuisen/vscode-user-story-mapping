@@ -22,18 +22,8 @@ function isTodo(text: string): boolean {
 	return /^\[ \] /.test(text);
 }
 
-// Marker for a blank level. In CommonMark an empty list item cannot break into a paragraph,
-// so a zero-width space is added before parsing to keep the item as part of the list.
-// CRLF line breaks are accepted and normalized to LF
-const blankMarker = '​';
-const blankItemPattern = /^([ \t]*)-[ \t]*$/;
-
-function fillBlankItems(outline: string): string {
-	return outline
-		.split(/\r?\n/)
-		.map(line => line.replace(blankItemPattern, `$1- ${blankMarker}`))
-		.join('\n');
-}
+// Marker for a blank level: an item whose whole text is "_"
+const blankMarker = '_';
 
 function cardOf(content: string): Card {
 	return { text: markdown.renderInline(withCheckboxEmoji(content)), done: isDone(content), todo: isTodo(content) };
@@ -53,7 +43,7 @@ function withoutTrailingPlus(content: string): string {
 
 // Return the first heading of the outline as the map title (empty string if none)
 export function mapTitle(outline: string): string {
-	const tokens = markdown.parse(fillBlankItems(outline), {});
+	const tokens = markdown.parse(outline, {});
 	const headingIndex = tokens.findIndex(token => token.type === 'heading_open');
 	return headingIndex === -1 ? '' : (tokens[headingIndex + 1]?.content ?? '');
 }
@@ -87,7 +77,7 @@ export type RenderMapOptions = { zoom?: number };
 
 export function renderMap(outline: string, options: RenderMapOptions = {}): string {
 	const zoom = options.zoom ?? 1;
-	const tokens = markdown.parse(fillBlankItems(outline), {});
+	const tokens = markdown.parse(outline, {});
 	let titleText = '';
 	let titleFound = false;
 	// Paragraphs above the outline, shown as notes under the title
