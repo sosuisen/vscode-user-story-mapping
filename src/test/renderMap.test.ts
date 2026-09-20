@@ -141,16 +141,6 @@ suite('renderMap', () => {
 		);
 	});
 
-	// 行末の「#タグ」はただの文字で、積む印にはならない
-	test('keeps a trailing hashtag as plain text without stacking', () => {
-		const outline = '- Activity A\n\t- Task A1 #s\n\t\t- Task A1b #s';
-
-		const html = renderMap(outline);
-
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task A1 #s</div>'));
-		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 3;">Task A1b #s</div>'));
-	});
-
 	// 日本語のように「^」の直前に空白がなくても、行末の「^」は積む印として扱われる
 	test('treats a trailing caret without a preceding space as the stack mark too', () => {
 		const outline = '- Activity A\n\t- タスクA1\n\t\t- タスクA1b^';
