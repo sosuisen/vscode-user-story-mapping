@@ -1,5 +1,5 @@
 {
-	"name": "story-mapping",
+	"name": "user-story-mapping",
 	"displayName": "Story Mapping",
 	"description": "Preview your outline notes as a story map.",
 	"version": "0.1.2",
@@ -21,7 +21,7 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "story-mapping.preview",
+				"command": "user-story-mapping.preview",
 				"title": "Preview as Story Map",
 				"icon": "$(map)"
 			}
@@ -29,14 +29,14 @@
 		"menus": {
 			"editor/title": [
 				{
-					"command": "story-mapping.preview",
+					"command": "user-story-mapping.preview",
 					"when": "resourceLangId == markdown",
 					"group": "navigation"
 				}
 			],
 			"editor/context": [
 				{
-					"command": "story-mapping.preview",
+					"command": "user-story-mapping.preview",
 					"when": "resourceLangId == markdown"
 				}
 			]

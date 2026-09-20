@@ -12,7 +12,7 @@ suite('Preview panel', () => {
 		});
 		await vscode.window.showTextDocument(document, vscode.ViewColumn.One);
 
-		await vscode.commands.executeCommand('story-mapping.preview');
+		await vscode.commands.executeCommand('user-story-mapping.preview');
 
 		// タブへの反映は非同期のため、2列目にWebviewタブが現れるまで待つ
 		const findPreviewTab = () => {
@@ -22,7 +22,7 @@ suite('Preview panel', () => {
 			return group?.tabs.find(
 				t =>
 					t.input instanceof vscode.TabInputWebview &&
-					t.input.viewType.includes('storyMapping.preview')
+					t.input.viewType.includes('userStoryMapping.preview')
 			);
 		};
 		const start = Date.now();

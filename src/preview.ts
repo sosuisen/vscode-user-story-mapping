@@ -13,7 +13,7 @@ type WebviewMessage = { type?: string; dataUrl?: string; zoom?: number };
 
 function createPanel(): PreviewPanel {
 	return vscode.window.createWebviewPanel(
-		'storyMapping.preview',
+		'userStoryMapping.preview',
 		'Story Map',
 		vscode.ViewColumn.Beside,
 		{ enableScripts: true }
