@@ -3,7 +3,7 @@ import { formatZoomLevel } from './zoomLevel';
 
 const markdown = new MarkdownIt();
 
-type Card = { text: string; done: boolean; todo: boolean };
+type Card = { text: string; done: boolean; todo: boolean; tags: string[] };
 // rowInLevel is the row inside the band of the level: 0 for the first row, 1 for a child placed under a trailing "+", and so on
 type Cell = { card: Card; level: number; rowInLevel: number };
 
@@ -25,8 +25,21 @@ function isTodo(text: string): boolean {
 // Marker for a blank level: an item whose whole text is "_"
 const blankMarker = '_';
 
+// Trailing hashtags such as "#tag1 #tag2" are tags of the item, not part of its text
+const trailingTagsPattern = /(?:\s+#\S+)+$/;
+
+function trailingTagsOf(content: string): string[] {
+	const match = trailingTagsPattern.exec(content);
+	return match === null ? [] : match[0].trim().split(/\s+/).map(tag => tag.slice(1));
+}
+
+function withoutTrailingTags(content: string): string {
+	return content.replace(trailingTagsPattern, '');
+}
+
 function cardOf(content: string): Card {
-	return { text: markdown.renderInline(withCheckboxEmoji(content)), done: isDone(content), todo: isTodo(content) };
+	const text = withoutTrailingTags(content);
+	return { text: markdown.renderInline(withCheckboxEmoji(text)), done: isDone(text), todo: isTodo(text), tags: trailingTagsOf(content) };
 }
 
 // A trailing "+" marks an item whose children are stacked into its own cell
@@ -51,7 +64,8 @@ export function mapTitle(outline: string): string {
 // Render one grid cell as a card
 function renderCell(card: Card, kind: string, position: string): string {
 	const classes = kind + (card.done ? ' done' : '') + (card.todo ? ' todo' : '');
-	return `<div class="${classes}" style="${position}">${card.text}</div>`;
+	const tags = card.tags.map(tag => `<span class="tag">${markdown.utils.escapeHtml(tag)}</span>`).join('');
+	return `<div class="${classes}" style="${position}">${card.text}${tags}</div>`;
 }
 
 // The card class for a level: level 0 is the activity band, level 1 is the skeleton band, the rest are task bands
@@ -193,6 +207,7 @@ body { background: white; color: black; }
 .task { background: hsl(from var(--tasks-color) h s calc(l * var(--card-shade))); border-color: hsl(from var(--tasks-color) h s calc(l * var(--border-shade))); }
 .task.skeleton { background: hsl(from var(--skeleton-color) h s calc(l * var(--card-shade))); border-color: hsl(from var(--skeleton-color) h s calc(l * var(--border-shade))); }
 .done { border: none; box-shadow: none; }
+.tag { background: white; border-radius: 8px; padding: 0 6px; margin-left: 4px; font-size: 0.8em; white-space: nowrap; }
 .row-label { padding: 4px 8px; margin: 8px; color: #888; white-space: nowrap; }
 .row-band { align-self: stretch; justify-self: stretch; border-bottom: 2px dashed; }
 .activity-band { background: var(--activity-color); border-color: hsl(from var(--activity-color) h s calc(l * var(--card-shade))); }

@@ -139,6 +139,33 @@ suite('renderMap', () => {
 		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">snake_case</div>'));
 	});
 
+	// リスト項目の末尾に複数のハッシュタグを付けられる。タグは本文から切り離され、「#」なしでカードの末尾に並ぶ
+	test('renders trailing hashtags as tags at the end of the card', () => {
+		const outline = '- Activity A\n\t- Task A1 #tag1 #tag2';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task A1<span class="tag">tag1</span><span class="tag">tag2</span></div>'));
+	});
+
+	// タグは白い背景で角丸に囲まれる
+	test('draws tags with a white background and rounded corners', () => {
+		const html = renderMap('- Activity A #tag1');
+
+		assert.ok(/\.tag\s*\{[^}]*background:\s*white/.test(html));
+		assert.ok(/\.tag\s*\{[^}]*border-radius:/.test(html));
+	});
+
+	// タグの後ろに「+」を付けられる。タグは表示され、子は同じレベルの1つ下の行に置かれる
+	test('accepts a trailing plus after the tags', () => {
+		const outline = '- Activity A\n\t- Task A1 #tag1 +\n\t\t- Task A1b';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task A1<span class="tag">tag1</span></div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 3;">Task A1b</div>'));
+	});
+
 	// 行末に「+」があるアイテムの子は、次のCSS行に置かれ、親と同じ帯のクラス（skeleton）を持つ。表示テキストから「+」は消える
 	test('places the child of an item with a trailing plus on the next row in the same band', () => {
 		const outline = '- Activity A\n\t- Task A1 +\n\t\t- Task A1b';
