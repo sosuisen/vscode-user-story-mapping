@@ -87,6 +87,9 @@ function bandClassOf(level: number): string {
 	return (level - 2) % 2 === 1 ? 'tasks-band alt' : 'tasks-band';
 }
 
+// Level titles used when the outline has no ordered list
+const defaultLevelTitles = ['Backbone', 'Walking Skeleton', 'Next Goal'];
+
 export type RenderMapOptions = { zoom?: number };
 
 export function renderMap(outline: string, options: RenderMapOptions = {}): string {
@@ -97,6 +100,10 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 	// Paragraphs above the outline, shown as notes under the title
 	const notes: string[] = [];
 	let listSeen = false;
+	// The items of the first top-level ordered list, used as the level titles from the top
+	const levelTitles: string[] = [];
+	let inOrderedList = false;
+	let orderedListSeen = false;
 	// Each activity column group: the top activity card, and the cells below it in sub-columns
 	const columns: { activity: Card; subColumns: Cell[][]; lastIndentDepth: number }[] = [];
 	let openLists = 0;
@@ -116,10 +123,17 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 			listSeen = true;
 		} else if (token.type === 'bullet_list_close') {
 			openLists--;
+		} else if (token.type === 'ordered_list_open' && openLists === 0 && !orderedListSeen) {
+			inOrderedList = true;
+			orderedListSeen = true;
+		} else if (token.type === 'ordered_list_close' && inOrderedList) {
+			inOrderedList = false;
+		} else if (token.type === 'inline' && inOrderedList) {
+			levelTitles.push(markdown.renderInline(token.content));
 		} else if (token.type === 'heading_open' && !titleFound) {
 			titleText = tokens[i + 1]?.content ?? '';
 			titleFound = true;
-		} else if (token.type === 'paragraph_open' && !listSeen) {
+		} else if (token.type === 'paragraph_open' && !listSeen && !inOrderedList) {
 			notes.push(`<p class="map-note">${markdown.renderInline(tokens[i + 1]?.content ?? '')}</p>`);
 		} else if (token.type === 'inline' && openLists > 0) {
 			const indentDepth = openLists - 1;
@@ -165,7 +179,6 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 		firstRowByLevel[level] = nextRow;
 		nextRow += rowsByLevel[level] ?? 1;
 	}
-	const maxRow = nextRow - 1;
 	const title = `<h1 class="map-title">${titleText}</h1>`;
 	const cells: string[] = [];
 	// The first column holds the row labels. Data columns start at the second column
@@ -181,11 +194,13 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 		});
 		nextColumn += width;
 	}
-	// Each label sits on the first row of its band. The Next Goal label goes right after the last band when there are no tasks
-	const rowLabels = ['Backbone', 'Walking Skeleton', 'Next Goal'];
+	// Each label sits on the first row of its band. Levels that do not exist get no label
+	const rowLabels = levelTitles.length > 0 ? levelTitles : defaultLevelTitles;
 	rowLabels.forEach((label, level) => {
-		const row = firstRowByLevel[level] ?? maxRow + 1;
-		cells.unshift(`<div class="row-label" style="grid-column: 1; grid-row: ${row};">${label}</div>`);
+		const row = firstRowByLevel[level];
+		if (row !== undefined) {
+			cells.unshift(`<div class="row-label" style="grid-column: 1; grid-row: ${row};">${label}</div>`);
+		}
 	});
 	// Bands go behind the cards, so they come first in DOM order. One band per level, as tall as the level needs
 	const bands: string[] = [];

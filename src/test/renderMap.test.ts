@@ -449,6 +449,52 @@ suite('renderMap', () => {
 		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 3; grid-row: 2;">Task A2</div>'));
 	});
 
+	// Ordered listがあれば、その項目が上のレベルから順にレベルのタイトルになる。番号は表示されない。Ordered listは補足事項にはならない
+	test('uses the items of an ordered list as the level titles', () => {
+		const outline = '1. First\n2. Second\n3. Third\n4. Fourth\n\n- Activity A\n\t- Task A1\n\t\t- Task A2\n\t\t\t- Task A3';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 1;">First</div>'));
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 2;">Second</div>'));
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 3;">Third</div>'));
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 4;">Fourth</div>'));
+		assert.ok(!html.includes('Backbone'));
+		assert.ok(!html.includes('<p class="map-note">First</p>'));
+	});
+
+	// Ordered listの項目数より深いレベルには、タイトルがない
+	test('leaves levels beyond the ordered list without a title', () => {
+		const outline = '1. First\n2. Second\n\n- Activity A\n\t- Task A1\n\t\t- Task A2';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 2;">Second</div>'));
+		assert.strictEqual((html.match(/class="row-label"/g) ?? []).length, 2);
+	});
+
+	// Ordered listはアウトラインより下に置いてもレベルのタイトルになる
+	test('uses an ordered list below the outline as the level titles', () => {
+		const outline = '- Activity A\n\t- Task A1\n\n1. First\n2. Second';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 1;">First</div>'));
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 2;">Second</div>'));
+		assert.ok(!html.includes('Backbone'));
+	});
+
+	// 存在しないレベルのタイトルは描画されない。Ordered listがレベル数より長くても、余りは表示されない
+	test('does not render titles for levels that do not exist', () => {
+		const outline = '1. First\n2. Second\n3. Third\n4. Fourth\n\n- Activity A\n\t- Task A1';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 1;">First</div>'));
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 2;">Second</div>'));
+		assert.strictEqual((html.match(/class="row-label"/g) ?? []).length, 2);
+	});
+
 	// 一番左のカラムに、行の説明（Backbone / Walking Skeleton / Next Goal）が表示される。4行目以降にラベルはない
 	test('renders row labels in the leftmost column', () => {
 		const outline = '- Activity A\n\t- Task A1\n\t\t- Task A2\n\t\t\t- Task A3';
