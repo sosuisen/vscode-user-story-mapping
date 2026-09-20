@@ -322,6 +322,48 @@ suite('renderMap', () => {
 		assert.ok(titlePosition < html.indexOf('class="map-grid"'));
 	});
 
+	// アウトラインより上のパラグラフは、タイトルの下・グリッドの上に段落（map-note）として表示される
+	test('renders a paragraph above the outline as a note between the title and the grid', () => {
+		const outline = '# Map Title\n\nThis map covers the first release.\n\n- Activity A';
+
+		const html = renderMap(outline);
+
+		const notePosition = html.indexOf('<p class="map-note">This map covers the first release.</p>');
+		assert.ok(notePosition !== -1);
+		assert.ok(html.indexOf('<h1 class="map-title">Map Title</h1>') < notePosition);
+		assert.ok(notePosition < html.indexOf('class="map-grid"'));
+	});
+
+	// パラグラフが複数あれば、アウトラインの順に段落が並ぶ
+	test('renders several paragraphs above the outline as notes in order', () => {
+		const outline = '# Map Title\n\nFirst note.\n\nSecond note.\n\n- Activity A';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<p class="map-note">First note.</p><p class="map-note">Second note.</p>'));
+	});
+
+	// 段落の中のインライン記法（強調など）が反映される
+	test('renders inline markdown inside a note', () => {
+		const html = renderMap('# Map Title\n\nRead **this** first.\n\n- Activity A');
+
+		assert.ok(html.includes('<p class="map-note">Read <strong>this</strong> first.</p>'));
+	});
+
+	// 見出しがなくても、アウトラインより上のパラグラフは段落として表示される
+	test('renders a note above the outline even when there is no heading', () => {
+		const html = renderMap('A note without a heading.\n\n- Activity A');
+
+		assert.ok(html.includes('<p class="map-note">A note without a heading.</p>'));
+	});
+
+	// アウトラインより下のパラグラフは、補足事項の段落にはならない
+	test('does not render a paragraph below the outline as a note', () => {
+		const html = renderMap('# Map Title\n\n- Activity A\n\nA paragraph below the outline.');
+
+		assert.ok(!html.includes('<p class="map-note">A paragraph below the outline.</p>'));
+	});
+
 	// 見出しがない場合、空のタイトル領域が表示される
 	test('renders an empty title area when there is no heading', () => {
 		const html = renderMap('- Activity A');

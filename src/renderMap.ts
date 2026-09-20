@@ -90,6 +90,9 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 	const tokens = markdown.parse(fillBlankItems(outline), {});
 	let titleText = '';
 	let titleFound = false;
+	// Paragraphs above the outline, shown as notes under the title
+	const notes: string[] = [];
+	let listSeen = false;
 	// Each activity column group: the top activity card, and the cells below it in sub-columns
 	const columns: { activity: Card; subColumns: Cell[][]; lastIndentDepth: number }[] = [];
 	let openLists = 0;
@@ -106,11 +109,14 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 		}
 		if (token.type === 'bullet_list_open') {
 			openLists++;
+			listSeen = true;
 		} else if (token.type === 'bullet_list_close') {
 			openLists--;
 		} else if (token.type === 'heading_open' && !titleFound) {
 			titleText = tokens[i + 1]?.content ?? '';
 			titleFound = true;
+		} else if (token.type === 'paragraph_open' && !listSeen) {
+			notes.push(`<p class="map-note">${markdown.renderInline(tokens[i + 1]?.content ?? '')}</p>`);
 		} else if (token.type === 'inline' && openLists > 0) {
 			const indentDepth = openLists - 1;
 			const parent = itemByIndentDepth[indentDepth - 1];
@@ -208,6 +214,6 @@ body { background: white; color: black; }
 .zoom-controls button { width: 32px; border-radius: 50%; font-size: 16px; }
 .save-png { position: fixed; right: 16px; bottom: 16px; padding: 0 12px; border-radius: 16px; font-size: 12px; font-weight: bold; }
 </style>
-<div class="map-zoom" style="zoom: ${zoom};">${title}<div class="map-grid">${cells.join('')}</div></div>
+<div class="map-zoom" style="zoom: ${zoom};">${title}${notes.join('')}<div class="map-grid">${cells.join('')}</div></div>
 <div class="zoom-controls"><button class="zoom-out">－</button><span class="zoom-level">${formatZoomLevel(zoom)}</span><button class="zoom-in">＋</button></div><button class="save-png">PNG</button>`;
 }
