@@ -165,7 +165,7 @@ Task 1b と Task 1c は、赤の Walking Skeleton のレベルの中で、Task 1
 
 ## インストール
 
-VSCode の拡張機能ビューで「User Story Mapping」を検索し、VSCode Marketplace からインストールしてください。
+VSCode の拡張機能ビューで「Story Mapping」を検索し、VSCode Marketplace からインストールしてください。
 
 GitHub のリリースページから `.vsix` ファイルをダウンロードして、手動でインストールすることもできます。
 

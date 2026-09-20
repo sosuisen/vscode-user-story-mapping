@@ -1,10 +1,10 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
-// Preview as User Story Map ボタン
-suite('Preview as User Story Map button', () => {
-	// mdファイルのとき、エディタ右上にPreview as User Story Mapボタンが表示される設定である
-	test('shows the Preview as User Story Map button in the editor title for md files', () => {
+// Preview as Story Map ボタン
+suite('Preview as Story Map button', () => {
+	// mdファイルのとき、エディタ右上にPreview as Story Mapボタンが表示される設定である
+	test('shows the Preview as Story Map button in the editor title for md files', () => {
 		const extension = vscode.extensions.getExtension('sosuisha.user-story-mapping');
 		assert.ok(extension);
 		const contributes = extension.packageJSON.contributes;
@@ -13,7 +13,7 @@ suite('Preview as User Story Map button', () => {
 			(c: { command: string }) => c.command === 'user-story-mapping.preview'
 		);
 		assert.ok(command);
-		assert.strictEqual(command.title, 'Preview as User Story Map');
+		assert.strictEqual(command.title, 'Preview as Story Map');
 
 		const editorTitleMenus = contributes.menus?.['editor/title'] ?? [];
 		const entry = editorTitleMenus.find(
@@ -24,8 +24,8 @@ suite('Preview as User Story Map button', () => {
 		assert.strictEqual(entry.group, 'navigation');
 	});
 
-	// mdファイルのエディタ内右クリックメニューに、Preview as User Story Mapが表示される設定である
-	test('shows Preview as User Story Map in the editor context menu for md files', () => {
+	// mdファイルのエディタ内右クリックメニューに、Preview as Story Mapが表示される設定である
+	test('shows Preview as Story Map in the editor context menu for md files', () => {
 		const extension = vscode.extensions.getExtension('sosuisha.user-story-mapping');
 		assert.ok(extension);
 

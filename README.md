@@ -1,17 +1,17 @@
-# User Story Mapping Extension for VSCode
+# Story Mapping Extension for VSCode
 
 Japanese version: [README.ja.md](README.ja.md)
 
-[User Story Mapping](https://jpattonassociates.com/story-mapping/) is a method by Jeff Patton for seeing the whole product from the user's point of view and deciding what to build first. User stories are arranged along the user's activities from left to right, with the stories to build first at the top.
+[Story Mapping](https://jpattonassociates.com/story-mapping/) is a method by Jeff Patton for seeing the whole product from the user's point of view and deciding what to build first. User stories are arranged along the user's activities from left to right, with the stories to build first at the top.
 
-This VSCode extension lets you use that method with a plain Markdown outline. Write your outline as a bullet list, and preview it as a user story map. You do not need a separate diagram tool to place cards one by one. The outline you already know how to write is all you need.
+This VSCode extension lets you use that method with a plain Markdown outline. Write your outline as a bullet list, and preview it as a story map. You do not need a separate diagram tool to place cards one by one. The outline you already know how to write is all you need.
 
 ## How to Use
 
 1. Open the Markdown file (.md) you want to view as a story map.
 2. Open the preview in either of these two ways:
-   - Click the map icon "Preview as User Story Map" at the top right of the editor.
-   - Right-click inside the editor and choose "Preview as User Story Map" from the menu.
+   - Click the map icon "Preview as Story Map" at the top right of the editor.
+   - Right-click inside the editor and choose "Preview as Story Map" from the menu.
 3. The preview opens beside the editor.
 
 ### Outline Format
@@ -145,7 +145,7 @@ For comfortable outline editing, we recommend:
 
 ## Install
 
-Search for "User Story Mapping" in the Extensions view of VSCode and install it from the VSCode Marketplace.
+Search for "Story Mapping" in the Extensions view of VSCode and install it from the VSCode Marketplace.
 
 You can also download the `.vsix` file from the GitHub releases page and install it by hand.
 

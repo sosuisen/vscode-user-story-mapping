@@ -1,7 +1,7 @@
 {
 	"name": "user-story-mapping",
-	"displayName": "User Story Mapping",
-	"description": "Preview your outline notes as a user story map.",
+	"displayName": "Story Mapping",
+	"description": "Preview your outline notes as a story map.",
 	"version": "0.1.2",
 	"publisher": "sosuisha",
 	"license": "MIT",
@@ -22,7 +22,7 @@
 		"commands": [
 			{
 				"command": "user-story-mapping.preview",
-				"title": "Preview as User Story Map",
+				"title": "Preview as Story Map",
 				"icon": "$(map)"
 			}
 		],
