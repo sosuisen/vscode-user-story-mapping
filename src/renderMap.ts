@@ -4,7 +4,8 @@ import { formatZoomLevel } from './zoomLevel';
 const markdown = new MarkdownIt();
 
 type Card = { text: string; done: boolean; todo: boolean };
-type Cell = { cards: Card[]; level: number };
+// rowInLevel is the row inside the band of the level: 0 for the first row, 1 for a child placed under a trailing "+", and so on
+type Cell = { card: Card; level: number; rowInLevel: number };
 
 // Turn a leading [x] / [ ] into a checkbox emoji
 function withCheckboxEmoji(text: string): string {
@@ -57,16 +58,29 @@ export function mapTitle(outline: string): string {
 	return headingIndex === -1 ? '' : (tokens[headingIndex + 1]?.content ?? '');
 }
 
-// Render one grid cell. A single card is rendered as is. Two or more cards are wrapped in "<first word of kind>-stack" and stacked vertically
-function renderCell(cards: Card[], kind: string, position: string): string {
-	const classesOf = (card: Card) => kind + (card.done ? ' done' : '') + (card.todo ? ' todo' : '');
-	const first = cards[0];
-	if (cards.length === 1 && first !== undefined) {
-		return `<div class="${classesOf(first)}" style="${position}">${first.text}</div>`;
+// Render one grid cell as a card
+function renderCell(card: Card, kind: string, position: string): string {
+	const classes = kind + (card.done ? ' done' : '') + (card.todo ? ' todo' : '');
+	return `<div class="${classes}" style="${position}">${card.text}</div>`;
+}
+
+// The card class for a level: level 0 is the activity band, level 1 is the skeleton band, the rest are task bands
+function kindOf(level: number): string {
+	if (level === 0) {
+		return 'activity';
 	}
-	const stacked = cards.map(card => `<div class="${classesOf(card)}">${card.text}</div>`).join('');
-	const stackClass = `${kind.split(' ')[0]}-stack`;
-	return `<div class="${stackClass}" style="${position}">${stacked}</div>`;
+	return level === 1 ? 'task skeleton' : 'task';
+}
+
+// The band class for a level. Every second task level is a bit lighter
+function bandClassOf(level: number): string {
+	if (level === 0) {
+		return 'activity-band';
+	}
+	if (level === 1) {
+		return 'skeleton-band';
+	}
+	return (level - 2) % 2 === 1 ? 'tasks-band alt' : 'tasks-band';
 }
 
 export type RenderMapOptions = { zoom?: number };
@@ -76,13 +90,15 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 	const tokens = markdown.parse(fillBlankItems(outline), {});
 	let titleText = '';
 	let titleFound = false;
-	const columns: { activity: Cell; taskColumns: Cell[][]; lastLevel: number }[] = [];
+	// Each activity column group: the top activity card, and the cells below it in sub-columns
+	const columns: { activity: Card; subColumns: Cell[][]; lastIndentDepth: number }[] = [];
 	let openLists = 0;
-	let maxLevel = 0;
-	let itemMarkup = '-';
-	// The latest item at each indent depth. Used to decide the level of a child and to find the cell to stack into with "+"
-	// An item stacked into its parent gets the same level and the same Cell as the parent
-	const itemByIndentDepth: { level: number; cell?: Cell; stacksChildren?: boolean }[] = [];
+	// The number of rows each level needs, which is the largest rowInLevel + 1 over all columns
+	// The activity band (level 0) and the skeleton band (level 1) are always drawn, so they start at one row each
+	const rowsByLevel: number[] = [1, 1];
+	// The latest item at each indent depth. Used to decide the level and the rowInLevel of a child
+	// A child of an item with a trailing "+" stays on the same level as the parent, one row further down inside the band
+	const itemByIndentDepth: { level: number; rowInLevel: number; stacksChildren?: boolean }[] = [];
 	for (let i = 0; i < tokens.length; i++) {
 		const token = tokens[i];
 		if (token === undefined) {
@@ -90,8 +106,6 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 		}
 		if (token.type === 'bullet_list_open') {
 			openLists++;
-		} else if (token.type === 'list_item_open') {
-			itemMarkup = token.markup;
 		} else if (token.type === 'bullet_list_close') {
 			openLists--;
 		} else if (token.type === 'heading_open' && !titleFound) {
@@ -100,75 +114,76 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 		} else if (token.type === 'inline' && openLists > 0) {
 			const indentDepth = openLists - 1;
 			const parent = itemByIndentDepth[indentDepth - 1];
-			// The level of a child is one below the level of its parent
-			const level = (parent?.level ?? -1) + 1;
+			// A child goes one level below its parent. If the parent has a trailing "+",
+			// the child stays on the parent level instead, one row further down inside the band
+			let level = 0;
+			let rowInLevel = 0;
+			if (parent !== undefined && parent.stacksChildren === true) {
+				level = parent.level;
+				rowInLevel = parent.rowInLevel + 1;
+			} else if (parent !== undefined) {
+				level = parent.level + 1;
+			}
+			rowsByLevel[level] = Math.max(rowsByLevel[level] ?? 1, rowInLevel + 1);
 			// A blank-level item makes no card. It only adds to the indent depth
 			if (token.content === blankMarker) {
-				itemByIndentDepth[indentDepth] = { level };
+				itemByIndentDepth[indentDepth] = { level, rowInLevel };
 				continue;
 			}
 			const stacksChildren = hasTrailingPlus(token.content);
 			const card = cardOf(withoutTrailingPlus(token.content));
-			itemByIndentDepth[indentDepth] = { level, stacksChildren };
-			// If the parent has a trailing "+", stack into the cell that holds the parent card (same for activities and tasks)
-			if (parent?.stacksChildren === true && parent.cell !== undefined) {
-				parent.cell.cards.push(card);
-				itemByIndentDepth[indentDepth] = { level: parent.level, cell: parent.cell, stacksChildren };
-				continue;
-			}
-			if (level === 0) {
-				const activity = { cards: [card], level };
-				columns.push({ activity, taskColumns: [], lastLevel: 0 });
-				itemByIndentDepth[indentDepth] = { level, cell: activity, stacksChildren };
+			itemByIndentDepth[indentDepth] = { level, rowInLevel, stacksChildren };
+			if (indentDepth === 0) {
+				columns.push({ activity: card, subColumns: [], lastIndentDepth: 0 });
 			} else {
 				const column = columns.at(-1);
 				if (column !== undefined) {
-					// An item with the "+" list marker is stacked as a card into the level above (the parent task cell)
-					const parentCell = column.taskColumns.at(-1)?.at(-1);
-					if (itemMarkup === '+' && parentCell !== undefined) {
-						parentCell.cards.push(card);
-						continue;
+					// A sibling (same or shallower indent depth) starts a new sub-column to the right
+					if (column.subColumns.length === 0 || indentDepth <= column.lastIndentDepth) {
+						column.subColumns.push([]);
 					}
-					if (column.taskColumns.length === 0 || level <= column.lastLevel) {
-						column.taskColumns.push([]);
-					}
-					const cell = { cards: [card], level };
-					column.taskColumns.at(-1)?.push(cell);
-					itemByIndentDepth[indentDepth] = { level, cell, stacksChildren };
-					column.lastLevel = level;
-					maxLevel = Math.max(maxLevel, level);
+					column.subColumns.at(-1)?.push({ card, level, rowInLevel });
+					column.lastIndentDepth = indentDepth;
 				}
 			}
 		}
 	}
+	// The first CSS row of each band. Bands are stacked in level order, and each band is as tall as the level needs
+	const firstRowByLevel: number[] = [];
+	let nextRow = 1;
+	for (let level = 0; level < rowsByLevel.length; level++) {
+		firstRowByLevel[level] = nextRow;
+		nextRow += rowsByLevel[level] ?? 1;
+	}
+	const maxRow = nextRow - 1;
 	const title = `<h1 class="map-title">${titleText}</h1>`;
 	const cells: string[] = [];
 	// The first column holds the row labels. Data columns start at the second column
 	let nextColumn = 2;
 	for (const column of columns) {
-		const width = Math.max(column.taskColumns.length, 1);
-		cells.push(renderCell(column.activity.cards, 'activity', `grid-column: ${nextColumn} / span ${width}; grid-row: 1;`));
-		column.taskColumns.forEach((columnCells, columnOffset) => {
+		const width = Math.max(column.subColumns.length, 1);
+		cells.push(renderCell(column.activity, 'activity', `grid-column: ${nextColumn} / span ${width}; grid-row: 1;`));
+		column.subColumns.forEach((columnCells, columnOffset) => {
 			for (const cell of columnCells) {
-				const kind = cell.level === 1 ? 'task skeleton' : 'task';
-				cells.push(renderCell(cell.cards, kind, `grid-column: ${nextColumn + columnOffset}; grid-row: ${cell.level + 1};`));
+				const row = (firstRowByLevel[cell.level] ?? 1) + cell.rowInLevel;
+				cells.push(renderCell(cell.card, kindOf(cell.level), `grid-column: ${nextColumn + columnOffset}; grid-row: ${row};`));
 			}
 		});
 		nextColumn += width;
 	}
+	// Each label sits on the first row of its band. The User Tasks label goes right after the last band when there are no tasks
 	const rowLabels = ['User Activity', 'Walking Skeleton', 'User Tasks'];
-	rowLabels.forEach((label, index) => {
-		cells.unshift(`<div class="row-label" style="grid-column: 1; grid-row: ${index + 1};">${label}</div>`);
+	rowLabels.forEach((label, level) => {
+		const row = firstRowByLevel[level] ?? maxRow + 1;
+		cells.unshift(`<div class="row-label" style="grid-column: 1; grid-row: ${row};">${label}</div>`);
 	});
-	// Bands go behind the cards, so they come first in DOM order
-	const bands = [
-		`<div class="row-band activity-band" style="grid-column: 1 / ${nextColumn}; grid-row: 1;"></div>`,
-		`<div class="row-band skeleton-band" style="grid-column: 1 / ${nextColumn}; grid-row: 2;"></div>`,
-	];
-	// The User Tasks bands are laid one per row, and every second row is a bit lighter
-	for (let row = 3; row <= maxLevel + 1; row++) {
-		const alt = (row - 3) % 2 === 1 ? ' alt' : '';
-		bands.push(`<div class="row-band tasks-band${alt}" style="grid-column: 1 / ${nextColumn}; grid-row: ${row};"></div>`);
+	// Bands go behind the cards, so they come first in DOM order. One band per level, as tall as the level needs
+	const bands: string[] = [];
+	for (let level = 0; level < rowsByLevel.length; level++) {
+		const first = firstRowByLevel[level] ?? 1;
+		const rows = rowsByLevel[level] ?? 1;
+		const gridRow = rows === 1 ? `${first}` : `${first} / ${first + rows}`;
+		bands.push(`<div class="row-band ${bandClassOf(level)}" style="grid-column: 1 / ${nextColumn}; grid-row: ${gridRow};"></div>`);
 	}
 	cells.unshift(...bands);
 	return `<style>
