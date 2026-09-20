@@ -167,8 +167,8 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 		});
 		nextColumn += width;
 	}
-	// Each label sits on the first row of its band. The User Tasks label goes right after the last band when there are no tasks
-	const rowLabels = ['User Activity', 'Walking Skeleton', 'User Tasks'];
+	// Each label sits on the first row of its band. The Next Goal label goes right after the last band when there are no tasks
+	const rowLabels = ['Backbone', 'Walking Skeleton', 'Next Goal'];
 	rowLabels.forEach((label, level) => {
 		const row = firstRowByLevel[level] ?? maxRow + 1;
 		cells.unshift(`<div class="row-label" style="grid-column: 1; grid-row: ${row};">${label}</div>`);

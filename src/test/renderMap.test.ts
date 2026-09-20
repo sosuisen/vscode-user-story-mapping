@@ -180,18 +180,18 @@ suite('renderMap', () => {
 		assert.ok(html.includes('<div class="row-band skeleton-band" style="grid-column: 1 / 3; grid-row: 3;"></div>'));
 	});
 
-	// 行ラベルは、各帯の先頭行に置かれる。アクティビティ帯が2行なら、Walking Skeletonは3行目、User Tasksは4行目
+	// 行ラベルは、各帯の先頭行に置かれる。アクティビティ帯が2行なら、Walking Skeletonは3行目、Next Goalは4行目
 	test('places each row label on the first row of its band', () => {
 		const outline = '- Activity A +\n\t- Activity A2\n\t\t- Task A1\n\t\t\t- Task A2';
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 1;">User Activity</div>'));
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 1;">Backbone</div>'));
 		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 3;">Walking Skeleton</div>'));
-		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 4;">User Tasks</div>'));
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 4;">Next Goal</div>'));
 	});
 
-	// User Tasksの帯の明暗は、CSS行ではなくlevelごとに交互になる。2行にまたがるlevel 2の帯は1色で、次のlevel 3がalt
+	// Next Goalの帯の明暗は、CSS行ではなくlevelごとに交互になる。2行にまたがるlevel 2の帯は1色で、次のlevel 3がalt
 	test('alternates task bands per level, not per row', () => {
 		const outline = '- Activity A\n\t- Task A1\n\t\t- Task A2 +\n\t\t\t- Task A2b\n\t\t\t\t- Task A3';
 
@@ -248,7 +248,7 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		// Task A1b はskeleton帯のまま、Task A1c はUser Tasks帯（taskクラス）に置かれる
+		// Task A1b はskeleton帯のまま、Task A1c はNext Goal帯（taskクラス）に置かれる
 		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 3;">Task A1b</div>'));
 		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 4;">Task A1c</div>'));
 	});
@@ -422,15 +422,15 @@ suite('renderMap', () => {
 		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 3; grid-row: 2;">Task A2</div>'));
 	});
 
-	// 一番左のカラムに、行の説明（User Activity / Walking Skeleton / User Tasks）が表示される。4行目以降にラベルはない
+	// 一番左のカラムに、行の説明（Backbone / Walking Skeleton / Next Goal）が表示される。4行目以降にラベルはない
 	test('renders row labels in the leftmost column', () => {
 		const outline = '- Activity A\n\t- Task A1\n\t\t- Task A2\n\t\t\t- Task A3';
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 1;">User Activity</div>'));
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 1;">Backbone</div>'));
 		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 2;">Walking Skeleton</div>'));
-		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 3;">User Tasks</div>'));
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 3;">Next Goal</div>'));
 		// ラベルは3つだけ（4行目以降にはない）
 		assert.strictEqual((html.match(/class="row-label"/g) ?? []).length, 3);
 		// アクティビティのカードは2列目から始まる
@@ -485,7 +485,7 @@ suite('renderMap', () => {
 		assert.ok(/--border-shade:\s*0\.\d+/.test(html));
 	});
 
-	// デフォルトの基本色は、User Activityが緑、Walking Skeletonが赤、User Tasksが黄
+	// デフォルトの基本色は、Backboneが緑、Walking Skeletonが赤、Next Goalが黄
 	test('has green, red, and yellow default base colors', () => {
 		const html = renderMap('- Activity A');
 
@@ -494,7 +494,7 @@ suite('renderMap', () => {
 		assert.ok(html.includes('--tasks-color: #fff3e0'));
 	});
 
-	// User Tasksの帯は、1行ごとに基本色と少し明るい色が交互になる
+	// Next Goalの帯は、1行ごとに基本色と少し明るい色が交互になる
 	test('alternates task row bands between the base color and a lighter shade', () => {
 		const outline = '- Activity A\n\t- Task A1\n\t\t- Task A2\n\t\t\t- Task A3\n\t\t\t\t- Task A4';
 

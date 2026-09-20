@@ -62,9 +62,9 @@ This map covers the first release.
 |---|---|
 | The first heading (`#` to `######`) | The map title at the top. If there is no heading, the title area is empty |
 | A paragraph above the first list item | A note under the title. Use it for remarks about the map |
-| A top-level `- ` item | An activity. Activities appear in one row (User Activity, green band) |
+| A top-level `- ` item | An activity. Activities appear in one row (Backbone, green band) |
 | A `- ` item nested one level | A task to start first. It appears in the second band (Walking Skeleton, red) |
-| A `- ` item nested two or more levels | A task. It appears in the third band or lower (User Tasks, yellow). Each extra level of nesting is one band lower |
+| A `- ` item nested two or more levels | A task. It appears in the third band or lower (Next Goal, yellow). Each extra level of nesting is one band lower |
 | Two or more `- ` items at the same depth | The second and later items move to the next inner column on the right (Task 2 in the example). Inner columns also follow time order, left to right |
 | A `- ` line with no text | A blank level. No card is created; it only makes the level one step deeper (Task 4 starts at level 2) |
 | An item ending with `+` | Its children stay in the same band as the item, on the row below it (Task 1b stays in the red band, under Task 1). The `+` is not shown on the card |
