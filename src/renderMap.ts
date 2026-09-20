@@ -6,24 +6,24 @@ const markdown = new MarkdownIt();
 type Card = { text: string; done: boolean; todo: boolean };
 type Cell = { cards: Card[]; level: number };
 
-// 行頭の [x] / [ ] をチェックボックス絵文字にする
+// Turn a leading [x] / [ ] into a checkbox emoji
 function withCheckboxEmoji(text: string): string {
 	return text.replace(/^\[[xX]\] /, '✅ ').replace(/^\[ \] /, '⬜ ');
 }
 
-// 行頭に完了チェック [x] があるか
+// Whether the text starts with a done check [x]
 function isDone(text: string): boolean {
 	return /^\[[xX]\] /.test(text);
 }
 
-// 行頭に未完了チェック [ ] があるか
+// Whether the text starts with an open check [ ]
 function isTodo(text: string): boolean {
 	return /^\[ \] /.test(text);
 }
 
-// 空白レベルの印（CommonMarkでは空のリスト項目が段落に割り込めないため、
-// パース前にゼロ幅スペースを補ってリストとして成立させる）
-// 改行はCRLFも受け付け、LFに正規化する
+// Marker for a blank level. In CommonMark an empty list item cannot break into a paragraph,
+// so a zero-width space is added before parsing to keep the item as part of the list.
+// CRLF line breaks are accepted and normalized to LF
 const blankMarker = '​';
 const blankItemPattern = /^([ \t]*)-[ \t]*$/;
 
@@ -38,26 +38,26 @@ function cardOf(content: string): Card {
 	return { text: markdown.renderInline(withCheckboxEmoji(content)), done: isDone(content), todo: isTodo(content) };
 }
 
-// 行末の「^」は、親のセルに積む印
-// 日本語では「^」の直前に空白がないことが多いので、空白は必須にしない。空白があれば「^」と一緒に取り除く
-const trailingCaretPattern = /\s*\^$/;
+// A trailing "+" marks an item whose children are stacked into its own cell
+// The space before "+" is optional, for languages that do not separate words with spaces. If present, it is removed together with the "+"
+const trailingPlusPattern = /\s*\+$/;
 
-function hasTrailingCaret(content: string): boolean {
-	return trailingCaretPattern.test(content);
+function hasTrailingPlus(content: string): boolean {
+	return trailingPlusPattern.test(content);
 }
 
-function withoutTrailingCaret(content: string): string {
-	return content.replace(trailingCaretPattern, '');
+function withoutTrailingPlus(content: string): string {
+	return content.replace(trailingPlusPattern, '');
 }
 
-// アウトラインの最初の見出しをマップのタイトルとして返す（なければ空文字）
+// Return the first heading of the outline as the map title (empty string if none)
 export function mapTitle(outline: string): string {
 	const tokens = markdown.parse(fillBlankItems(outline), {});
 	const headingIndex = tokens.findIndex(token => token.type === 'heading_open');
 	return headingIndex === -1 ? '' : (tokens[headingIndex + 1]?.content ?? '');
 }
 
-// グリッドの1セルを描画する。カードが1枚ならそのまま、2枚以上なら「<kindの先頭語>-stack」で包んで縦に積む
+// Render one grid cell. A single card is rendered as is. Two or more cards are wrapped in "<first word of kind>-stack" and stacked vertically
 function renderCell(cards: Card[], kind: string, position: string): string {
 	const classesOf = (card: Card) => kind + (card.done ? ' done' : '') + (card.todo ? ' todo' : '');
 	const first = cards[0];
@@ -80,9 +80,9 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 	let openLists = 0;
 	let maxLevel = 0;
 	let itemMarkup = '-';
-	// インデントの段数ごとの、直近のアイテム。子のレベルの決定と、「^」で積む先のセルの特定に使う
-	// 親に積まれたアイテムは、親と同じレベル・同じCellになる
-	const itemByIndentDepth: { level: number; cell?: Cell }[] = [];
+	// The latest item at each indent depth. Used to decide the level of a child and to find the cell to stack into with "+"
+	// An item stacked into its parent gets the same level and the same Cell as the parent
+	const itemByIndentDepth: { level: number; cell?: Cell; stacksChildren?: boolean }[] = [];
 	for (let i = 0; i < tokens.length; i++) {
 		const token = tokens[i];
 		if (token === undefined) {
@@ -100,30 +100,30 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 		} else if (token.type === 'inline' && openLists > 0) {
 			const indentDepth = openLists - 1;
 			const parent = itemByIndentDepth[indentDepth - 1];
-			// 子のレベルは親のレベルの1つ下
+			// The level of a child is one below the level of its parent
 			const level = (parent?.level ?? -1) + 1;
-			// 空白レベルの項目はカードにしない（インデントの段数だけに寄与する）
+			// A blank-level item makes no card. It only adds to the indent depth
 			if (token.content === blankMarker) {
 				itemByIndentDepth[indentDepth] = { level };
 				continue;
 			}
-			const caret = hasTrailingCaret(token.content);
-			const card = cardOf(withoutTrailingCaret(token.content));
-			itemByIndentDepth[indentDepth] = { level };
-			// 行末に「^」があるアイテムは、親のカードが入ったセルに積む（アクティビティもタスクも同じ）
-			if (caret && parent?.cell !== undefined) {
+			const stacksChildren = hasTrailingPlus(token.content);
+			const card = cardOf(withoutTrailingPlus(token.content));
+			itemByIndentDepth[indentDepth] = { level, stacksChildren };
+			// If the parent has a trailing "+", stack into the cell that holds the parent card (same for activities and tasks)
+			if (parent?.stacksChildren === true && parent.cell !== undefined) {
 				parent.cell.cards.push(card);
-				itemByIndentDepth[indentDepth] = { level: parent.level, cell: parent.cell };
+				itemByIndentDepth[indentDepth] = { level: parent.level, cell: parent.cell, stacksChildren };
 				continue;
 			}
 			if (level === 0) {
 				const activity = { cards: [card], level };
 				columns.push({ activity, taskColumns: [], lastLevel: 0 });
-				itemByIndentDepth[indentDepth] = { level, cell: activity };
+				itemByIndentDepth[indentDepth] = { level, cell: activity, stacksChildren };
 			} else {
 				const column = columns.at(-1);
 				if (column !== undefined) {
-					// 「+」のアイテムは、1つ上のレベル（親タスクのセル）にカードとして積む
+					// An item with the "+" list marker is stacked as a card into the level above (the parent task cell)
 					const parentCell = column.taskColumns.at(-1)?.at(-1);
 					if (itemMarkup === '+' && parentCell !== undefined) {
 						parentCell.cards.push(card);
@@ -134,7 +134,7 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 					}
 					const cell = { cards: [card], level };
 					column.taskColumns.at(-1)?.push(cell);
-					itemByIndentDepth[indentDepth] = { level, cell };
+					itemByIndentDepth[indentDepth] = { level, cell, stacksChildren };
 					column.lastLevel = level;
 					maxLevel = Math.max(maxLevel, level);
 				}
@@ -143,7 +143,7 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 	}
 	const title = `<h1 class="map-title">${titleText}</h1>`;
 	const cells: string[] = [];
-	// 1列目は行の説明ラベル。データのカラムは2列目から始まる
+	// The first column holds the row labels. Data columns start at the second column
 	let nextColumn = 2;
 	for (const column of columns) {
 		const width = Math.max(column.taskColumns.length, 1);
@@ -160,12 +160,12 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 	rowLabels.forEach((label, index) => {
 		cells.unshift(`<div class="row-label" style="grid-column: 1; grid-row: ${index + 1};">${label}</div>`);
 	});
-	// 帯は背面に敷くため、カードより先（DOM順で前）に置く
+	// Bands go behind the cards, so they come first in DOM order
 	const bands = [
 		`<div class="row-band activity-band" style="grid-column: 1 / ${nextColumn}; grid-row: 1;"></div>`,
 		`<div class="row-band skeleton-band" style="grid-column: 1 / ${nextColumn}; grid-row: 2;"></div>`,
 	];
-	// User Tasksの帯は1行ずつ敷き、偶数番目の行を少し明るくする
+	// The User Tasks bands are laid one per row, and every second row is a bit lighter
 	for (let row = 3; row <= maxLevel + 1; row++) {
 		const alt = (row - 3) % 2 === 1 ? ' alt' : '';
 		bands.push(`<div class="row-band tasks-band${alt}" style="grid-column: 1 / ${nextColumn}; grid-row: ${row};"></div>`);

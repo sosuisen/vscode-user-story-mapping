@@ -123,13 +123,13 @@ suite('renderMap', () => {
 		);
 	});
 
-	// 行末に「^」があるアイテムは親のセルに積まれる。積まれたアイテムの子に「^」があれば、さらに同じセルに積まれる
-	test('stacks items with a trailing caret into the parent cell', () => {
-		const outline = '- Activity A\n\t- Task A1\n\t\t- Task A1b ^\n\t\t\t- Task A1c ^';
+	// 行末に「+」があるアイテムの子は、そのアイテムのセルに積まれる。積まれた子にも「+」があれば、その子はさらに同じセルに積まれる
+	test('stacks the children of an item with a trailing plus into its cell', () => {
+		const outline = '- Activity A\n\t- Task A1 +\n\t\t- Task A1b +\n\t\t\t- Task A1c';
 
 		const html = renderMap(outline);
 
-		// 3枚とも Task A1 の階層（スケルトン行）に積まれ、表示テキストから「^」は消える
+		// 3枚とも Task A1 の階層（スケルトン行）に積まれ、表示テキストから「+」は消える
 		assert.ok(
 			html.includes(
 				'<div class="task-stack" style="grid-column: 2; grid-row: 2;">' +
@@ -141,9 +141,26 @@ suite('renderMap', () => {
 		);
 	});
 
-	// 日本語のように「^」の直前に空白がなくても、行末の「^」は積む印として扱われる
-	test('treats a trailing caret without a preceding space as the stack mark too', () => {
-		const outline = '- Activity A\n\t- タスクA1\n\t\t- タスクA1b^';
+	// 「+」は親に付けるので、兄弟は全員まとめて親のセルに積まれる
+	test('stacks all siblings under an item with a trailing plus into its cell', () => {
+		const outline = '- Activity A\n\t- Task A1 +\n\t\t- Task A1b\n\t\t- Task A1c';
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="task-stack" style="grid-column: 2; grid-row: 2;">' +
+					'<div class="task skeleton">Task A1</div>' +
+					'<div class="task skeleton">Task A1b</div>' +
+					'<div class="task skeleton">Task A1c</div>' +
+					'</div>'
+			)
+		);
+	});
+
+	// ワード区切りが空白でない言語を考慮して、「+」の直前に空白がなくても、行末の「+」は積む印として扱われる
+	test('treats a trailing plus without a preceding space as the stack mark too', () => {
+		const outline = '- Activity A\n\t- タスクA1+\n\t\t- タスクA1b';
 
 		const html = renderMap(outline);
 
@@ -157,9 +174,9 @@ suite('renderMap', () => {
 		);
 	});
 
-	// アクティビティも、行末に「^」がある子はアクティビティのセルに積まれる
-	test('stacks a child with a trailing caret into the activity cell', () => {
-		const outline = '- Activity A\n\t- Activity A2 ^';
+	// アクティビティも、行末に「+」があれば子はアクティビティのセルに積まれる
+	test('stacks the child of an activity with a trailing plus into the activity cell', () => {
+		const outline = '- Activity A +\n\t- Activity A2';
 
 		const html = renderMap(outline);
 
@@ -175,7 +192,7 @@ suite('renderMap', () => {
 
 	// アクティビティに積まれたアイテムの子は、インデントが1段深くてもスケルトン行（レベル1）に置かれる
 	test('places the child of a stacked activity on the skeleton row', () => {
-		const outline = '- Activity A\n\t- Activity A2 ^\n\t\t- Task A1';
+		const outline = '- Activity A +\n\t- Activity A2\n\t\t- Task A1';
 
 		const html = renderMap(outline);
 
@@ -184,7 +201,7 @@ suite('renderMap', () => {
 
 	// タスクに積まれたアイテムの子は、インデントが1段深くても積んだセルの直下のレベルに置かれる
 	test('places the child of a stacked task on the level right below the stack', () => {
-		const outline = '- Activity A\n\t- Task A1\n\t\t- Task A1b ^\n\t\t\t- Task A1c';
+		const outline = '- Activity A\n\t- Task A1 +\n\t\t- Task A1b\n\t\t\t- Task A1c';
 
 		const html = renderMap(outline);
 

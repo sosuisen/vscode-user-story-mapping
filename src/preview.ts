@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { renderMap } from './renderMap';
 import { dataUrlToPngBuffer, defaultPngFileName } from './savePng';
 
-// openPreviewが使うパネルの機能だけを切り出した型（テストからは偽パネルを渡せる）
+// The subset of the panel features that openPreview uses (tests can pass a fake panel)
 export type PreviewPanel = {
 	webview: Pick<vscode.Webview, 'html' | 'options' | 'asWebviewUri' | 'onDidReceiveMessage'>;
 	onDidDispose: vscode.WebviewPanel['onDidDispose'];

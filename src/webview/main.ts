@@ -5,7 +5,7 @@ declare function acquireVsCodeApi(): { postMessage(message: unknown): void };
 
 const vscodeApi = acquireVsCodeApi();
 
-// ズーム: 描画時のズーム値（style.zoom）から始め、変更のたびに拡張機能へ通知する
+// Zoom: start from the rendered zoom value (style.zoom) and notify the extension on every change
 const mapZoom = document.querySelector('.map-zoom');
 const zoomLevel = document.querySelector('.zoom-level');
 if (mapZoom instanceof HTMLElement) {
