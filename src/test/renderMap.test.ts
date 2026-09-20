@@ -123,6 +123,85 @@ suite('renderMap', () => {
 		);
 	});
 
+	// 行末に「^」があるアイテムは親のセルに積まれる。積まれたアイテムの子に「^」があれば、さらに同じセルに積まれる
+	test('stacks items with a trailing caret into the parent cell', () => {
+		const outline = '- Activity A\n\t- Task A1\n\t\t- Task A1b ^\n\t\t\t- Task A1c ^';
+
+		const html = renderMap(outline);
+
+		// 3枚とも Task A1 の階層（スケルトン行）に積まれ、表示テキストから「^」は消える
+		assert.ok(
+			html.includes(
+				'<div class="task-stack" style="grid-column: 2; grid-row: 2;">' +
+					'<div class="task skeleton">Task A1</div>' +
+					'<div class="task skeleton">Task A1b</div>' +
+					'<div class="task skeleton">Task A1c</div>' +
+					'</div>'
+			)
+		);
+	});
+
+	// 行末の「#タグ」はただの文字で、積む印にはならない
+	test('keeps a trailing hashtag as plain text without stacking', () => {
+		const outline = '- Activity A\n\t- Task A1 #s\n\t\t- Task A1b #s';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task A1 #s</div>'));
+		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 3;">Task A1b #s</div>'));
+	});
+
+	// 日本語のように「^」の直前に空白がなくても、行末の「^」は積む印として扱われる
+	test('treats a trailing caret without a preceding space as the stack mark too', () => {
+		const outline = '- Activity A\n\t- タスクA1\n\t\t- タスクA1b^';
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="task-stack" style="grid-column: 2; grid-row: 2;">' +
+					'<div class="task skeleton">タスクA1</div>' +
+					'<div class="task skeleton">タスクA1b</div>' +
+					'</div>'
+			)
+		);
+	});
+
+	// アクティビティも、行末に「^」がある子はアクティビティのセルに積まれる
+	test('stacks a child with a trailing caret into the activity cell', () => {
+		const outline = '- Activity A\n\t- Activity A2 ^';
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="activity-stack" style="grid-column: 2 / span 1; grid-row: 1;">' +
+					'<div class="activity">Activity A</div>' +
+					'<div class="activity">Activity A2</div>' +
+					'</div>'
+			)
+		);
+	});
+
+	// アクティビティに積まれたアイテムの子は、インデントが1段深くてもスケルトン行（レベル1）に置かれる
+	test('places the child of a stacked activity on the skeleton row', () => {
+		const outline = '- Activity A\n\t- Activity A2 ^\n\t\t- Task A1';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task A1</div>'));
+	});
+
+	// タスクに積まれたアイテムの子は、インデントが1段深くても積んだセルの直下のレベルに置かれる
+	test('places the child of a stacked task on the level right below the stack', () => {
+		const outline = '- Activity A\n\t- Task A1\n\t\t- Task A1b ^\n\t\t\t- Task A1c';
+
+		const html = renderMap(outline);
+
+		// Task A1c はレベル2（3行目）に置かれる
+		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 3;">Task A1c</div>'));
+	});
+
 	// アイテム行内のインライン記法（強調など）がカードに反映される
 	test('renders inline markdown such as emphasis inside a card', () => {
 		const html = renderMap('- Activity A\n\t- **Task 1**');
