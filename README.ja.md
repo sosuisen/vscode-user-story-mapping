@@ -156,8 +156,13 @@ Task 1b と Task 1c は、赤の Walking Skeleton のレベルの中で、Task 1
 
 快適にアウトラインを編集するために、次の設定をおすすめします。
 
-- 拡張機能「[Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)」をインストールします。
-- キーバインディングをアウトライナー風に変更します（項目の入れ替え、インデント操作など）。
+- VSCode拡張機能「[Dynalist-Style Moves](https://marketplace.visualstudio.com/items?itemName=OneOffObject.dynalist-mover-vscode)」
+  - 項目の上下移動がツリー単位でできるようになります。
+- VSCode拡張機能「[Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one)」
+  - 一般的なMarkdownの便利機能です。
+- VSCode拡張機能「[markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint)」
+  - Markdown用の文法チェッカーです。
+- あとはキーバインディングをお気に入りのアウトライナー風に変更してください（項目の入れ替え、インデント操作など）。
 
 ## 動作環境
 
