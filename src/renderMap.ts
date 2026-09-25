@@ -54,6 +54,9 @@ function withoutTrailingPlus(content: string): string {
 	return content.replace(trailingPlusPattern, '');
 }
 
+// A heading whose text is exactly "story map" (any case) starts the story map section
+const storyMapHeadingPattern = /^story\s+map$/i;
+
 // Return the first heading of the outline as the map title (empty string if none)
 export function mapTitle(outline: string): string {
 	const tokens = markdown.parse(outline, {});
@@ -93,13 +96,29 @@ function bandClassOf(level: number): string {
 	return level >= 3 && (level - 3) % 2 === 1 ? `${base} alt` : base;
 }
 
+// With a "Story Map" heading, only the content from that heading up to the next heading is the story map.
+// Without it, the whole document is the story map
+function storyMapTokens(tokens: MarkdownIt.Token[]): MarkdownIt.Token[] {
+	const headingIndex = tokens.findIndex(
+		(token, index) => token.type === 'heading_open' && storyMapHeadingPattern.test((tokens[index + 1]?.content ?? '').trim())
+	);
+	if (headingIndex === -1) {
+		return tokens;
+	}
+	// A heading is three tokens: heading_open, inline, heading_close
+	const start = headingIndex + 3;
+	const nextHeadingIndex = tokens.findIndex((token, index) => index >= start && token.type === 'heading_open');
+	return tokens.slice(start, nextHeadingIndex === -1 ? undefined : nextHeadingIndex);
+}
+
 export type RenderMapOptions = { zoom?: number };
 
 export function renderMap(outline: string, options: RenderMapOptions = {}): string {
 	const zoom = options.zoom ?? 1;
-	const tokens = markdown.parse(outline, {});
-	let titleText = '';
-	let titleFound = false;
+	const allTokens = markdown.parse(outline, {});
+	const tokens = storyMapTokens(allTokens);
+	// The map title is the first heading of the whole document, even when it is above the "Story Map" heading
+	const titleText = mapTitle(outline);
 	// Paragraphs above the outline, shown as notes under the title
 	const notes: string[] = [];
 	let listSeen = false;
@@ -133,9 +152,6 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 			inOrderedList = false;
 		} else if (token.type === 'inline' && inOrderedList) {
 			levelTitles.push(markdown.renderInline(token.content));
-		} else if (token.type === 'heading_open' && !titleFound) {
-			titleText = tokens[i + 1]?.content ?? '';
-			titleFound = true;
 		} else if (token.type === 'paragraph_open' && !listSeen && !inOrderedList) {
 			notes.push(`<p class="map-note">${markdown.renderInline(tokens[i + 1]?.content ?? '')}</p>`);
 		} else if (token.type === 'inline' && openLists > 0) {

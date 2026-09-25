@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import { renderMap } from '../renderMap';
+import { mapTitle, renderMap } from '../renderMap';
 
 // マップの描画
 suite('renderMap', () => {
@@ -699,5 +699,78 @@ suite('renderMap', () => {
 		// 同じレベルなので、同じ行のまま隣のグリッド列に分かれる
 		assert.ok(html.includes('<div class="card level2" style="grid-column: 1; grid-row: 2;">Task A1</div>'));
 		assert.ok(html.includes('<div class="card level2" style="grid-column: 2; grid-row: 2;">Task A2</div>'));
+	});
+
+	// 「Story Map」の見出しがあるとき、その見出しより前にあるリストの項目はカードにならない
+	test('ignores list items before the Story Map heading', () => {
+		const outline = '# Design Notes\n\n- Not a card\n\n## Story Map\n\n- Activity A\n\t- Task A1';
+
+		const html = renderMap(outline);
+
+		assert.ok(!/<div class="card[^"]*"[^>]*>Not a card<\/div>/.test(html));
+		assert.ok(html.includes('<div class="card level1" style="grid-column: 1; grid-row: 1;">Activity A</div>'));
+	});
+
+	// 「Story Map」の見出しがあっても、マップのタイトルは文書の最初の見出しのまま
+	test('keeps the first heading of the document as the map title above the Story Map heading', () => {
+		const outline = '# Design Notes\n\n## Story Map\n\n- Activity A';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<h1 class="map-title">Design Notes</h1>'));
+		assert.ok(!html.includes('<h1 class="map-title">Story Map</h1>'));
+	});
+
+	// 補足のパラグラフは、「Story Map」の見出しより後で最初のリストより前のものだけが表示される。見出しより前のパラグラフは表示されない
+	test('shows only the paragraphs between the Story Map heading and the first list as notes', () => {
+		const outline = '# Design Notes\n\nBefore the map.\n\n## Story Map\n\nAbout the map.\n\n- Activity A';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<p class="map-note">About the map.</p>'));
+		assert.ok(!html.includes('<p class="map-note">Before the map.</p>'));
+	});
+
+	// レベル名の順序付きリストは、「Story Map」の見出しより後のものだけを使う。見出しより前の順序付きリストは無視される
+	test('takes the level titles only from an ordered list after the Story Map heading', () => {
+		const outline = '# Design Notes\n\n1. Not a title\n\n## Story Map\n\n1. First\n\n- Activity A';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 1;">First</div>'));
+		assert.ok(!html.includes('Not a title'));
+	});
+
+	// ストーリーマップの範囲は次の見出しまで。その見出しより後にあるリストの項目はカードにならない
+	test('ends the story map at the next heading and ignores list items after it', () => {
+		const outline = '## Story Map\n\n- Activity A\n\n## Appendix\n\n- Not a card';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<div class="card level1" style="grid-column: 1; grid-row: 1;">Activity A</div>'));
+		assert.ok(!/<div class="card[^"]*"[^>]*>Not a card<\/div>/.test(html));
+	});
+
+	// 見出しの一致は大文字小文字を区別しない。「story map」「STORY MAP」も一致し、前後の空白と語の間の空白の数は無視される
+	test('matches the Story Map heading regardless of case and the amount of spaces', () => {
+		for (const heading of ['story map', 'STORY MAP', ' Story Map ', 'Story   Map']) {
+			const html = renderMap(`- Not a card\n\n## ${heading}\n\n- Activity A`);
+
+			assert.ok(!/<div class="card[^"]*"[^>]*>Not a card<\/div>/.test(html), heading);
+			assert.ok(html.includes('<div class="card level1" style="grid-column: 1; grid-row: 1;">Activity A</div>'), heading);
+		}
+	});
+
+	// 「My Story Map」のように前後に語がある見出しは一致せず、文書全体がストーリーマップとして扱われる
+	test('does not treat a heading with extra words such as My Story Map as the Story Map heading', () => {
+		const html = renderMap('- Activity A\n\n## My Story Map\n\n- Activity B');
+
+		assert.ok(html.includes('<div class="card level1" style="grid-column: 1; grid-row: 1;">Activity A</div>'));
+		assert.ok(html.includes('<div class="card level1" style="grid-column: 2; grid-row: 1;">Activity B</div>'));
+	});
+
+	// PNGのファイル名に使うmapTitleも、「Story Map」の見出しではなく文書の最初の見出しを返す
+	test('mapTitle returns the first heading of the document, not the Story Map heading', () => {
+		assert.strictEqual(mapTitle('# Design Notes\n\n## Story Map\n\n- Activity A'), 'Design Notes');
 	});
 });
