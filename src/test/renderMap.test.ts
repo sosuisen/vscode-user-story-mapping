@@ -255,7 +255,7 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="activity" style="grid-column: 1 / span 2; grid-row: 1;">Activity A</div>'));
+		assert.ok(html.includes('<div class="activity" style="grid-column: 1; grid-row: 1;">Activity A</div>'));
 		assert.ok(html.includes('<div class="activity" style="grid-column: 1; grid-row: 2;">Activity A1</div>'));
 		assert.ok(html.includes('<div class="activity" style="grid-column: 2; grid-row: 2;">Activity A2</div>'));
 	});
@@ -438,6 +438,15 @@ suite('renderMap', () => {
 		assert.ok(html.includes('<h1 class="map-title">Map Title</h1>'));
 	});
 
+	// 内部カラムが複数あっても、アクティビティのカードは最初の内部カラムだけを占め、タスクのカードと同じ幅になる
+	test('keeps the activity card in the first inner column instead of spanning all of them', () => {
+		const outline = '- Activity A\n\t- Task A1\n\t- Task A2';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<div class="activity" style="grid-column: 1; grid-row: 1;">Activity A</div>'));
+	});
+
 	// 同じアクティビティ内で同じレベルのタスクは、右どなりのグリッド列に分かれて並ぶ
 	test('puts same-level tasks into adjacent grid columns', () => {
 		const outline = '- Activity A\n\t- Task A1\n\t- Task A2';
@@ -464,9 +473,9 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="activity" style="grid-column: 1 / span 1; grid-row: 1;">Activity A</div>'));
+		assert.ok(html.includes('<div class="activity" style="grid-column: 1; grid-row: 1;">Activity A</div>'));
 		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 2;">Task A1</div>'));
-		assert.ok(html.includes('<div class="activity" style="grid-column: 2 / span 1; grid-row: 1;">Activity B</div>'));
+		assert.ok(html.includes('<div class="activity" style="grid-column: 2; grid-row: 1;">Activity B</div>'));
 	});
 
 	// Ordered listがないとき、帯も1列目から始まり、カードの列数ぶんの幅になる（ADR 004）

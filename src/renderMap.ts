@@ -183,7 +183,7 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 	let nextColumn = levelTitles.length > 0 ? 2 : 1;
 	for (const column of columns) {
 		const width = Math.max(column.subColumns.length, 1);
-		cells.push(renderCell(column.activity, 'activity', `grid-column: ${nextColumn} / span ${width}; grid-row: 1;`));
+		cells.push(renderCell(column.activity, 'activity', `grid-column: ${nextColumn}; grid-row: 1;`));
 		column.subColumns.forEach((columnCells, columnOffset) => {
 			for (const cell of columnCells) {
 				const row = (firstRowByLevel[cell.level] ?? 1) + cell.rowInLevel;
