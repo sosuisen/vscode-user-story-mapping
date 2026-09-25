@@ -62,9 +62,10 @@ This map covers the first release.
 |---|---|
 | The first heading (`#` to `######`) | The map title at the top. If there is no heading, the title area is empty |
 | A paragraph above the first list item | A note under the title. Use it for remarks about the map |
-| A top-level `- ` item | An activity. Activities appear in one row (Backbone, green band) |
-| A `- ` item nested one level | A task to start first. It appears in the second band (Walking Skeleton, red) |
-| A `- ` item nested two or more levels | A task. It appears in the third band or lower (Next Goal, yellow). Each extra level of nesting is one band lower |
+| A top-level `- ` item | An activity. Activities appear in one row (the first band, green) |
+| A `- ` item nested one level | A task to start first. It appears in the second band (red) |
+| A `- ` item nested two or more levels | A task. It appears in the third band or lower (yellow). Each extra level of nesting is one band lower |
+| An ordered list starting with `1.` | Level titles. The items appear from the top at the left end of each band. Without an ordered list there is no title column. Write it once the map has taken shape, for example `1. Backbone` `2. Walking Skeleton` `3. Next Goal` |
 | Two or more `- ` items at the same depth | The second and later items move to the next inner column on the right (Task 2 in the example). Inner columns also follow time order, left to right |
 | A `- ` line with no text | A blank level. No card is created; it only makes the level one step deeper (Task 4 starts at level 2) |
 | An item ending with `+` | Its children stay in the same band as the item, on the row below it (Task 1b stays in the red band, under Task 1). The `+` is not shown on the card |
@@ -99,7 +100,7 @@ It renders as this map:
 
 ![Task 1b and Task 1c placed in the red band under Task 1, side by side, while Task 2 starts a new column](images/outline-to-map-plus.png)
 
-Task 1b and Task 1c are in the red Walking Skeleton band, on the row under Task 1. The band grows to two rows for every column, so Task 3 under Activity B stays on the first row of the band.
+Task 1b and Task 1c are in the red band, on the row under Task 1. The band grows to two rows for every column, so Task 3 under Activity B stays on the first row of the band.
 
 The same rule works for activities. When an activity ends with `+`, its children are sub-activities in the green band, each with its own column:
 
