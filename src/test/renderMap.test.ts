@@ -35,9 +35,9 @@ suite('renderMap', () => {
 		const cards = [...html.matchAll(/<div class="(?:activity|task)(?: skeleton)?"[^>]*>([^<]*)<\/div>/g)].map(m => m[1]);
 		assert.deepStrictEqual(cards, ['Activity A', 'Task A1', 'Task A2', 'Activity B', 'Task B1']);
 		// タスクは自分のアクティビティと同じグリッド列に入る
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task A1</div>'));
-		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 3;">Task A2</div>'));
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 3; grid-row: 2;">Task B1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 2;">Task A1</div>'));
+		assert.ok(html.includes('<div class="task" style="grid-column: 1; grid-row: 3;">Task A2</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task B1</div>'));
 	});
 
 	// スペースでインデントされたタスクも、タブと同じくアクティビティの下に並ぶ
@@ -91,7 +91,7 @@ suite('renderMap', () => {
 		const html = renderMap(outline);
 
 		// 空白レベルの下のタスクはレベル2（3行目）に置かれる
-		assert.ok(/<div class="task" style="grid-column: 2; grid-row: 3;">Task A2<\/div>/.test(html));
+		assert.ok(/<div class="task" style="grid-column: 1; grid-row: 3;">Task A2<\/div>/.test(html));
 		// 「_」のカードは作られない
 		assert.ok(!/<div class="(?:activity|task)[^"]*"[^>]*>_<\/div>/.test(html));
 	});
@@ -103,7 +103,7 @@ suite('renderMap', () => {
 		const html = renderMap(outline);
 
 		// 空白レベルの下のタスクはレベル2（3行目）に置かれる
-		assert.ok(/<div class="task" style="grid-column: 2; grid-row: 3;">Task A2<\/div>/.test(html));
+		assert.ok(/<div class="task" style="grid-column: 1; grid-row: 3;">Task A2<\/div>/.test(html));
 		// 「_」のカードは作られない
 		assert.ok(!/<div class="(?:activity|task)[^"]*"[^>]*>_<\/div>/.test(html));
 	});
@@ -115,7 +115,7 @@ suite('renderMap', () => {
 		const html = renderMap(outline);
 
 		// 空白レベルではないので、Task A2はレベル2（3行目）には置かれない
-		assert.ok(!/<div class="task" style="grid-column: 2; grid-row: 3;">Task A2<\/div>/.test(html));
+		assert.ok(!/<div class="task" style="grid-column: 1; grid-row: 3;">Task A2<\/div>/.test(html));
 	});
 
 	// 「_」の前後に半角スペースがあっても、空白レベルとして扱われる
@@ -125,7 +125,7 @@ suite('renderMap', () => {
 		const html = renderMap(outline);
 
 		// 空白レベルの下のタスクはレベル2（3行目）に置かれる
-		assert.ok(/<div class="task" style="grid-column: 2; grid-row: 3;">Task A2<\/div>/.test(html));
+		assert.ok(/<div class="task" style="grid-column: 1; grid-row: 3;">Task A2<\/div>/.test(html));
 		// 「_」のカードは作られない
 		assert.ok(!/<div class="(?:activity|task)[^"]*"[^>]*>_<\/div>/.test(html));
 	});
@@ -136,7 +136,7 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">snake_case</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 2;">snake_case</div>'));
 	});
 
 	// リスト項目の末尾に複数のハッシュタグを付けられる。タグは本文から切り離され、「#」なしでカードの末尾に並ぶ
@@ -145,7 +145,7 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task A1<span class="tag">tag1</span><span class="tag">tag2</span></div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 2;">Task A1<span class="tag">tag1</span><span class="tag">tag2</span></div>'));
 	});
 
 	// タグは白い背景で角丸に囲まれる
@@ -162,8 +162,8 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task A1<span class="tag">tag1</span></div>'));
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 3;">Task A1b</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 2;">Task A1<span class="tag">tag1</span></div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 3;">Task A1b</div>'));
 	});
 
 	// 行末に「+」があるアイテムの子は、次のCSS行に置かれ、親と同じ帯のクラス（skeleton）を持つ。表示テキストから「+」は消える
@@ -172,8 +172,8 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task A1</div>'));
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 3;">Task A1b</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 2;">Task A1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 3;">Task A1b</div>'));
 	});
 
 	// 「+」が連鎖すると、CSS行が1つずつ下がりながら同じ帯が続く
@@ -182,9 +182,9 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task A1</div>'));
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 3;">Task A1b</div>'));
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 4;">Task A1c</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 2;">Task A1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 3;">Task A1b</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 4;">Task A1c</div>'));
 	});
 
 	// 帯の高さ（CSS行数）は全列でそろう。「+」で2行になったアクティビティ帯に合わせて、「+」のない列のskeletonも3行目に下がる
@@ -193,8 +193,8 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 3;">Task A1</div>'));
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 3; grid-row: 3;">Task B1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 3;">Task A1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 3;">Task B1</div>'));
 	});
 
 	// 帯（row-band）は、そのlevelの行数分の高さになる。2行になったアクティビティ帯は1〜2行目にまたがり、skeleton帯は3行目になる
@@ -203,19 +203,19 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="row-band activity-band" style="grid-column: 1 / 3; grid-row: 1 / 3;"></div>'));
-		assert.ok(html.includes('<div class="row-band skeleton-band" style="grid-column: 1 / 3; grid-row: 3;"></div>'));
+		assert.ok(html.includes('<div class="row-band activity-band" style="grid-column: 1 / 2; grid-row: 1 / 3;"></div>'));
+		assert.ok(html.includes('<div class="row-band skeleton-band" style="grid-column: 1 / 2; grid-row: 3;"></div>'));
 	});
 
-	// 行ラベルは、各帯の先頭行に置かれる。アクティビティ帯が2行なら、Walking Skeletonは3行目、Next Goalは4行目
-	test('places each row label on the first row of its band', () => {
-		const outline = '- Activity A +\n\t- Activity A2\n\t\t- Task A1\n\t\t\t- Task A2';
+	// レベルのタイトルは、各帯の先頭行に置かれる。最初の帯が2行なら、2番目のタイトルは3行目、3番目は4行目
+	test('places each level title on the first row of its band', () => {
+		const outline = '1. First\n2. Second\n3. Third\n\n- Activity A +\n\t- Activity A2\n\t\t- Task A1\n\t\t\t- Task A2';
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 1;">Backbone</div>'));
-		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 3;">Walking Skeleton</div>'));
-		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 4;">Next Goal</div>'));
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 1;">First</div>'));
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 3;">Second</div>'));
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 4;">Third</div>'));
 	});
 
 	// Next Goalの帯の明暗は、CSS行ではなくlevelごとに交互になる。2行にまたがるlevel 2の帯は1色で、次のlevel 3がalt
@@ -224,8 +224,8 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="row-band tasks-band" style="grid-column: 1 / 3; grid-row: 3 / 5;"></div>'));
-		assert.ok(html.includes('<div class="row-band tasks-band alt" style="grid-column: 1 / 3; grid-row: 5;"></div>'));
+		assert.ok(html.includes('<div class="row-band tasks-band" style="grid-column: 1 / 2; grid-row: 3 / 5;"></div>'));
+		assert.ok(html.includes('<div class="row-band tasks-band alt" style="grid-column: 1 / 2; grid-row: 5;"></div>'));
 	});
 
 	// 「+」の子の兄弟は、タスクの兄弟と同じく横（隣の列）に並ぶ。帯は親と同じ
@@ -234,9 +234,9 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task A1</div>'));
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 3;">Task A1b</div>'));
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 3; grid-row: 3;">Task A1c</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 2;">Task A1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 3;">Task A1b</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 3;">Task A1c</div>'));
 	});
 
 	// ワード区切りが空白でない言語を考慮して、「+」の直前に空白がなくても、行末の「+」は積む印として扱われる
@@ -245,8 +245,8 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">タスクA1</div>'));
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 3;">タスクA1b</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 2;">タスクA1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 3;">タスクA1b</div>'));
 	});
 
 	// アクティビティの「+」の子は、2行目に列ごとに並び、activityクラスを持つ。列いっぱいに伸びるのは1行目だけ
@@ -255,9 +255,9 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="activity" style="grid-column: 2 / span 2; grid-row: 1;">Activity A</div>'));
-		assert.ok(html.includes('<div class="activity" style="grid-column: 2; grid-row: 2;">Activity A1</div>'));
-		assert.ok(html.includes('<div class="activity" style="grid-column: 3; grid-row: 2;">Activity A2</div>'));
+		assert.ok(html.includes('<div class="activity" style="grid-column: 1 / span 2; grid-row: 1;">Activity A</div>'));
+		assert.ok(html.includes('<div class="activity" style="grid-column: 1; grid-row: 2;">Activity A1</div>'));
+		assert.ok(html.includes('<div class="activity" style="grid-column: 2; grid-row: 2;">Activity A2</div>'));
 	});
 
 	// アクティビティの「+」の子の子は、次の帯（Walking Skeleton）に置かれる
@@ -266,7 +266,7 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 3;">Task A1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 3;">Task A1</div>'));
 	});
 
 	// 「+」のない子は、次のlevel（帯）に置かれる
@@ -276,8 +276,8 @@ suite('renderMap', () => {
 		const html = renderMap(outline);
 
 		// Task A1b はskeleton帯のまま、Task A1c はNext Goal帯（taskクラス）に置かれる
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 3;">Task A1b</div>'));
-		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 4;">Task A1c</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 3;">Task A1b</div>'));
+		assert.ok(html.includes('<div class="task" style="grid-column: 1; grid-row: 4;">Task A1c</div>'));
 	});
 
 	// アイテム行内のインライン記法（強調など）がカードに反映される
@@ -445,8 +445,38 @@ suite('renderMap', () => {
 		const html = renderMap(outline);
 
 		// 同じレベルなので、同じ行のまま隣のグリッド列に分かれる
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task A1</div>'));
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 3; grid-row: 2;">Task A2</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 2;">Task A1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task A2</div>'));
+	});
+
+	// Ordered listがないとき、レベルのタイトルは1つも描画されない（ADR 004）
+	test('renders no level titles when there is no ordered list', () => {
+		const outline = '- Activity A\n\t- Task A1\n\t\t- Task A2\n\t\t\t- Task A3';
+
+		const html = renderMap(outline);
+
+		assert.ok(!html.includes('class="row-label"'));
+	});
+
+	// Ordered listがないとき、レベルのタイトルの列は作られず、カードは1列目から始まる（ADR 004）
+	test('starts the cards at the first column when there is no ordered list', () => {
+		const outline = '- Activity A\n\t- Task A1\n- Activity B';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<div class="activity" style="grid-column: 1 / span 1; grid-row: 1;">Activity A</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 2;">Task A1</div>'));
+		assert.ok(html.includes('<div class="activity" style="grid-column: 2 / span 1; grid-row: 1;">Activity B</div>'));
+	});
+
+	// Ordered listがないとき、帯も1列目から始まり、カードの列数ぶんの幅になる（ADR 004）
+	test('starts the bands at the first column and spans only the card columns when there is no ordered list', () => {
+		const outline = '- Activity A\n\t- Task A1\n- Activity B';
+
+		const html = renderMap(outline);
+
+		assert.ok(html.includes('<div class="row-band activity-band" style="grid-column: 1 / 3; grid-row: 1;"></div>'));
+		assert.ok(html.includes('<div class="row-band skeleton-band" style="grid-column: 1 / 3; grid-row: 2;"></div>'));
 	});
 
 	// Ordered listがあれば、その項目が上のレベルから順にレベルのタイトルになる。番号は表示されない。Ordered listは補足事項にはならない
@@ -459,18 +489,18 @@ suite('renderMap', () => {
 		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 2;">Second</div>'));
 		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 3;">Third</div>'));
 		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 4;">Fourth</div>'));
-		assert.ok(!html.includes('Backbone'));
 		assert.ok(!html.includes('<p class="map-note">First</p>'));
 	});
 
-	// Ordered listの項目数より深いレベルには、タイトルがない
-	test('leaves levels beyond the ordered list without a title', () => {
+	// Ordered listの項目数より深いレベルには、タイトルがない。タイトルの列は残り、カードは2列目から始まる
+	test('leaves levels beyond the ordered list without a title but keeps the title column', () => {
 		const outline = '1. First\n2. Second\n\n- Activity A\n\t- Task A1\n\t\t- Task A2';
 
 		const html = renderMap(outline);
 
 		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 2;">Second</div>'));
 		assert.strictEqual((html.match(/class="row-label"/g) ?? []).length, 2);
+		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 3;">Task A2</div>'));
 	});
 
 	// Ordered listはアウトラインより下に置いてもレベルのタイトルになる
@@ -481,7 +511,6 @@ suite('renderMap', () => {
 
 		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 1;">First</div>'));
 		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 2;">Second</div>'));
-		assert.ok(!html.includes('Backbone'));
 	});
 
 	// 存在しないレベルのタイトルは描画されない。Ordered listがレベル数より長くても、余りは表示されない
@@ -495,16 +524,16 @@ suite('renderMap', () => {
 		assert.strictEqual((html.match(/class="row-label"/g) ?? []).length, 2);
 	});
 
-	// 一番左のカラムに、行の説明（Backbone / Walking Skeleton / Next Goal）が表示される。4行目以降にラベルはない
-	test('renders row labels in the leftmost column', () => {
-		const outline = '- Activity A\n\t- Task A1\n\t\t- Task A2\n\t\t\t- Task A3';
+	// Ordered listがあるとき、レベルのタイトルは一番左のカラムに表示され、カードは2列目から始まる
+	test('renders level titles in the leftmost column and starts the cards at the second column', () => {
+		const outline = '1. First\n2. Second\n3. Third\n\n- Activity A\n\t- Task A1\n\t\t- Task A2\n\t\t\t- Task A3';
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 1;">Backbone</div>'));
-		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 2;">Walking Skeleton</div>'));
-		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 3;">Next Goal</div>'));
-		// ラベルは3つだけ（4行目以降にはない）
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 1;">First</div>'));
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 2;">Second</div>'));
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 3;">Third</div>'));
+		// タイトルは3つだけ（4行目以降にはない）
 		assert.strictEqual((html.match(/class="row-label"/g) ?? []).length, 3);
 		// アクティビティのカードは2列目から始まる
 		assert.ok(/<div class="activity" style="grid-column: 2[^"]*"/.test(html));
@@ -574,9 +603,9 @@ suite('renderMap', () => {
 		const html = renderMap(outline);
 
 		// タスク行（3〜5行目）に1行ずつ帯があり、偶数番目の行はaltクラスを持つ
-		assert.ok(html.includes('<div class="row-band tasks-band" style="grid-column: 1 / 3; grid-row: 3;"></div>'));
-		assert.ok(html.includes('<div class="row-band tasks-band alt" style="grid-column: 1 / 3; grid-row: 4;"></div>'));
-		assert.ok(html.includes('<div class="row-band tasks-band" style="grid-column: 1 / 3; grid-row: 5;"></div>'));
+		assert.ok(html.includes('<div class="row-band tasks-band" style="grid-column: 1 / 2; grid-row: 3;"></div>'));
+		assert.ok(html.includes('<div class="row-band tasks-band alt" style="grid-column: 1 / 2; grid-row: 4;"></div>'));
+		assert.ok(html.includes('<div class="row-band tasks-band" style="grid-column: 1 / 2; grid-row: 5;"></div>'));
 		// altの帯の色は基本色から明度を変えて導出される
 		assert.ok(/\.tasks-band\.alt\s*\{[^}]*background:\s*hsl\(from var\(--tasks-color\)/.test(html));
 	});
@@ -624,9 +653,9 @@ suite('renderMap', () => {
 		const html = renderMap(outline);
 
 		// レベル1は2行目、レベル2は3行目
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task A1</div>'));
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 3; grid-row: 2;">Task B1</div>'));
-		assert.ok(html.includes('<div class="task" style="grid-column: 3; grid-row: 3;">Task B2</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 2;">Task A1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task B1</div>'));
+		assert.ok(html.includes('<div class="task" style="grid-column: 2; grid-row: 3;">Task B2</div>'));
 	});
 
 	// タブ1個とスペース4個のインデントは同じレベルとして扱われる
@@ -636,7 +665,7 @@ suite('renderMap', () => {
 		const html = renderMap(outline);
 
 		// 同じレベルなので、同じ行のまま隣のグリッド列に分かれる
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task A1</div>'));
-		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 3; grid-row: 2;">Task A2</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 1; grid-row: 2;">Task A1</div>'));
+		assert.ok(html.includes('<div class="task skeleton" style="grid-column: 2; grid-row: 2;">Task A2</div>'));
 	});
 });

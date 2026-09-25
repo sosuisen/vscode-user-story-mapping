@@ -87,9 +87,6 @@ function bandClassOf(level: number): string {
 	return (level - 2) % 2 === 1 ? 'tasks-band alt' : 'tasks-band';
 }
 
-// Level titles used when the outline has no ordered list
-const defaultLevelTitles = ['Backbone', 'Walking Skeleton', 'Next Goal'];
-
 export type RenderMapOptions = { zoom?: number };
 
 export function renderMap(outline: string, options: RenderMapOptions = {}): string {
@@ -181,8 +178,9 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 	}
 	const title = `<h1 class="map-title">${titleText}</h1>`;
 	const cells: string[] = [];
-	// The first column holds the row labels. Data columns start at the second column
-	let nextColumn = 2;
+	// With level titles, the first column holds them and the cards start at the second column.
+	// Without level titles there is no title column, and the cards start at the first column (ADR 004)
+	let nextColumn = levelTitles.length > 0 ? 2 : 1;
 	for (const column of columns) {
 		const width = Math.max(column.subColumns.length, 1);
 		cells.push(renderCell(column.activity, 'activity', `grid-column: ${nextColumn} / span ${width}; grid-row: 1;`));
@@ -194,9 +192,9 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 		});
 		nextColumn += width;
 	}
-	// Each label sits on the first row of its band. Levels that do not exist get no label
-	const rowLabels = levelTitles.length > 0 ? levelTitles : defaultLevelTitles;
-	rowLabels.forEach((label, level) => {
+	// Each label sits on the first row of its band. Levels that do not exist get no label.
+	// Without an ordered list there are no labels at all (ADR 004)
+	levelTitles.forEach((label, level) => {
 		const row = firstRowByLevel[level];
 		if (row !== undefined) {
 			cells.unshift(`<div class="row-label" style="grid-column: 1; grid-row: ${row};">${label}</div>`);
