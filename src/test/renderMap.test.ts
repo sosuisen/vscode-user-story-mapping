@@ -773,4 +773,61 @@ suite('renderMap', () => {
 	test('mapTitle returns the first heading of the document, not the Story Map heading', () => {
 		assert.strictEqual(mapTitle('# Design Notes\n\n## Story Map\n\n- Activity A'), 'Design Notes');
 	});
+
+	// 「//」で始まるアイテムはメモであり、カードにならない
+	test('does not render an item starting with // as a card', () => {
+		const html = renderMap('- Activity A\n\t- Task A1\n\t- // Why this task matters');
+
+		assert.ok(!html.includes('Why this task matters'));
+		assert.ok(html.includes('<div class="card level2" style="grid-column: 1; grid-row: 2;">Task A1</div>'));
+	});
+
+	// 「//」で始まるアイテムの子孫もメモの一部であり、カードにならない
+	test('does not render the descendants of a // item as cards', () => {
+		const html = renderMap('- Activity A\n\t- // Background\n\t\t- A detail of the background\n\t\t\t- A deeper detail');
+
+		assert.ok(!html.includes('A detail of the background'));
+		assert.ok(!html.includes('A deeper detail'));
+	});
+
+	// メモは内部カラムに影響しない。メモの次の兄弟は、メモがないときと同じカラムに置かれる
+	test('does not give a // item an inner column of its own', () => {
+		const html = renderMap('- Activity A\n\t- Task A1\n\t- // memo\n\t- Task A2');
+
+		assert.ok(html.includes('<div class="card level2" style="grid-column: 1; grid-row: 2;">Task A1</div>'));
+		assert.ok(html.includes('<div class="card level2" style="grid-column: 2; grid-row: 2;">Task A2</div>'));
+	});
+
+	// メモは行数に影響しない。「+」の下にあるメモは、レベルの行を増やさない
+	test('does not add a row for a // item under an item with a trailing plus', () => {
+		const html = renderMap('- Activity A\n\t- Task A1 +\n\t\t- // memo\n\t- Task A2\n\t\t- Task A3');
+
+		// Task A1 のレベル（2行目）は1行のままなので、Task A3 は3行目に置かれる
+		assert.ok(html.includes('<div class="card level3" style="grid-column: 2; grid-row: 3;">Task A3</div>'));
+		assert.ok(html.includes('<div class="row-band level2" style="grid-column: 1 / 3; grid-row: 2;"></div>'));
+	});
+
+	// 「//」の直後に空白がなくてもメモとして無視される
+	test('treats //memo without a space after the slashes as a memo too', () => {
+		const html = renderMap('- Activity A\n\t- //memo\n\t- Task A1');
+
+		assert.ok(!html.includes('memo'));
+		assert.ok(html.includes('<div class="card level2" style="grid-column: 1; grid-row: 2;">Task A1</div>'));
+	});
+
+	// トップレベルの「//」アイテムは子ごと無視され、カラムを作らない。次のアクティビティは1列目に置かれる
+	test('ignores a top-level // item with its children and makes no column for it', () => {
+		const html = renderMap('- // Ideas\n\t- An idea\n- Activity A');
+
+		assert.ok(!html.includes('Ideas'));
+		assert.ok(!html.includes('An idea'));
+		assert.ok(html.includes('<div class="card level1" style="grid-column: 1; grid-row: 1;">Activity A</div>'));
+	});
+
+	// 「//」で始まるパラグラフは対象外で、補足としてそのまま表示される
+	test('still shows a paragraph starting with // as a note', () => {
+		const html = renderMap('// Not a memo\n\n- Activity A');
+
+		assert.ok(html.includes('<p class="map-note">// Not a memo</p>'));
+	});
 });

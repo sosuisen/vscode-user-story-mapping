@@ -22,6 +22,13 @@ function isTodo(text: string): boolean {
 	return /^\[ \] /.test(text);
 }
 
+// An item starting with "//" is a memo about the map. It is not shown on the map
+const memoPrefix = '//';
+
+function isMemo(content: string): boolean {
+	return content.startsWith(memoPrefix);
+}
+
 // Marker for a blank level: an item whose whole text is "_"
 const blankMarker = '_';
 
@@ -111,6 +118,9 @@ function storyMapTokens(tokens: MarkdownIt.Token[]): MarkdownIt.Token[] {
 	return tokens.slice(start, nextHeadingIndex === -1 ? undefined : nextHeadingIndex);
 }
 
+// The latest item at an indent depth: a memo (hidden with its children), or a placed item with its level and row
+type IndentItem = { isMemo: true } | { isMemo?: false; level: number; rowInLevel: number; stacksChildren?: boolean };
+
 export type RenderMapOptions = { zoom?: number };
 
 export function renderMap(outline: string, options: RenderMapOptions = {}): string {
@@ -134,7 +144,7 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 	const rowsByLevel: number[] = [1, 1, 1];
 	// The latest item at each indent depth. Used to decide the level and the rowInLevel of a child
 	// A child of an item with a trailing "+" stays on the same level as the parent, one row further down inside the band
-	const itemByIndentDepth: { level: number; rowInLevel: number; stacksChildren?: boolean }[] = [];
+	const itemByIndentDepth: IndentItem[] = [];
 	for (let i = 0; i < tokens.length; i++) {
 		const token = tokens[i];
 		if (token === undefined) {
@@ -157,6 +167,11 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 		} else if (token.type === 'inline' && openLists > 0) {
 			const indentDepth = openLists - 1;
 			const parent = itemByIndentDepth[indentDepth - 1];
+			// A memo item makes no card and does not change the layout. Its children are memos too
+			if (isMemo(token.content) || parent?.isMemo === true) {
+				itemByIndentDepth[indentDepth] = { isMemo: true };
+				continue;
+			}
 			// A child goes one level below its parent. If the parent has a trailing "+",
 			// the child stays on the parent level instead, one row further down inside the band
 			let level = 0;
