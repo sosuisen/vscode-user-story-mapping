@@ -61,6 +61,15 @@ export function mapTitle(outline: string): string {
 	return headingIndex === -1 ? '' : (tokens[headingIndex + 1]?.content ?? '');
 }
 
+// The CSS rules that give each level its colors. The band is painted in the base color of the level.
+// The card background is the base color with a lower lightness, and the card border is darker still
+const levelColorRules = [1, 2, 3, 4]
+	.flatMap(level => [
+		`.card.level${level} { background: hsl(from var(--level${level}-color) h s calc(l * var(--card-shade))); border-color: hsl(from var(--level${level}-color) h s calc(l * var(--border-shade))); }`,
+		`.row-band.level${level} { background: var(--level${level}-color); border-color: hsl(from var(--level${level}-color) h s calc(l * var(--card-shade))); }`,
+	])
+	.join('\n');
+
 // Render one grid cell as a card
 function renderCell(card: Card, kind: string, position: string): string {
 	const classes = kind + (card.done ? ' done' : '') + (card.todo ? ' todo' : '');
@@ -68,23 +77,20 @@ function renderCell(card: Card, kind: string, position: string): string {
 	return `<div class="${classes}" style="${position}">${card.text}${tags}</div>`;
 }
 
-// The card class for a level: level 0 is the activity band, level 1 is the skeleton band, the rest are task bands
-function kindOf(level: number): string {
-	if (level === 0) {
-		return 'activity';
-	}
-	return level === 1 ? 'task skeleton' : 'task';
+// Levels have no names. They are numbered from 1 at the top, and level 4 and below all count as level 4
+function levelNumberOf(level: number): number {
+	return Math.min(level + 1, 4);
 }
 
-// The band class for a level. Every second task level is a bit lighter
+// The card class for a level
+function kindOf(level: number): string {
+	return `card level${levelNumberOf(level)}`;
+}
+
+// The band class for a level. From level 4 down, every second level is a bit lighter
 function bandClassOf(level: number): string {
-	if (level === 0) {
-		return 'activity-band';
-	}
-	if (level === 1) {
-		return 'skeleton-band';
-	}
-	return (level - 2) % 2 === 1 ? 'tasks-band alt' : 'tasks-band';
+	const base = `level${levelNumberOf(level)}`;
+	return level >= 3 && (level - 3) % 2 === 1 ? `${base} alt` : base;
 }
 
 export type RenderMapOptions = { zoom?: number };
@@ -105,7 +111,7 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 	const columns: { activity: Card; subColumns: Cell[][]; lastIndentDepth: number }[] = [];
 	let openLists = 0;
 	// The number of rows each level needs, which is the largest rowInLevel + 1 over all columns
-	// The activity band (level 0) and the skeleton band (level 1) are always drawn, so they start at one row each
+	// The bands of level 1 and 2 (0-based 0 and 1) are always drawn, so they start at one row each
 	const rowsByLevel: number[] = [1, 1];
 	// The latest item at each indent depth. Used to decide the level and the rowInLevel of a child
 	// A child of an item with a trailing "+" stays on the same level as the parent, one row further down inside the band
@@ -183,7 +189,7 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 	let nextColumn = levelTitles.length > 0 ? 2 : 1;
 	for (const column of columns) {
 		const width = Math.max(column.subColumns.length, 1);
-		cells.push(renderCell(column.activity, 'activity', `grid-column: ${nextColumn}; grid-row: 1;`));
+		cells.push(renderCell(column.activity, kindOf(0), `grid-column: ${nextColumn}; grid-row: 1;`));
 		column.subColumns.forEach((columnCells, columnOffset) => {
 			for (const cell of columnCells) {
 				const row = (firstRowByLevel[cell.level] ?? 1) + cell.rowInLevel;
@@ -210,23 +216,18 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 	}
 	cells.unshift(...bands);
 	return `<style>
-:root { --activity-color: #e0ffee; --skeleton-color: #ffe0e9; --tasks-color: #fff3e0; --card-shade: 0.93; --border-shade: 0.6; --alt-shade: 1.04; }
+:root { --level1-color: #e0efff; --level2-color: #e0ffee; --level3-color: #ffe0e9; --level4-color: #fff3e0; --card-shade: 0.93; --border-shade: 0.6; --alt-shade: 1.04; }
 body { background: white; color: black; }
 .map-zoom { width: fit-content; display: flow-root; padding: 16px; }
 .map-grid { display: grid; gap: 0; justify-content: start; align-items: start; }
-.activity, .task { border: 2px solid; padding: 4px 8px; margin: 8px; border-radius: 6px; min-width: 120px; box-sizing: border-box; }
+.card { border: 2px solid; padding: 4px 8px; margin: 8px; border-radius: 6px; min-width: 120px; box-sizing: border-box; }
 .todo { box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); }
-.activity { background: hsl(from var(--activity-color) h s calc(l * var(--card-shade))); border-color: hsl(from var(--activity-color) h s calc(l * var(--border-shade))); }
-.task { background: hsl(from var(--tasks-color) h s calc(l * var(--card-shade))); border-color: hsl(from var(--tasks-color) h s calc(l * var(--border-shade))); }
-.task.skeleton { background: hsl(from var(--skeleton-color) h s calc(l * var(--card-shade))); border-color: hsl(from var(--skeleton-color) h s calc(l * var(--border-shade))); }
+${levelColorRules}
 .done { border: none; box-shadow: none; }
 .tag { background: white; border-radius: 8px; padding: 0 6px; margin-left: 4px; font-size: 0.8em; white-space: nowrap; }
 .row-label { padding: 4px 8px; margin: 8px; color: #888; white-space: nowrap; }
 .row-band { align-self: stretch; justify-self: stretch; border-bottom: 2px dashed; }
-.activity-band { background: var(--activity-color); border-color: hsl(from var(--activity-color) h s calc(l * var(--card-shade))); }
-.skeleton-band { background: var(--skeleton-color); border-color: hsl(from var(--skeleton-color) h s calc(l * var(--card-shade))); }
-.tasks-band { background: var(--tasks-color); border-color: hsl(from var(--tasks-color) h s calc(l * var(--card-shade))); }
-.tasks-band.alt { background: hsl(from var(--tasks-color) h s calc(l * var(--alt-shade))); }
+.row-band.level4.alt { background: hsl(from var(--level4-color) h s calc(l * var(--alt-shade))); }
 .zoom-controls { position: fixed; left: 16px; bottom: 16px; display: flex; align-items: center; gap: 8px; }
 .zoom-controls button, .save-png { height: 32px; border: 2px solid #888; background: white; color: black; cursor: pointer; }
 .zoom-controls button { width: 32px; border-radius: 50%; font-size: 16px; }
