@@ -523,7 +523,7 @@ suite('renderMap', () => {
 		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 2;">Second</div>'));
 	});
 
-	// 存在しないレベルのタイトルは描画されない。Ordered listがレベル数より長くても、余りは表示されない
+	// 存在しないレベルのタイトルは描画されない。level 1〜3の帯は常にあるので3つ目までは表示され、Ordered listがそれより長くても余りは表示されない
 	test('does not render titles for levels that do not exist', () => {
 		const outline = '1. First\n2. Second\n3. Third\n4. Fourth\n\n- Activity A\n\t- Task A1';
 
@@ -531,7 +531,8 @@ suite('renderMap', () => {
 
 		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 1;">First</div>'));
 		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 2;">Second</div>'));
-		assert.strictEqual((html.match(/class="row-label"/g) ?? []).length, 2);
+		assert.ok(html.includes('<div class="row-label" style="grid-column: 1; grid-row: 3;">Third</div>'));
+		assert.strictEqual((html.match(/class="row-label"/g) ?? []).length, 3);
 	});
 
 	// Ordered listがあるとき、レベルのタイトルは一番左のカラムに表示され、カードは2列目から始まる
@@ -566,6 +567,16 @@ suite('renderMap', () => {
 		assert.ok(html.includes('<div class="card level2" style="grid-column: 1; grid-row: 2;">Task A1</div>'));
 	});
 
+
+	// level 1〜3の帯は、そのlevelにカードがなくても常に描画される。アクティビティだけのアウトラインでも帯は3本ある
+	test('always draws the bands of level 1 to 3 even when they have no cards', () => {
+		const html = renderMap('- Activity A');
+
+		assert.ok(html.includes('<div class="row-band level1" style="grid-column: 1 / 2; grid-row: 1;"></div>'));
+		assert.ok(html.includes('<div class="row-band level2" style="grid-column: 1 / 2; grid-row: 2;"></div>'));
+		assert.ok(html.includes('<div class="row-band level3" style="grid-column: 1 / 2; grid-row: 3;"></div>'));
+		assert.ok(!html.includes('row-band level4'));
+	});
 
 	// 色のルール（全level共通）: levelごとに基本色の変数があり、帯は基本色で塗られ、
 	// カード背景は基本色の明度だけ下げた濃い色（色相・彩度は保持）、枠色はさらに明度を下げた色として導出される

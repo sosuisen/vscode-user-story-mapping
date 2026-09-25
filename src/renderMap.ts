@@ -111,8 +111,8 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 	const columns: { activity: Card; subColumns: Cell[][]; lastIndentDepth: number }[] = [];
 	let openLists = 0;
 	// The number of rows each level needs, which is the largest rowInLevel + 1 over all columns
-	// The bands of level 1 and 2 (0-based 0 and 1) are always drawn, so they start at one row each
-	const rowsByLevel: number[] = [1, 1];
+	// The bands of level 1 to 3 (0-based 0 to 2) are always drawn, so they start at one row each
+	const rowsByLevel: number[] = [1, 1, 1];
 	// The latest item at each indent depth. Used to decide the level and the rowInLevel of a child
 	// A child of an item with a trailing "+" stays on the same level as the parent, one row further down inside the band
 	const itemByIndentDepth: { level: number; rowInLevel: number; stacksChildren?: boolean }[] = [];
