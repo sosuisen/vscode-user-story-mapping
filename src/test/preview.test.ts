@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { openPreview } from '../preview';
+import { md } from './md';
 
 // パネルとの配線
 suite('openPreview', () => {
@@ -37,7 +38,10 @@ suite('openPreview', () => {
 	// ドキュメントを渡すと、renderMapの結果がWebviewのHTMLに反映される
 	test('sets the rendered map as the webview html', async () => {
 		const document = await vscode.workspace.openTextDocument({
-			content: '- Activity A\n- Activity B',
+			content: md`
+				- Activity A
+				- Activity B
+			`,
 		});
 		const panel = openPreview(document, getExtensionUri());
 

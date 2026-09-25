@@ -1,11 +1,16 @@
 import * as assert from 'assert';
 import { mapTitle, renderMap } from '../renderMap';
+import { md } from './md';
 
 // マップの描画
 suite('renderMap', () => {
 	// アクティビティが、アウトラインの順でグリッドの1行目に横一列に並ぶ
 	test('renders activities in outline order on the first grid row', () => {
-		const outline = '- Activity A\n- Activity B\n- Activity C';
+		const outline = md`
+			- Activity A
+			- Activity B
+			- Activity C
+		`;
 
 		const html = renderMap(outline);
 
@@ -25,15 +30,23 @@ suite('renderMap', () => {
 
 	// マップ全体がグリッドとして配置される
 	test('lays out the map as a grid', () => {
-		const html = renderMap('- Activity A\n- Activity B');
+		const html = renderMap(md`
+			- Activity A
+			- Activity B
+		`);
 
 		assert.ok(/\.map-grid\s*\{[^}]*display:\s*grid/.test(html));
 	});
 
 	// 各アクティビティの下に、そのタスクがアウトラインの順で縦に並ぶ
 	test('renders tasks under their activity in outline order', () => {
-		const outline =
-			'- Activity A\n\t- Task A1\n\t\t- Task A2\n- Activity B\n\t- Task B1';
+		const outline = md`
+			- Activity A
+				- Task A1
+					- Task A2
+			- Activity B
+				- Task B1
+		`;
 
 		const html = renderMap(outline);
 
@@ -78,7 +91,11 @@ suite('renderMap', () => {
 
 	// [ ] と [x] は、チェックボックス絵文字として表示される
 	test('renders checkbox markers as emoji', () => {
-		const outline = '- Activity A\n\t- [x] Task A1\n\t\t- [ ] Task A2';
+		const outline = md`
+			- Activity A
+				- [x] Task A1
+					- [ ] Task A2
+		`;
 
 		const html = renderMap(outline);
 
@@ -95,7 +112,10 @@ suite('renderMap', () => {
 
 	// 大文字の [X] も完了として絵文字になる
 	test('renders an uppercase checkbox marker as emoji too', () => {
-		const html = renderMap('- Activity A\n\t- [X] Task A1');
+		const html = renderMap(md`
+			- Activity A
+				- [X] Task A1
+		`);
 
 		assert.ok(
 			/<div class="card level2 done"[^>]*>✅ Task A1<\/div>/.test(html),
@@ -104,7 +124,11 @@ suite('renderMap', () => {
 
 	// 完了済み（[x]）のカードは枠なし・影なしになる
 	test('removes the border and shadow from completed cards', () => {
-		const outline = '- Activity A\n\t- [x] Task A1\n\t\t- [ ] Task A2';
+		const outline = md`
+			- Activity A
+				- [x] Task A1
+					- [ ] Task A2
+		`;
 
 		const html = renderMap(outline);
 
@@ -122,7 +146,11 @@ suite('renderMap', () => {
 
 	// 「_」だけのリスト項目は空白レベルとして扱われ、カードにはならない
 	test('treats an underscore-only list item as a blank level without a card', () => {
-		const outline = '- Activity A\n\t- _\n\t\t- Task A2';
+		const outline = md`
+			- Activity A
+				- _
+					- Task A2
+		`;
 
 		const html = renderMap(outline);
 
@@ -154,6 +182,7 @@ suite('renderMap', () => {
 
 	// 内容のない「- 」だけの行は空白レベルにならない。その解釈はCommonMarkに任せる（ADR 003）
 	test('does not treat an empty list item as a blank level', () => {
+		// The trailing space after "-" matters, so this stays an explicit string
 		const outline = '- Activity A\n\t- \n\t\t- Task A2';
 
 		const html = renderMap(outline);
@@ -168,6 +197,7 @@ suite('renderMap', () => {
 
 	// 「_」の前後に半角スペースがあっても、空白レベルとして扱われる
 	test('treats an underscore with surrounding spaces as a blank level', () => {
+		// The spaces around "_" matter, so this stays an explicit string
 		const outline = '- Activity A\n\t-  _  \n\t\t- Task A2';
 
 		const html = renderMap(outline);
@@ -184,7 +214,11 @@ suite('renderMap', () => {
 
 	// テキストに「_」を含むだけのアイテムは、空白レベルではなく通常のカードになる
 	test('renders an item that merely contains an underscore as a normal card', () => {
-		const outline = '- Activity A\n\t- snake_case\n\t\t- Task A2';
+		const outline = md`
+			- Activity A
+				- snake_case
+					- Task A2
+		`;
 
 		const html = renderMap(outline);
 
@@ -197,7 +231,10 @@ suite('renderMap', () => {
 
 	// リスト項目の末尾に複数のハッシュタグを付けられる。タグは本文から切り離され、「#」なしでカードの末尾に並ぶ
 	test('renders trailing hashtags as tags at the end of the card', () => {
-		const outline = '- Activity A\n\t- Task A1 #tag1 #tag2';
+		const outline = md`
+			- Activity A
+				- Task A1 #tag1 #tag2
+		`;
 
 		const html = renderMap(outline);
 
@@ -218,7 +255,11 @@ suite('renderMap', () => {
 
 	// タグの後ろに「+」を付けられる。タグは表示され、子は同じレベルの1つ下の行に置かれる
 	test('accepts a trailing plus after the tags', () => {
-		const outline = '- Activity A\n\t- Task A1 #tag1 +\n\t\t- Task A1b';
+		const outline = md`
+			- Activity A
+				- Task A1 #tag1 +
+					- Task A1b
+		`;
 
 		const html = renderMap(outline);
 
@@ -236,7 +277,11 @@ suite('renderMap', () => {
 
 	// 行末に「+」があるアイテムの子は、次のCSS行に置かれ、親と同じ帯のクラス（level2）を持つ。表示テキストから「+」は消える
 	test('places the child of an item with a trailing plus on the next row in the same band', () => {
-		const outline = '- Activity A\n\t- Task A1 +\n\t\t- Task A1b';
+		const outline = md`
+			- Activity A
+				- Task A1 +
+					- Task A1b
+		`;
 
 		const html = renderMap(outline);
 
@@ -254,8 +299,12 @@ suite('renderMap', () => {
 
 	// 「+」が連鎖すると、CSS行が1つずつ下がりながら同じ帯が続く
 	test('keeps the band while trailing pluses chain down the rows', () => {
-		const outline =
-			'- Activity A\n\t- Task A1 +\n\t\t- Task A1b +\n\t\t\t- Task A1c';
+		const outline = md`
+			- Activity A
+				- Task A1 +
+					- Task A1b +
+						- Task A1c
+		`;
 
 		const html = renderMap(outline);
 
@@ -278,8 +327,13 @@ suite('renderMap', () => {
 
 	// 帯の高さ（CSS行数）は全列でそろう。「+」で2行になったアクティビティ帯に合わせて、「+」のない列のlevel 2も3行目に下がる
 	test('aligns band heights across columns so a plain column moves down too', () => {
-		const outline =
-			'- Activity A +\n\t- Activity A2\n\t\t- Task A1\n- Activity B\n\t- Task B1';
+		const outline = md`
+			- Activity A +
+				- Activity A2
+					- Task A1
+			- Activity B
+				- Task B1
+		`;
 
 		const html = renderMap(outline);
 
@@ -297,7 +351,11 @@ suite('renderMap', () => {
 
 	// 帯（row-band）は、そのlevelの行数分の高さになる。2行になったアクティビティ帯は1〜2行目にまたがり、level 2の帯は3行目になる
 	test('stretches a band over all the rows of its level', () => {
-		const outline = '- Activity A +\n\t- Activity A2\n\t\t- Task A1';
+		const outline = md`
+			- Activity A +
+				- Activity A2
+					- Task A1
+		`;
 
 		const html = renderMap(outline);
 
@@ -315,8 +373,16 @@ suite('renderMap', () => {
 
 	// レベルのタイトルは、各帯の先頭行に置かれる。最初の帯が2行なら、2番目のタイトルは3行目、3番目は4行目
 	test('places each level title on the first row of its band', () => {
-		const outline =
-			'1. First\n2. Second\n3. Third\n\n- Activity A +\n\t- Activity A2\n\t\t- Task A1\n\t\t\t- Task A2';
+		const outline = md`
+			1. First
+			2. Second
+			3. Third
+
+			- Activity A +
+				- Activity A2
+					- Task A1
+						- Task A2
+		`;
 
 		const html = renderMap(outline);
 
@@ -339,8 +405,14 @@ suite('renderMap', () => {
 
 	// level 4以降の帯の明暗は、CSS行ではなくlevelごとに交互になる。2行にまたがるlevel 4の帯は1色で、次のlevel 5がalt
 	test('alternates the bands from level 4 down per level, not per row', () => {
-		const outline =
-			'- Activity A\n\t- Task A1\n\t\t- Task A2\n\t\t\t- Task A3 +\n\t\t\t\t- Task A3b\n\t\t\t\t\t- Task A4';
+		const outline = md`
+			- Activity A
+				- Task A1
+					- Task A2
+						- Task A3 +
+							- Task A3b
+								- Task A4
+		`;
 
 		const html = renderMap(outline);
 
@@ -363,8 +435,12 @@ suite('renderMap', () => {
 
 	// 「+」の子の兄弟は、タスクの兄弟と同じく横（隣の列）に並ぶ。帯は親と同じ
 	test('places siblings under an item with a trailing plus side by side in the same band', () => {
-		const outline =
-			'- Activity A\n\t- Task A1 +\n\t\t- Task A1b\n\t\t- Task A1c';
+		const outline = md`
+			- Activity A
+				- Task A1 +
+					- Task A1b
+					- Task A1c
+		`;
 
 		const html = renderMap(outline);
 
@@ -387,7 +463,11 @@ suite('renderMap', () => {
 
 	// ワード区切りが空白でない言語を考慮して、「+」の直前に空白がなくても、行末の「+」は積む印として扱われる
 	test('treats a trailing plus without a preceding space as the stack mark too', () => {
-		const outline = '- Activity A\n\t- タスクA1+\n\t\t- タスクA1b';
+		const outline = md`
+			- Activity A
+				- タスクA1+
+					- タスクA1b
+		`;
 
 		const html = renderMap(outline);
 
@@ -405,7 +485,11 @@ suite('renderMap', () => {
 
 	// アクティビティの「+」の子は、2行目に列ごとに並び、activityクラスを持つ。列いっぱいに伸びるのは1行目だけ
 	test('places the children of an activity with a trailing plus on the second row as activities', () => {
-		const outline = '- Activity A +\n\t- Activity A1\n\t- Activity A2';
+		const outline = md`
+			- Activity A +
+				- Activity A1
+				- Activity A2
+		`;
 
 		const html = renderMap(outline);
 
@@ -428,7 +512,11 @@ suite('renderMap', () => {
 
 	// アクティビティの「+」の子の子は、次の帯（Walking Skeleton）に置かれる
 	test('places the grandchild of an activity with a trailing plus in the level 2 band', () => {
-		const outline = '- Activity A +\n\t- Activity A2\n\t\t- Task A1';
+		const outline = md`
+			- Activity A +
+				- Activity A2
+					- Task A1
+		`;
 
 		const html = renderMap(outline);
 
@@ -441,8 +529,12 @@ suite('renderMap', () => {
 
 	// 「+」のない子は、次のlevel（帯）に置かれる
 	test('places the child of an item without a trailing plus in the next band', () => {
-		const outline =
-			'- Activity A\n\t- Task A1 +\n\t\t- Task A1b\n\t\t\t- Task A1c';
+		const outline = md`
+			- Activity A
+				- Task A1 +
+					- Task A1b
+						- Task A1c
+		`;
 
 		const html = renderMap(outline);
 
@@ -461,7 +553,10 @@ suite('renderMap', () => {
 
 	// アイテム行内のインライン記法（強調など）がカードに反映される
 	test('renders inline markdown such as emphasis inside a card', () => {
-		const html = renderMap('- Activity A\n\t- **Task 1**');
+		const html = renderMap(md`
+			- Activity A
+				- **Task 1**
+		`);
 
 		assert.ok(
 			/<div class="card level2"[^>]*><strong>Task 1<\/strong><\/div>/.test(
@@ -484,7 +579,10 @@ suite('renderMap', () => {
 	// 行内の生のHTMLタグは解釈されず、文字としてエスケープ表示される
 	// （注: markdown-it の既定（html: false）で既に通るため、仕様の記録としてRedを経ずに置いたもの）
 	test('escapes raw html tags in an item instead of rendering them', () => {
-		const html = renderMap('- Activity A\n\t- <b>Task 1</b>');
+		const html = renderMap(md`
+			- Activity A
+				- <b>Task 1</b>
+		`);
 
 		assert.ok(
 			/<div class="card level2"[^>]*>&lt;b&gt;Task 1&lt;\/b&gt;<\/div>/.test(
@@ -569,7 +667,10 @@ suite('renderMap', () => {
 
 	// マークダウンで最初に現れた見出しが、マップ冒頭にタイトルとして表示される
 	test('renders the first heading as the map title at the top', () => {
-		const outline = '# Map Title\n- Activity A';
+		const outline = md`
+			# Map Title
+			- Activity A
+		`;
 
 		const html = renderMap(outline);
 
@@ -581,8 +682,13 @@ suite('renderMap', () => {
 
 	// アウトラインより上のパラグラフは、タイトルの下・グリッドの上に段落（map-note）として表示される
 	test('renders a paragraph above the outline as a note between the title and the grid', () => {
-		const outline =
-			'# Map Title\n\nThis map covers the first release.\n\n- Activity A';
+		const outline = md`
+			# Map Title
+
+			This map covers the first release.
+
+			- Activity A
+		`;
 
 		const html = renderMap(outline);
 
@@ -598,8 +704,15 @@ suite('renderMap', () => {
 
 	// パラグラフが複数あれば、アウトラインの順に段落が並ぶ
 	test('renders several paragraphs above the outline as notes in order', () => {
-		const outline =
-			'# Map Title\n\nFirst note.\n\nSecond note.\n\n- Activity A';
+		const outline = md`
+			# Map Title
+
+			First note.
+
+			Second note.
+
+			- Activity A
+		`;
 
 		const html = renderMap(outline);
 
@@ -613,7 +726,13 @@ suite('renderMap', () => {
 	// 段落の中のインライン記法（強調など）が反映される
 	test('renders inline markdown inside a note', () => {
 		const html = renderMap(
-			'# Map Title\n\nRead **this** first.\n\n- Activity A',
+			md`
+			# Map Title
+
+			Read **this** first.
+
+			- Activity A
+		`,
 		);
 
 		assert.ok(
@@ -625,7 +744,11 @@ suite('renderMap', () => {
 
 	// 見出しがなくても、アウトラインより上のパラグラフは段落として表示される
 	test('renders a note above the outline even when there is no heading', () => {
-		const html = renderMap('A note without a heading.\n\n- Activity A');
+		const html = renderMap(md`
+			A note without a heading.
+
+			- Activity A
+		`);
 
 		assert.ok(
 			html.includes('<p class="map-note">A note without a heading.</p>'),
@@ -635,7 +758,13 @@ suite('renderMap', () => {
 	// アウトラインより下のパラグラフは、補足事項の段落にはならない
 	test('does not render a paragraph below the outline as a note', () => {
 		const html = renderMap(
-			'# Map Title\n\n- Activity A\n\nA paragraph below the outline.',
+			md`
+			# Map Title
+
+			- Activity A
+
+			A paragraph below the outline.
+		`,
 		);
 
 		assert.ok(
@@ -652,14 +781,21 @@ suite('renderMap', () => {
 
 	// ## の見出しでも、最初に現れたものがタイトルになる
 	test('renders a level-2 heading as the map title too', () => {
-		const html = renderMap('## Map Title\n- Activity A');
+		const html = renderMap(md`
+			## Map Title
+			- Activity A
+		`);
 
 		assert.ok(html.includes('<h1 class="map-title">Map Title</h1>'));
 	});
 
 	// 内部カラムが複数あっても、アクティビティのカードは最初の内部カラムだけを占め、タスクのカードと同じ幅になる
 	test('keeps the activity card in the first inner column instead of spanning all of them', () => {
-		const outline = '- Activity A\n\t- Task A1\n\t- Task A2';
+		const outline = md`
+			- Activity A
+				- Task A1
+				- Task A2
+		`;
 
 		const html = renderMap(outline);
 
@@ -672,7 +808,11 @@ suite('renderMap', () => {
 
 	// 同じアクティビティ内で同じレベルのタスクは、右どなりのグリッド列に分かれて並ぶ
 	test('puts same-level tasks into adjacent grid columns', () => {
-		const outline = '- Activity A\n\t- Task A1\n\t- Task A2';
+		const outline = md`
+			- Activity A
+				- Task A1
+				- Task A2
+		`;
 
 		const html = renderMap(outline);
 
@@ -691,7 +831,12 @@ suite('renderMap', () => {
 
 	// Ordered listがないとき、レベルのタイトルは1つも描画されない（ADR 004）
 	test('renders no level titles when there is no ordered list', () => {
-		const outline = '- Activity A\n\t- Task A1\n\t\t- Task A2\n\t\t\t- Task A3';
+		const outline = md`
+			- Activity A
+				- Task A1
+					- Task A2
+						- Task A3
+		`;
 
 		const html = renderMap(outline);
 
@@ -700,7 +845,11 @@ suite('renderMap', () => {
 
 	// Ordered listがないとき、レベルのタイトルの列は作られず、カードは1列目から始まる（ADR 004）
 	test('starts the cards at the first column when there is no ordered list', () => {
-		const outline = '- Activity A\n\t- Task A1\n- Activity B';
+		const outline = md`
+			- Activity A
+				- Task A1
+			- Activity B
+		`;
 
 		const html = renderMap(outline);
 
@@ -723,7 +872,11 @@ suite('renderMap', () => {
 
 	// Ordered listがないとき、帯も1列目から始まり、カードの列数ぶんの幅になる（ADR 004）
 	test('starts the bands at the first column and spans only the card columns when there is no ordered list', () => {
-		const outline = '- Activity A\n\t- Task A1\n- Activity B';
+		const outline = md`
+			- Activity A
+				- Task A1
+			- Activity B
+		`;
 
 		const html = renderMap(outline);
 
@@ -741,8 +894,17 @@ suite('renderMap', () => {
 
 	// Ordered listがあれば、その項目が上のレベルから順にレベルのタイトルになる。番号は表示されない。Ordered listは補足事項にはならない
 	test('uses the items of an ordered list as the level titles', () => {
-		const outline =
-			'1. First\n2. Second\n3. Third\n4. Fourth\n\n- Activity A\n\t- Task A1\n\t\t- Task A2\n\t\t\t- Task A3';
+		const outline = md`
+			1. First
+			2. Second
+			3. Third
+			4. Fourth
+
+			- Activity A
+				- Task A1
+					- Task A2
+						- Task A3
+		`;
 
 		const html = renderMap(outline);
 
@@ -771,8 +933,14 @@ suite('renderMap', () => {
 
 	// Ordered listの項目数より深いレベルには、タイトルがない。タイトルの列は残り、カードは2列目から始まる
 	test('leaves levels beyond the ordered list without a title but keeps the title column', () => {
-		const outline =
-			'1. First\n2. Second\n\n- Activity A\n\t- Task A1\n\t\t- Task A2';
+		const outline = md`
+			1. First
+			2. Second
+
+			- Activity A
+				- Task A1
+					- Task A2
+		`;
 
 		const html = renderMap(outline);
 
@@ -791,7 +959,13 @@ suite('renderMap', () => {
 
 	// Ordered listはアウトラインより下に置いてもレベルのタイトルになる
 	test('uses an ordered list below the outline as the level titles', () => {
-		const outline = '- Activity A\n\t- Task A1\n\n1. First\n2. Second';
+		const outline = md`
+			- Activity A
+				- Task A1
+
+			1. First
+			2. Second
+		`;
 
 		const html = renderMap(outline);
 
@@ -809,8 +983,15 @@ suite('renderMap', () => {
 
 	// 存在しないレベルのタイトルは描画されない。level 1〜3の帯は常にあるので3つ目までは表示され、Ordered listがそれより長くても余りは表示されない
 	test('does not render titles for levels that do not exist', () => {
-		const outline =
-			'1. First\n2. Second\n3. Third\n4. Fourth\n\n- Activity A\n\t- Task A1';
+		const outline = md`
+			1. First
+			2. Second
+			3. Third
+			4. Fourth
+
+			- Activity A
+				- Task A1
+		`;
 
 		const html = renderMap(outline);
 
@@ -834,8 +1015,16 @@ suite('renderMap', () => {
 
 	// Ordered listがあるとき、レベルのタイトルは一番左のカラムに表示され、カードは2列目から始まる
 	test('renders level titles in the leftmost column and starts the cards at the second column', () => {
-		const outline =
-			'1. First\n2. Second\n3. Third\n\n- Activity A\n\t- Task A1\n\t\t- Task A2\n\t\t\t- Task A3';
+		const outline = md`
+			1. First
+			2. Second
+			3. Third
+
+			- Activity A
+				- Task A1
+					- Task A2
+						- Task A3
+		`;
 
 		const html = renderMap(outline);
 
@@ -864,7 +1053,11 @@ suite('renderMap', () => {
 
 	// Walking Skeletonの行（レベル1）のタスクカードだけがskeletonクラスを持つ
 	test('marks only level-1 task cards as skeleton', () => {
-		const outline = '- Activity A\n\t- Task A1\n\t\t- Task A2';
+		const outline = md`
+			- Activity A
+				- Task A1
+					- Task A2
+		`;
 
 		const html = renderMap(outline);
 
@@ -874,7 +1067,10 @@ suite('renderMap', () => {
 
 	// レベルに名前はなく番号で扱う。level 2のカードは2行目に置かれ、クラスはcard level2である
 	test('places a level 2 card on the second row with the level2 class', () => {
-		const html = renderMap('- Activity A\n\t- Task A1');
+		const html = renderMap(md`
+			- Activity A
+				- Task A1
+		`);
 
 		assert.ok(
 			html.includes(
@@ -908,7 +1104,12 @@ suite('renderMap', () => {
 	// 色のルール（全level共通）: levelごとに基本色の変数があり、帯は基本色で塗られ、
 	// カード背景は基本色の明度だけ下げた濃い色（色相・彩度は保持）、枠色はさらに明度を下げた色として導出される
 	test('derives band, card, and border colors from each level base color', () => {
-		const outline = '- Activity A\n\t- Task A1\n\t\t- Task A2\n\t\t\t- Task A3';
+		const outline = md`
+			- Activity A
+				- Task A1
+					- Task A2
+						- Task A3
+		`;
 
 		const html = renderMap(outline);
 
@@ -967,8 +1168,14 @@ suite('renderMap', () => {
 
 	// level 4以降の帯は、levelごとに基本色と少し明るい色が交互になる。level 3までは交互にならない
 	test('alternates the bands from level 4 down between the base color and a lighter shade', () => {
-		const outline =
-			'- Activity A\n\t- Task A1\n\t\t- Task A2\n\t\t\t- Task A3\n\t\t\t\t- Task A4\n\t\t\t\t\t- Task A5';
+		const outline = md`
+			- Activity A
+				- Task A1
+					- Task A2
+						- Task A3
+							- Task A4
+								- Task A5
+		`;
 
 		const html = renderMap(outline);
 
@@ -1003,7 +1210,10 @@ suite('renderMap', () => {
 
 	// 各行の帯の下端には、その行のカード背景色と同じ色のdashed区切り線が入る
 	test('draws a dashed separator at the bottom of each row band', () => {
-		const html = renderMap('- Activity A\n\t- Task A1');
+		const html = renderMap(md`
+			- Activity A
+				- Task A1
+		`);
 
 		// 帯共通でdashedの下線がある
 		assert.ok(/\.row-band\s*\{[^}]*border-bottom:\s*2px dashed/.test(html));
@@ -1025,7 +1235,11 @@ suite('renderMap', () => {
 
 	// [ ] のあるカードには影があり、チェックボックスのないカードには影がない
 	test('casts a shadow only on cards with an open checkbox', () => {
-		const outline = '- Activity A\n\t- [ ] Task A1\n\t\t- Task A2';
+		const outline = md`
+			- Activity A
+				- [ ] Task A1
+					- Task A2
+		`;
 
 		const html = renderMap(outline);
 
@@ -1048,8 +1262,13 @@ suite('renderMap', () => {
 
 	// 同じレベルのタスクは、どのカラムにあっても同じグリッド行に置かれる
 	test('places tasks of the same level on the same grid row', () => {
-		const outline =
-			'- Activity A\n\t- Task A1\n- Activity B\n\t- Task B1\n\t\t- Task B2';
+		const outline = md`
+			- Activity A
+				- Task A1
+			- Activity B
+				- Task B1
+					- Task B2
+		`;
 
 		const html = renderMap(outline);
 
@@ -1092,8 +1311,16 @@ suite('renderMap', () => {
 
 	// 「Story Map」の見出しがあるとき、その見出しより前にあるリストの項目はカードにならない
 	test('ignores list items before the Story Map heading', () => {
-		const outline =
-			'# Design Notes\n\n- Not a card\n\n## Story Map\n\n- Activity A\n\t- Task A1';
+		const outline = md`
+			# Design Notes
+
+			- Not a card
+
+			## Story Map
+
+			- Activity A
+				- Task A1
+		`;
 
 		const html = renderMap(outline);
 
@@ -1107,7 +1334,13 @@ suite('renderMap', () => {
 
 	// 「Story Map」の見出しがあっても、マップのタイトルは文書の最初の見出しのまま
 	test('keeps the first heading of the document as the map title above the Story Map heading', () => {
-		const outline = '# Design Notes\n\n## Story Map\n\n- Activity A';
+		const outline = md`
+			# Design Notes
+
+			## Story Map
+
+			- Activity A
+		`;
 
 		const html = renderMap(outline);
 
@@ -1117,8 +1350,17 @@ suite('renderMap', () => {
 
 	// 補足のパラグラフは、「Story Map」の見出しより後で最初のリストより前のものだけが表示される。見出しより前のパラグラフは表示されない
 	test('shows only the paragraphs between the Story Map heading and the first list as notes', () => {
-		const outline =
-			'# Design Notes\n\nBefore the map.\n\n## Story Map\n\nAbout the map.\n\n- Activity A';
+		const outline = md`
+			# Design Notes
+
+			Before the map.
+
+			## Story Map
+
+			About the map.
+
+			- Activity A
+		`;
 
 		const html = renderMap(outline);
 
@@ -1128,8 +1370,17 @@ suite('renderMap', () => {
 
 	// レベル名の順序付きリストは、「Story Map」の見出しより後のものだけを使う。見出しより前の順序付きリストは無視される
 	test('takes the level titles only from an ordered list after the Story Map heading', () => {
-		const outline =
-			'# Design Notes\n\n1. Not a title\n\n## Story Map\n\n1. First\n\n- Activity A';
+		const outline = md`
+			# Design Notes
+
+			1. Not a title
+
+			## Story Map
+
+			1. First
+
+			- Activity A
+		`;
 
 		const html = renderMap(outline);
 
@@ -1143,8 +1394,15 @@ suite('renderMap', () => {
 
 	// ストーリーマップの範囲は次の見出しまで。その見出しより後にあるリストの項目はカードにならない
 	test('ends the story map at the next heading and ignores list items after it', () => {
-		const outline =
-			'## Story Map\n\n- Activity A\n\n## Appendix\n\n- Not a card';
+		const outline = md`
+			## Story Map
+
+			- Activity A
+
+			## Appendix
+
+			- Not a card
+		`;
 
 		const html = renderMap(outline);
 
@@ -1164,7 +1422,13 @@ suite('renderMap', () => {
 			' Story Map ',
 			'Story   Map',
 		]) {
-			const html = renderMap(`- Not a card\n\n## ${heading}\n\n- Activity A`);
+			const html = renderMap(md`
+				- Not a card
+
+				## ${heading}
+
+				- Activity A
+			`);
 
 			assert.ok(
 				!/<div class="card[^"]*"[^>]*>Not a card<\/div>/.test(html),
@@ -1181,7 +1445,13 @@ suite('renderMap', () => {
 
 	// 「My Story Map」のように前後に語がある見出しは一致せず、文書全体がストーリーマップとして扱われる
 	test('does not treat a heading with extra words such as My Story Map as the Story Map heading', () => {
-		const html = renderMap('- Activity A\n\n## My Story Map\n\n- Activity B');
+		const html = renderMap(md`
+			- Activity A
+
+			## My Story Map
+
+			- Activity B
+		`);
 
 		assert.ok(
 			html.includes(
@@ -1198,7 +1468,13 @@ suite('renderMap', () => {
 	// PNGのファイル名に使うmapTitleも、「Story Map」の見出しではなく文書の最初の見出しを返す
 	test('mapTitle returns the first heading of the document, not the Story Map heading', () => {
 		assert.strictEqual(
-			mapTitle('# Design Notes\n\n## Story Map\n\n- Activity A'),
+			mapTitle(md`
+				# Design Notes
+
+				## Story Map
+
+				- Activity A
+			`),
 			'Design Notes',
 		);
 	});
@@ -1206,7 +1482,11 @@ suite('renderMap', () => {
 	// 「//」で始まるアイテムはメモであり、カードにならない
 	test('does not render an item starting with // as a card', () => {
 		const html = renderMap(
-			'- Activity A\n\t- Task A1\n\t- // Why this task matters',
+			md`
+			- Activity A
+				- Task A1
+				- // Why this task matters
+		`,
 		);
 
 		assert.ok(!html.includes('Why this task matters'));
@@ -1220,7 +1500,12 @@ suite('renderMap', () => {
 	// 「//」で始まるアイテムの子孫もメモの一部であり、カードにならない
 	test('does not render the descendants of a // item as cards', () => {
 		const html = renderMap(
-			'- Activity A\n\t- // Background\n\t\t- A detail of the background\n\t\t\t- A deeper detail',
+			md`
+			- Activity A
+				- // Background
+					- A detail of the background
+						- A deeper detail
+		`,
 		);
 
 		assert.ok(!html.includes('A detail of the background'));
@@ -1230,7 +1515,12 @@ suite('renderMap', () => {
 	// メモは内部カラムに影響しない。メモの次の兄弟は、メモがないときと同じカラムに置かれる
 	test('does not give a // item an inner column of its own', () => {
 		const html = renderMap(
-			'- Activity A\n\t- Task A1\n\t- // memo\n\t- Task A2',
+			md`
+			- Activity A
+				- Task A1
+				- // memo
+				- Task A2
+		`,
 		);
 
 		assert.ok(
@@ -1248,7 +1538,13 @@ suite('renderMap', () => {
 	// メモは行数に影響しない。「+」の下にあるメモは、レベルの行を増やさない
 	test('does not add a row for a // item under an item with a trailing plus', () => {
 		const html = renderMap(
-			'- Activity A\n\t- Task A1 +\n\t\t- // memo\n\t- Task A2\n\t\t- Task A3',
+			md`
+			- Activity A
+				- Task A1 +
+					- // memo
+				- Task A2
+					- Task A3
+		`,
 		);
 
 		// Task A1 のレベル（2行目）は1行のままなので、Task A3 は3行目に置かれる
@@ -1266,7 +1562,11 @@ suite('renderMap', () => {
 
 	// 「//」の直後に空白がなくてもメモとして無視される
 	test('treats //memo without a space after the slashes as a memo too', () => {
-		const html = renderMap('- Activity A\n\t- //memo\n\t- Task A1');
+		const html = renderMap(md`
+			- Activity A
+				- //memo
+				- Task A1
+		`);
 
 		assert.ok(!html.includes('memo'));
 		assert.ok(
@@ -1278,7 +1578,11 @@ suite('renderMap', () => {
 
 	// トップレベルの「//」アイテムは子ごと無視され、カラムを作らない。次のアクティビティは1列目に置かれる
 	test('ignores a top-level // item with its children and makes no column for it', () => {
-		const html = renderMap('- // Ideas\n\t- An idea\n- Activity A');
+		const html = renderMap(md`
+			- // Ideas
+				- An idea
+			- Activity A
+		`);
 
 		assert.ok(!html.includes('Ideas'));
 		assert.ok(!html.includes('An idea'));
@@ -1291,7 +1595,11 @@ suite('renderMap', () => {
 
 	// 「//」で始まるパラグラフは対象外で、補足としてそのまま表示される
 	test('still shows a paragraph starting with // as a note', () => {
-		const html = renderMap('// Not a memo\n\n- Activity A');
+		const html = renderMap(md`
+			// Not a memo
+
+			- Activity A
+		`);
 
 		assert.ok(html.includes('<p class="map-note">// Not a memo</p>'));
 	});

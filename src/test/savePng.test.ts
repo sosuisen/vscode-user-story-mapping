@@ -1,5 +1,6 @@
 import * as assert from 'assert';
 import { dataUrlToPngBuffer, defaultPngFileName } from '../savePng';
+import { md } from './md';
 
 // PNG保存
 suite('dataUrlToPngBuffer', () => {
@@ -20,7 +21,10 @@ suite('defaultPngFileName', () => {
 	// 最初の見出しが既定ファイル名になる
 	test('builds the default file name from the first heading', () => {
 		assert.strictEqual(
-			defaultPngFileName('# My Map\n- Activity A'),
+			defaultPngFileName(md`
+				# My Map
+				- Activity A
+			`),
 			'My Map.png',
 		);
 	});
@@ -40,11 +44,23 @@ suite('defaultPngFileName', () => {
 
 	// Windowsで不正になる末尾のドットは取り除かれる
 	test('trims trailing dots from the file name', () => {
-		assert.strictEqual(defaultPngFileName('# Map..\n- Activity A'), 'Map.png');
+		assert.strictEqual(
+			defaultPngFileName(md`
+			# Map..
+			- Activity A
+		`),
+			'Map.png',
+		);
 	});
 
 	// Windowsの予約名（CONなど）は末尾に _ を付けて回避する
 	test('escapes Windows reserved device names', () => {
-		assert.strictEqual(defaultPngFileName('# CON\n- Activity A'), 'CON_.png');
+		assert.strictEqual(
+			defaultPngFileName(md`
+			# CON
+			- Activity A
+		`),
+			'CON_.png',
+		);
 	});
 });
