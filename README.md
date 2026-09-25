@@ -74,6 +74,8 @@ A note about the map
 - Activity B #member
   - _
     - Task 4
+- // Not sure whether to keep this activity
+  - Notes for the decision go here
 ```
 
 | You write | The map shows |
@@ -88,6 +90,7 @@ A note about the map
 | Two or more `-` items at the same depth | The second and later items move to the next inner column on the right (Task 2 in the example) |
 | An item whose text is only `_` | A blank level. No card is created; it only makes the level one step deeper (Task 4 in the example starts at level 2). The `_` is not shown on the map |
 | An item ending with `+` | Its children do not go one level lower. They stay on the same level, on the row below the item (Task 1b in the example stays on the green level, under Task 1). The `+` is not shown on the card |
+| An item starting with `//` | A memo. Use it for the background of a card or your thoughts about it. The item and its children are left out of the map completely, and they do not change the number of columns or rows. A space after `//` is optional |
 | An item starting with `[ ]` | An open task. The card shows ⬜ and has a drop shadow |
 | An item starting with `[x]` or `[X]` | A completed task. The card shows ✅ and has no border and no shadow |
 | An item with no checkbox | A card with a border only |
