@@ -8,7 +8,7 @@ suite('Preview panel', () => {
 	test('opens the preview panel beside the editor when the preview command runs', async () => {
 		const document = await vscode.workspace.openTextDocument({
 			language: 'markdown',
-			content: '- Activity A'
+			content: '- Activity A',
 		});
 		await vscode.window.showTextDocument(document, vscode.ViewColumn.One);
 
@@ -17,12 +17,12 @@ suite('Preview panel', () => {
 		// タブへの反映は非同期のため、2列目にWebviewタブが現れるまで待つ
 		const findPreviewTab = () => {
 			const group = vscode.window.tabGroups.all.find(
-				g => g.viewColumn === vscode.ViewColumn.Two
+				g => g.viewColumn === vscode.ViewColumn.Two,
 			);
 			return group?.tabs.find(
 				t =>
 					t.input instanceof vscode.TabInputWebview &&
-					t.input.viewType.includes('userStoryMapping.preview')
+					t.input.viewType.includes('userStoryMapping.preview'),
 			);
 		};
 		const start = Date.now();

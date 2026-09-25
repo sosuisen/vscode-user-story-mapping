@@ -7,11 +7,16 @@ import * as vscode from 'vscode';
 // （注: Webview内のDOM操作はテストランナーから観測できないため、このsuiteは配線の記録としてRedを経ずに置いたもの。動作は手動で確認する）
 suite('Webview script', () => {
 	function readBundledScript(): string {
-		const extension = vscode.extensions.getExtension('sosuisha.user-story-mapping');
+		const extension = vscode.extensions.getExtension(
+			'sosuisha.user-story-mapping',
+		);
 		if (extension === undefined) {
 			throw new Error('Extension not found');
 		}
-		return fs.readFileSync(path.join(extension.extensionPath, 'dist', 'webview.js'), 'utf8');
+		return fs.readFileSync(
+			path.join(extension.extensionPath, 'dist', 'webview.js'),
+			'utf8',
+		);
 	}
 
 	// ズームボタンを押すと、新しいズーム値を zoom メッセージで拡張機能へ通知する

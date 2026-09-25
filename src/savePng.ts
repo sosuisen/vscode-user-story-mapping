@@ -3,9 +3,13 @@ import { mapTitle } from './renderMap';
 // Replace characters that are not allowed in file names on Windows, macOS, or Linux (symbols and control characters) with _
 function sanitizeFileName(name: string): string {
 	// eslint-disable-next-line no-control-regex
-	const replaced = name.replace(/[\\/:*?"<>|\u0000-\u001f]/g, '_').replace(/[. ]+$/, '');
+	const replaced = name
+		.replace(/[\\/:*?"<>|\u0000-\u001f]/g, '_')
+		.replace(/[. ]+$/, '');
 	// Reserved device names on Windows cannot be used as file names as they are
-	return /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i.test(replaced) ? `${replaced}_` : replaced;
+	return /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i.test(replaced)
+		? `${replaced}_`
+		: replaced;
 }
 
 // Build the default PNG file name from the map heading

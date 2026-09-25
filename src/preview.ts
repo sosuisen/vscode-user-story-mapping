@@ -4,7 +4,10 @@ import { dataUrlToPngBuffer, defaultPngFileName } from './savePng';
 
 // The subset of the panel features that openPreview uses (tests can pass a fake panel)
 export type PreviewPanel = {
-	webview: Pick<vscode.Webview, 'html' | 'options' | 'asWebviewUri' | 'onDidReceiveMessage'>;
+	webview: Pick<
+		vscode.Webview,
+		'html' | 'options' | 'asWebviewUri' | 'onDidReceiveMessage'
+	>;
 	onDidDispose: vscode.WebviewPanel['onDidDispose'];
 	dispose(): void;
 };
@@ -16,14 +19,21 @@ function createPanel(): PreviewPanel {
 		'userStoryMapping.preview',
 		'Story Map',
 		vscode.ViewColumn.Beside,
-		{ enableScripts: true }
+		{ enableScripts: true },
 	);
 }
 
-export function openPreview(document: vscode.TextDocument, extensionUri: vscode.Uri, panel: PreviewPanel = createPanel()): PreviewPanel {
-	const scriptUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'dist', 'webview.js'));
+export function openPreview(
+	document: vscode.TextDocument,
+	extensionUri: vscode.Uri,
+	panel: PreviewPanel = createPanel(),
+): PreviewPanel {
+	const scriptUri = panel.webview.asWebviewUri(
+		vscode.Uri.joinPath(extensionUri, 'dist', 'webview.js'),
+	);
 	let zoom = 1;
-	const buildHtml = () => `${renderMap(document.getText(), { zoom })}<script src="${scriptUri}"></script>`;
+	const buildHtml = () =>
+		`${renderMap(document.getText(), { zoom })}<script src="${scriptUri}"></script>`;
 	panel.webview.html = buildHtml();
 	const subscription = vscode.workspace.onDidChangeTextDocument(event => {
 		if (event.document === document) {
@@ -38,10 +48,16 @@ export function openPreview(document: vscode.TextDocument, extensionUri: vscode.
 			const fileName = defaultPngFileName(document.getText());
 			const target = await vscode.window.showSaveDialog({
 				filters: { 'PNG Image': ['png'] },
-				defaultUri: document.uri.scheme === 'file' ? vscode.Uri.joinPath(document.uri, '..', fileName) : undefined,
+				defaultUri:
+					document.uri.scheme === 'file'
+						? vscode.Uri.joinPath(document.uri, '..', fileName)
+						: undefined,
 			});
 			if (target !== undefined) {
-				await vscode.workspace.fs.writeFile(target, dataUrlToPngBuffer(message.dataUrl));
+				await vscode.workspace.fs.writeFile(
+					target,
+					dataUrlToPngBuffer(message.dataUrl),
+				);
 			}
 		}
 	});

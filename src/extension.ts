@@ -2,12 +2,15 @@ import * as vscode from 'vscode';
 import { openPreview } from './preview';
 
 export function activate(context: vscode.ExtensionContext) {
-	const disposable = vscode.commands.registerCommand('user-story-mapping.preview', () => {
-		const editor = vscode.window.activeTextEditor;
-		if (editor) {
-			openPreview(editor.document, context.extensionUri);
-		}
-	});
+	const disposable = vscode.commands.registerCommand(
+		'user-story-mapping.preview',
+		() => {
+			const editor = vscode.window.activeTextEditor;
+			if (editor) {
+				openPreview(editor.document, context.extensionUri);
+			}
+		},
+	);
 	context.subscriptions.push(disposable);
 }
 

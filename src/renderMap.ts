@@ -37,7 +37,12 @@ const trailingTagsPattern = /(?:\s+#\S+)+$/;
 
 function trailingTagsOf(content: string): string[] {
 	const match = trailingTagsPattern.exec(content);
-	return match === null ? [] : match[0].trim().split(/\s+/).map(tag => tag.slice(1));
+	return match === null
+		? []
+		: match[0]
+				.trim()
+				.split(/\s+/)
+				.map(tag => tag.slice(1));
 }
 
 function withoutTrailingTags(content: string): string {
@@ -46,7 +51,12 @@ function withoutTrailingTags(content: string): string {
 
 function cardOf(content: string): Card {
 	const text = withoutTrailingTags(content);
-	return { text: markdown.renderInline(withCheckboxEmoji(text)), done: isDone(text), todo: isTodo(text), tags: trailingTagsOf(content) };
+	return {
+		text: markdown.renderInline(withCheckboxEmoji(text)),
+		done: isDone(text),
+		todo: isTodo(text),
+		tags: trailingTagsOf(content),
+	};
 }
 
 // A trailing "+" marks an item whose children are stacked into its own cell
@@ -82,8 +92,11 @@ const levelColorRules = [1, 2, 3, 4]
 
 // Render one grid cell as a card
 function renderCell(card: Card, kind: string, position: string): string {
-	const classes = kind + (card.done ? ' done' : '') + (card.todo ? ' todo' : '');
-	const tags = card.tags.map(tag => `<span class="tag">${markdown.utils.escapeHtml(tag)}</span>`).join('');
+	const classes =
+		kind + (card.done ? ' done' : '') + (card.todo ? ' todo' : '');
+	const tags = card.tags
+		.map(tag => `<span class="tag">${markdown.utils.escapeHtml(tag)}</span>`)
+		.join('');
 	return `<div class="${classes}" style="${position}">${card.text}${tags}</div>`;
 }
 
@@ -107,23 +120,40 @@ function bandClassOf(level: number): string {
 // Without it, the whole document is the story map
 function storyMapTokens(tokens: MarkdownIt.Token[]): MarkdownIt.Token[] {
 	const headingIndex = tokens.findIndex(
-		(token, index) => token.type === 'heading_open' && storyMapHeadingPattern.test((tokens[index + 1]?.content ?? '').trim())
+		(token, index) =>
+			token.type === 'heading_open' &&
+			storyMapHeadingPattern.test((tokens[index + 1]?.content ?? '').trim()),
 	);
 	if (headingIndex === -1) {
 		return tokens;
 	}
 	// A heading is three tokens: heading_open, inline, heading_close
 	const start = headingIndex + 3;
-	const nextHeadingIndex = tokens.findIndex((token, index) => index >= start && token.type === 'heading_open');
-	return tokens.slice(start, nextHeadingIndex === -1 ? undefined : nextHeadingIndex);
+	const nextHeadingIndex = tokens.findIndex(
+		(token, index) => index >= start && token.type === 'heading_open',
+	);
+	return tokens.slice(
+		start,
+		nextHeadingIndex === -1 ? undefined : nextHeadingIndex,
+	);
 }
 
 // The latest item at an indent depth: a memo (hidden with its children), or a placed item with its level and row
-type IndentItem = { isMemo: true } | { isMemo?: false; level: number; rowInLevel: number; stacksChildren?: boolean };
+type IndentItem =
+	| { isMemo: true }
+	| {
+			isMemo?: false;
+			level: number;
+			rowInLevel: number;
+			stacksChildren?: boolean;
+	  };
 
 export type RenderMapOptions = { zoom?: number };
 
-export function renderMap(outline: string, options: RenderMapOptions = {}): string {
+export function renderMap(
+	outline: string,
+	options: RenderMapOptions = {},
+): string {
 	const zoom = options.zoom ?? 1;
 	const allTokens = markdown.parse(outline, {});
 	const tokens = storyMapTokens(allTokens);
@@ -137,7 +167,11 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 	let inOrderedList = false;
 	let orderedListSeen = false;
 	// Each activity column group: the top activity card, and the cells below it in sub-columns
-	const columns: { activity: Card; subColumns: Cell[][]; lastIndentDepth: number }[] = [];
+	const columns: {
+		activity: Card;
+		subColumns: Cell[][];
+		lastIndentDepth: number;
+	}[] = [];
 	let openLists = 0;
 	// The number of rows each level needs, which is the largest rowInLevel + 1 over all columns
 	// The bands of level 1 to 3 (0-based 0 to 2) are always drawn, so they start at one row each
@@ -155,7 +189,11 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 			listSeen = true;
 		} else if (token.type === 'bullet_list_close') {
 			openLists--;
-		} else if (token.type === 'ordered_list_open' && openLists === 0 && !orderedListSeen) {
+		} else if (
+			token.type === 'ordered_list_open' &&
+			openLists === 0 &&
+			!orderedListSeen
+		) {
 			inOrderedList = true;
 			orderedListSeen = true;
 		} else if (token.type === 'ordered_list_close' && inOrderedList) {
@@ -163,7 +201,9 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 		} else if (token.type === 'inline' && inOrderedList) {
 			levelTitles.push(markdown.renderInline(token.content));
 		} else if (token.type === 'paragraph_open' && !listSeen && !inOrderedList) {
-			notes.push(`<p class="map-note">${markdown.renderInline(tokens[i + 1]?.content ?? '')}</p>`);
+			notes.push(
+				`<p class="map-note">${markdown.renderInline(tokens[i + 1]?.content ?? '')}</p>`,
+			);
 		} else if (token.type === 'inline' && openLists > 0) {
 			const indentDepth = openLists - 1;
 			const parent = itemByIndentDepth[indentDepth - 1];
@@ -197,7 +237,10 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 				const column = columns.at(-1);
 				if (column !== undefined) {
 					// A sibling (same or shallower indent depth) starts a new sub-column to the right
-					if (column.subColumns.length === 0 || indentDepth <= column.lastIndentDepth) {
+					if (
+						column.subColumns.length === 0 ||
+						indentDepth <= column.lastIndentDepth
+					) {
 						column.subColumns.push([]);
 					}
 					column.subColumns.at(-1)?.push({ card, level, rowInLevel });
@@ -220,11 +263,23 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 	let nextColumn = levelTitles.length > 0 ? 2 : 1;
 	for (const column of columns) {
 		const width = Math.max(column.subColumns.length, 1);
-		cells.push(renderCell(column.activity, kindOf(0), `grid-column: ${nextColumn}; grid-row: 1;`));
+		cells.push(
+			renderCell(
+				column.activity,
+				kindOf(0),
+				`grid-column: ${nextColumn}; grid-row: 1;`,
+			),
+		);
 		column.subColumns.forEach((columnCells, columnOffset) => {
 			for (const cell of columnCells) {
 				const row = (firstRowByLevel[cell.level] ?? 1) + cell.rowInLevel;
-				cells.push(renderCell(cell.card, kindOf(cell.level), `grid-column: ${nextColumn + columnOffset}; grid-row: ${row};`));
+				cells.push(
+					renderCell(
+						cell.card,
+						kindOf(cell.level),
+						`grid-column: ${nextColumn + columnOffset}; grid-row: ${row};`,
+					),
+				);
 			}
 		});
 		nextColumn += width;
@@ -234,7 +289,9 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 	levelTitles.forEach((label, level) => {
 		const row = firstRowByLevel[level];
 		if (row !== undefined) {
-			cells.unshift(`<div class="row-label" style="grid-column: 1; grid-row: ${row};">${label}</div>`);
+			cells.unshift(
+				`<div class="row-label" style="grid-column: 1; grid-row: ${row};">${label}</div>`,
+			);
 		}
 	});
 	// Bands go behind the cards, so they come first in DOM order. One band per level, as tall as the level needs
@@ -243,7 +300,9 @@ export function renderMap(outline: string, options: RenderMapOptions = {}): stri
 		const first = firstRowByLevel[level] ?? 1;
 		const rows = rowsByLevel[level] ?? 1;
 		const gridRow = rows === 1 ? `${first}` : `${first} / ${first + rows}`;
-		bands.push(`<div class="row-band ${bandClassOf(level)}" style="grid-column: 1 / ${nextColumn}; grid-row: ${gridRow};"></div>`);
+		bands.push(
+			`<div class="row-band ${bandClassOf(level)}" style="grid-column: 1 / ${nextColumn}; grid-row: ${gridRow};"></div>`,
+		);
 	}
 	cells.unshift(...bands);
 	return `<style>

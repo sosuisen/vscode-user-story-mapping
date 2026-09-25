@@ -8,7 +8,10 @@ suite('dataUrlToPngBuffer', () => {
 		// 'iVBORw0KGgo=' はPNGシグネチャ8バイトのbase64
 		const buffer = dataUrlToPngBuffer('data:image/png;base64,iVBORw0KGgo=');
 
-		assert.deepStrictEqual([...buffer], [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+		assert.deepStrictEqual(
+			[...buffer],
+			[0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a],
+		);
 	});
 });
 
@@ -16,7 +19,10 @@ suite('dataUrlToPngBuffer', () => {
 suite('defaultPngFileName', () => {
 	// 最初の見出しが既定ファイル名になる
 	test('builds the default file name from the first heading', () => {
-		assert.strictEqual(defaultPngFileName('# My Map\n- Activity A'), 'My Map.png');
+		assert.strictEqual(
+			defaultPngFileName('# My Map\n- Activity A'),
+			'My Map.png',
+		);
 	});
 
 	// 見出しがないときは storymap.png になる
@@ -26,7 +32,10 @@ suite('defaultPngFileName', () => {
 
 	// ファイル名に使えない文字（Windows/macOS/Linux）は _ に置換される
 	test('replaces characters not allowed in file names', () => {
-		assert.strictEqual(defaultPngFileName('# a\\b/c:d*e?f"g<h>i|j\n- Activity A'), 'a_b_c_d_e_f_g_h_i_j.png');
+		assert.strictEqual(
+			defaultPngFileName('# a\\b/c:d*e?f"g<h>i|j\n- Activity A'),
+			'a_b_c_d_e_f_g_h_i_j.png',
+		);
 	});
 
 	// Windowsで不正になる末尾のドットは取り除かれる

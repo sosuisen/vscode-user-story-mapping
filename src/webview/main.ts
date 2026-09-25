@@ -18,8 +18,12 @@ if (mapZoom instanceof HTMLElement) {
 		}
 		vscodeApi.postMessage({ type: 'zoom', zoom });
 	};
-	document.querySelector('.zoom-in')?.addEventListener('click', () => setZoom(zoomIn(zoom)));
-	document.querySelector('.zoom-out')?.addEventListener('click', () => setZoom(zoomOut(zoom)));
+	document
+		.querySelector('.zoom-in')
+		?.addEventListener('click', () => setZoom(zoomIn(zoom)));
+	document
+		.querySelector('.zoom-out')
+		?.addEventListener('click', () => setZoom(zoomOut(zoom)));
 }
 
 document.querySelector('.save-png')?.addEventListener('click', () => {

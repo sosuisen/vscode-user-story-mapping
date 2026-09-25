@@ -17,8 +17,8 @@ async function main() {
 		logLevel: 'warning',
 		plugins: [
 			/* add to the end of plugins array */
-			esbuildProblemMatcherPlugin
-		]
+			esbuildProblemMatcherPlugin,
+		],
 	});
 	const webviewCtx = await esbuild.context({
 		entryPoints: ['src/webview/main.ts'],
@@ -30,7 +30,7 @@ async function main() {
 		platform: 'browser',
 		outfile: 'dist/webview.js',
 		logLevel: 'warning',
-		plugins: [esbuildProblemMatcherPlugin]
+		plugins: [esbuildProblemMatcherPlugin],
 	});
 	if (watch) {
 		await Promise.all([extensionCtx.watch(), webviewCtx.watch()]);
@@ -56,11 +56,13 @@ const esbuildProblemMatcherPlugin = {
 				if (location == null) {
 					return;
 				}
-				console.error(`    ${location.file}:${location.line}:${location.column}:`);
+				console.error(
+					`    ${location.file}:${location.line}:${location.column}:`,
+				);
 			});
 			console.log('[watch] build finished');
 		});
-	}
+	},
 };
 
 main().catch(e => {
