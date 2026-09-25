@@ -1,6 +1,13 @@
-// Zoom steps (%). The real zoom value stays continuous. It moves to these steps only when + or - is pressed
+// Zoom steps (%): from MIN to MAX in STEP increments (20, 30, ..., 200).
+// The real zoom value stays continuous. It moves to these steps only when + or - is pressed
 // (Values between steps are allowed, so that the zoom can be typed in directly later)
-const ZOOM_STEPS = [25, 50, 75, 100, 125, 150, 200];
+const MIN_ZOOM_PERCENT = 20;
+const MAX_ZOOM_PERCENT = 200;
+const ZOOM_STEP_PERCENT = 10;
+const ZOOM_STEPS = Array.from(
+	{ length: (MAX_ZOOM_PERCENT - MIN_ZOOM_PERCENT) / ZOOM_STEP_PERCENT + 1 },
+	(_, i) => MIN_ZOOM_PERCENT + i * ZOOM_STEP_PERCENT,
+);
 
 // Turn a zoom value (1 = 100%) into a whole-number percent
 function toPercent(zoom: number): number {
