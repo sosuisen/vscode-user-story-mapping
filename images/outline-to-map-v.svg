@@ -1,42 +1,50 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="612" height="324" viewBox="0 0 612 324" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="14">
-<rect width="612" height="324" fill="white"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="684" height="420" viewBox="0 0 684 420" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="14">
+<rect width="684" height="420" fill="white"/>
 <text x="24" y="20" text-anchor="middle" font-size="14" fill="#57606a">Time</text>
-<line x1="24" y1="34" x2="24" y2="262" stroke="#57606a" stroke-width="2"/>
-<polygon points="18,262 24,272 30,262" fill="#57606a"/>
-<text x="120" y="40" text-anchor="middle" font-size="16" fill="#57606a">outline.md</text>
-<rect x="40" y="48" width="160" height="224" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+<line x1="24" y1="34" x2="24" y2="286" stroke="#57606a" stroke-width="2"/>
+<polygon points="18,286 24,296 30,286" fill="#57606a"/>
+<text x="156" y="40" text-anchor="middle" font-size="16" fill="#57606a">outline.md</text>
+<rect x="40" y="48" width="232" height="248" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
 <text x="56" y="80" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"># Map Title</text>
 <text x="56" y="104" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"></text>
 <text x="56" y="128" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">- Activity A</text>
 <text x="56" y="152" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">  - Task 1</text>
-<text x="56" y="176" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - v Task 1-1</text>
-<text x="56" y="200" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">- Activity B</text>
+<text x="56" y="176" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - Task 1-1</text>
+<text x="56" y="200" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">      - v Task 1-1-1</text>
 <text x="56" y="224" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">  - Task 2</text>
 <text x="56" y="248" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - Task 2-1</text>
-<polygon points="214,154 256,154 256,146 276,160 256,174 256,166 214,166" fill="#d0d7de" stroke="#57606a" stroke-width="2" stroke-linejoin="round"/>
-<text x="444" y="20" text-anchor="middle" font-size="14" fill="#57606a">Time</text>
-<line x1="308" y1="34" x2="570" y2="34" stroke="#57606a" stroke-width="2"/>
-<polygon points="570,28 580,34 570,40" fill="#57606a"/>
-<rect x="292" y="48" width="304" height="260" rx="6" fill="white" stroke="#d0d7de"/>
-<text x="308" y="86" font-size="22" font-weight="bold" fill="#1f2328">Map Title</text>
-<rect x="308" y="100" width="272" height="48" fill="hsl(211, 100%, 94%)"/>
-<line x1="308" y1="147" x2="580" y2="147" stroke="hsl(211, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
-<rect x="308" y="148" width="272" height="48" fill="hsl(147, 100%, 94%)"/>
-<line x1="308" y1="195" x2="580" y2="195" stroke="hsl(147, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
-<rect x="308" y="196" width="272" height="48" fill="hsl(343, 100%, 94%)"/>
-<line x1="308" y1="243" x2="580" y2="243" stroke="hsl(343, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
-<rect x="308" y="244" width="272" height="48" fill="hsl(37, 100%, 94%)"/>
-<line x1="308" y1="291" x2="580" y2="291" stroke="hsl(37, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
-<rect x="316" y="108" width="120" height="32" rx="6" fill="hsl(211, 100%, 87%)" stroke="hsl(211, 100%, 56%)" stroke-width="2"/>
-<text x="326" y="129" fill="#1f2328">Activity A</text>
-<rect x="316" y="156" width="120" height="32" rx="6" fill="hsl(147, 100%, 87%)" stroke="hsl(147, 100%, 56%)" stroke-width="2"/>
-<text x="326" y="177" fill="#1f2328">Task 1</text>
-<rect x="316" y="252" width="120" height="32" rx="6" fill="hsl(37, 100%, 87%)" stroke="hsl(37, 100%, 56%)" stroke-width="2"/>
-<text x="326" y="273" fill="#1f2328">Task 1-1</text>
-<rect x="452" y="108" width="120" height="32" rx="6" fill="hsl(211, 100%, 87%)" stroke="hsl(211, 100%, 56%)" stroke-width="2"/>
-<text x="462" y="129" fill="#1f2328">Activity B</text>
-<rect x="452" y="156" width="120" height="32" rx="6" fill="hsl(147, 100%, 87%)" stroke="hsl(147, 100%, 56%)" stroke-width="2"/>
-<text x="462" y="177" fill="#1f2328">Task 2</text>
-<rect x="452" y="204" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
-<text x="462" y="225" fill="#1f2328">Task 2-1</text>
+<text x="56" y="272" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">      - [ ] vv Task 2-1-1</text>
+<polygon points="286,166 328,166 328,158 348,172 328,186 328,178 286,178" fill="#d0d7de" stroke="#57606a" stroke-width="2" stroke-linejoin="round"/>
+<text x="516" y="20" text-anchor="middle" font-size="14" fill="#57606a">Time</text>
+<line x1="380" y1="34" x2="642" y2="34" stroke="#57606a" stroke-width="2"/>
+<polygon points="642,28 652,34 642,40" fill="#57606a"/>
+<rect x="364" y="48" width="304" height="356" rx="6" fill="white" stroke="#d0d7de"/>
+<text x="380" y="86" font-size="22" font-weight="bold" fill="#1f2328">Map Title</text>
+<rect x="380" y="100" width="272" height="48" fill="hsl(211, 100%, 94%)"/>
+<line x1="380" y1="147" x2="652" y2="147" stroke="hsl(211, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="380" y="148" width="272" height="48" fill="hsl(147, 100%, 94%)"/>
+<line x1="380" y1="195" x2="652" y2="195" stroke="hsl(147, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="380" y="196" width="272" height="48" fill="hsl(343, 100%, 94%)"/>
+<line x1="380" y1="243" x2="652" y2="243" stroke="hsl(343, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="380" y="244" width="272" height="48" fill="hsl(37, 100%, 94%)"/>
+<line x1="380" y1="291" x2="652" y2="291" stroke="hsl(37, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="380" y="292" width="272" height="48" fill="hsl(37, 100%, 98%)"/>
+<line x1="380" y1="339" x2="652" y2="339" stroke="hsl(37, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="380" y="340" width="272" height="48" fill="hsl(37, 100%, 94%)"/>
+<line x1="380" y1="387" x2="652" y2="387" stroke="hsl(37, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="388" y="108" width="120" height="32" rx="6" fill="hsl(211, 100%, 87%)" stroke="hsl(211, 100%, 56%)" stroke-width="2"/>
+<text x="398" y="129" fill="#1f2328">Activity A</text>
+<rect x="388" y="156" width="120" height="32" rx="6" fill="hsl(147, 100%, 87%)" stroke="hsl(147, 100%, 56%)" stroke-width="2"/>
+<text x="398" y="177" fill="#1f2328">Task 1</text>
+<rect x="388" y="204" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
+<text x="398" y="225" fill="#1f2328">Task 1-1</text>
+<rect x="388" y="300" width="120" height="32" rx="6" fill="hsl(37, 100%, 87%)" stroke="hsl(37, 100%, 56%)" stroke-width="2"/>
+<text x="398" y="321" fill="#1f2328">Task 1-1-1</text>
+<rect x="524" y="156" width="120" height="32" rx="6" fill="hsl(147, 100%, 87%)" stroke="hsl(147, 100%, 56%)" stroke-width="2"/>
+<text x="534" y="177" fill="#1f2328">Task 2</text>
+<rect x="524" y="204" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
+<text x="534" y="225" fill="#1f2328">Task 2-1</text>
+<rect x="526" y="350" width="120" height="32" rx="6" fill="rgba(0, 0, 0, 0.2)"/>
+<rect x="524" y="348" width="120" height="32" rx="6" fill="hsl(37, 100%, 87%)" stroke="hsl(37, 100%, 56%)" stroke-width="2"/>
+<text x="534" y="369" fill="#1f2328">⬜ Task 2-1-1</text>
 </svg>

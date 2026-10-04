@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1188" height="648" viewBox="0 0 1188 648" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="14">
-<rect width="1188" height="648" fill="white"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1196" height="696" viewBox="0 0 1196 696" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="14">
+<rect width="1196" height="696" fill="white"/>
 <text x="24" y="20" text-anchor="middle" font-size="14" fill="#57606a">Time</text>
-<line x1="24" y1="34" x2="24" y2="622" stroke="#57606a" stroke-width="2"/>
-<polygon points="18,622 24,632 30,622" fill="#57606a"/>
+<line x1="24" y1="34" x2="24" y2="670" stroke="#57606a" stroke-width="2"/>
+<polygon points="18,670 24,680 30,670" fill="#57606a"/>
 <text x="204" y="40" text-anchor="middle" font-size="16" fill="#57606a">outline.md</text>
-<rect x="40" y="48" width="328" height="584" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+<rect x="40" y="48" width="328" height="632" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
 <text x="56" y="80" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"># マップのタイトル</text>
 <text x="56" y="104" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"></text>
 <text x="56" y="128" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">マップの補足事項、ユーザータイプ</text>
@@ -18,34 +18,36 @@
 <text x="56" y="320" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">  - [x] タスク2</text>
 <text x="56" y="344" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - タスク2-1</text>
 <text x="56" y="368" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">      - ^ タスク2-1-1</text>
-<text x="56" y="392" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - タスク2-2</text>
-<text x="56" y="416" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">      - v タスク2-2-1</text>
-<text x="56" y="440" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">- アクティビティB #プレイヤー</text>
-<text x="56" y="464" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">  - タスク3</text>
-<text x="56" y="488" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - タスク3-1</text>
-<text x="56" y="512" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">      - // タスク3-1の補足説明</text>
-<text x="56" y="536" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - // タスク3-2</text>
-<text x="56" y="560" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">      - このタスクを入れるか迷っている</text>
-<text x="56" y="584" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"></text>
-<text x="56" y="608" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">マップの下に置く補足事項</text>
-<polygon points="382,334 424,334 424,326 444,340 424,354 424,346 382,346" fill="#d0d7de" stroke="#57606a" stroke-width="2" stroke-linejoin="round"/>
-<text x="816" y="20" text-anchor="middle" font-size="14" fill="#57606a">Time</text>
-<line x1="476" y1="34" x2="1146" y2="34" stroke="#57606a" stroke-width="2"/>
-<polygon points="1146,28 1156,34 1146,40" fill="#57606a"/>
-<rect x="460" y="48" width="712" height="406" rx="6" fill="white" stroke="#d0d7de"/>
+<text x="56" y="392" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">        - ^ タスク2-1-1-1</text>
+<text x="56" y="416" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">          - タスク2-1-1-1-1</text>
+<text x="56" y="440" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - タスク2-2</text>
+<text x="56" y="464" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">      - v タスク2-2-1</text>
+<text x="56" y="488" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">- アクティビティB #プレイヤー</text>
+<text x="56" y="512" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">  - タスク3</text>
+<text x="56" y="536" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - タスク3-1</text>
+<text x="56" y="560" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">      - // タスク3-1の補足説明</text>
+<text x="56" y="584" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - // タスク3-2</text>
+<text x="56" y="608" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">      - このタスクを入れるか迷っている</text>
+<text x="56" y="632" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"></text>
+<text x="56" y="656" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">マップの下に置く補足事項</text>
+<polygon points="382,358 424,358 424,350 444,364 424,378 424,370 382,370" fill="#d0d7de" stroke="#57606a" stroke-width="2" stroke-linejoin="round"/>
+<text x="820" y="20" text-anchor="middle" font-size="14" fill="#57606a">Time</text>
+<line x1="476" y1="34" x2="1154" y2="34" stroke="#57606a" stroke-width="2"/>
+<polygon points="1154,28 1164,34 1154,40" fill="#57606a"/>
+<rect x="460" y="48" width="720" height="454" rx="6" fill="white" stroke="#d0d7de"/>
 <text x="476" y="86" font-size="22" font-weight="bold" fill="#1f2328">マップのタイトル</text>
 <text x="476" y="112" fill="#1f2328">マップの補足事項、ユーザータイプ
 （「開催者」「プレイヤー」等）の説明</text>
-<rect x="476" y="126" width="680" height="48" fill="hsl(211, 100%, 94%)"/>
-<line x1="476" y1="173" x2="1156" y2="173" stroke="hsl(211, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
-<rect x="476" y="174" width="680" height="48" fill="hsl(147, 100%, 94%)"/>
-<line x1="476" y1="221" x2="1156" y2="221" stroke="hsl(147, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
-<rect x="476" y="222" width="680" height="96" fill="hsl(343, 100%, 94%)"/>
-<line x1="476" y1="317" x2="1156" y2="317" stroke="hsl(343, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
-<rect x="476" y="318" width="680" height="48" fill="hsl(37, 100%, 94%)"/>
-<line x1="476" y1="365" x2="1156" y2="365" stroke="hsl(37, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
-<rect x="476" y="366" width="680" height="48" fill="hsl(37, 100%, 98%)"/>
-<line x1="476" y1="413" x2="1156" y2="413" stroke="hsl(37, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="476" y="126" width="688" height="48" fill="hsl(211, 100%, 94%)"/>
+<line x1="476" y1="173" x2="1164" y2="173" stroke="hsl(211, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="476" y="174" width="688" height="48" fill="hsl(147, 100%, 94%)"/>
+<line x1="476" y1="221" x2="1164" y2="221" stroke="hsl(147, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="476" y="222" width="688" height="144" fill="hsl(343, 100%, 94%)"/>
+<line x1="476" y1="365" x2="1164" y2="365" stroke="hsl(343, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="476" y="366" width="688" height="48" fill="hsl(37, 100%, 94%)"/>
+<line x1="476" y1="413" x2="1164" y2="413" stroke="hsl(37, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="476" y="414" width="688" height="48" fill="hsl(37, 100%, 98%)"/>
+<line x1="476" y1="461" x2="1164" y2="461" stroke="hsl(37, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
 <rect x="484" y="134" width="176" height="32" rx="6" fill="hsl(211, 100%, 87%)" stroke="hsl(211, 100%, 56%)" stroke-width="2"/>
 <text x="494" y="155" fill="#1f2328">アクティビティA</text>
 <rect x="603" y="142" width="45" height="16" rx="8" fill="white"/>
@@ -55,27 +57,31 @@
 <text x="494" y="203" fill="#1f2328">⬜ タスク1</text>
 <rect x="484" y="230" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
 <text x="494" y="251" fill="#1f2328">タスク1-1</text>
-<rect x="484" y="326" width="120" height="32" rx="6" fill="hsl(37, 100%, 87%)" stroke="hsl(37, 100%, 56%)" stroke-width="2"/>
-<text x="494" y="347" fill="#1f2328">タスク1-1-1</text>
 <rect x="484" y="374" width="120" height="32" rx="6" fill="hsl(37, 100%, 87%)" stroke="hsl(37, 100%, 56%)" stroke-width="2"/>
-<text x="494" y="395" fill="#1f2328">タスク1-1-1-1</text>
+<text x="494" y="395" fill="#1f2328">タスク1-1-1</text>
+<rect x="484" y="422" width="120" height="32" rx="6" fill="hsl(37, 100%, 87%)" stroke="hsl(37, 100%, 56%)" stroke-width="2"/>
+<text x="494" y="443" fill="#1f2328">タスク1-1-1-1</text>
 <rect x="676" y="182" width="120" height="32" rx="6" fill="hsl(147, 100%, 87%)"/>
 <text x="686" y="203" fill="#1f2328">✅ タスク2</text>
 <rect x="676" y="230" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
 <text x="686" y="251" fill="#1f2328">タスク2-1</text>
 <rect x="676" y="278" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
 <text x="686" y="299" fill="#1f2328">タスク2-1-1</text>
-<rect x="812" y="230" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
-<text x="822" y="251" fill="#1f2328">タスク2-2</text>
-<rect x="812" y="374" width="120" height="32" rx="6" fill="hsl(37, 100%, 87%)" stroke="hsl(37, 100%, 56%)" stroke-width="2"/>
-<text x="822" y="395" fill="#1f2328">タスク2-2-1</text>
-<rect x="948" y="134" width="200" height="32" rx="6" fill="hsl(211, 100%, 87%)" stroke="hsl(211, 100%, 56%)" stroke-width="2"/>
-<text x="958" y="155" fill="#1f2328">アクティビティB</text>
-<rect x="1067" y="142" width="67" height="16" rx="8" fill="white"/>
-<text x="1100.5" y="154" text-anchor="middle" font-size="11" fill="#1f2328">プレイヤー</text>
-<rect x="948" y="182" width="120" height="32" rx="6" fill="hsl(147, 100%, 87%)" stroke="hsl(147, 100%, 56%)" stroke-width="2"/>
-<text x="958" y="203" fill="#1f2328">タスク3</text>
-<rect x="948" y="230" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
-<text x="958" y="251" fill="#1f2328">タスク3-1</text>
-<text x="476" y="438" fill="#1f2328">マップの下に置く補足事項</text>
+<rect x="676" y="326" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
+<text x="686" y="347" fill="#1f2328">タスク2-1-1-1</text>
+<rect x="676" y="374" width="128" height="32" rx="6" fill="hsl(37, 100%, 87%)" stroke="hsl(37, 100%, 56%)" stroke-width="2"/>
+<text x="686" y="395" fill="#1f2328">タスク2-1-1-1-1</text>
+<rect x="820" y="230" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
+<text x="830" y="251" fill="#1f2328">タスク2-2</text>
+<rect x="820" y="422" width="120" height="32" rx="6" fill="hsl(37, 100%, 87%)" stroke="hsl(37, 100%, 56%)" stroke-width="2"/>
+<text x="830" y="443" fill="#1f2328">タスク2-2-1</text>
+<rect x="956" y="134" width="200" height="32" rx="6" fill="hsl(211, 100%, 87%)" stroke="hsl(211, 100%, 56%)" stroke-width="2"/>
+<text x="966" y="155" fill="#1f2328">アクティビティB</text>
+<rect x="1075" y="142" width="67" height="16" rx="8" fill="white"/>
+<text x="1108.5" y="154" text-anchor="middle" font-size="11" fill="#1f2328">プレイヤー</text>
+<rect x="956" y="182" width="120" height="32" rx="6" fill="hsl(147, 100%, 87%)" stroke="hsl(147, 100%, 56%)" stroke-width="2"/>
+<text x="966" y="203" fill="#1f2328">タスク3</text>
+<rect x="956" y="230" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
+<text x="966" y="251" fill="#1f2328">タスク3-1</text>
+<text x="476" y="486" fill="#1f2328">マップの下に置く補足事項</text>
 </svg>

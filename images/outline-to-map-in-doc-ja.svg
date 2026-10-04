@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="612" height="432" viewBox="0 0 612 432" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="14">
-<rect width="612" height="432" fill="white"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="612" height="456" viewBox="0 0 612 456" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="14">
+<rect width="612" height="456" fill="white"/>
 <text x="24" y="20" text-anchor="middle" font-size="14" fill="#57606a">Time</text>
-<line x1="24" y1="34" x2="24" y2="406" stroke="#57606a" stroke-width="2"/>
-<polygon points="18,406 24,416 30,406" fill="#57606a"/>
+<line x1="24" y1="34" x2="24" y2="430" stroke="#57606a" stroke-width="2"/>
+<polygon points="18,430 24,440 30,430" fill="#57606a"/>
 <text x="188" y="40" text-anchor="middle" font-size="16" fill="#57606a">outline.md</text>
-<rect x="40" y="48" width="296" height="368" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+<rect x="40" y="48" width="296" height="392" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
 <text x="56" y="80" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"># 設計メモ</text>
 <text x="56" y="104" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"></text>
 <text x="56" y="128" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">- この箇条書きはカードになりません</text>
@@ -15,11 +15,12 @@
 <text x="56" y="248" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"></text>
 <text x="56" y="272" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">- Activity A</text>
 <text x="56" y="296" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">  - Task 1</text>
-<text x="56" y="320" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"></text>
-<text x="56" y="344" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">## 付録</text>
-<text x="56" y="368" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"></text>
-<text x="56" y="392" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">- この箇条書きもカードになりません</text>
-<polygon points="350,226 392,226 392,218 412,232 392,246 392,238 350,238" fill="#d0d7de" stroke="#57606a" stroke-width="2" stroke-linejoin="round"/>
+<text x="56" y="320" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - Task 1-1</text>
+<text x="56" y="344" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"></text>
+<text x="56" y="368" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">## 付録</text>
+<text x="56" y="392" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"></text>
+<text x="56" y="416" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">- この箇条書きもカードになりません</text>
+<polygon points="350,238 392,238 392,230 412,244 392,258 392,250 350,250" fill="#d0d7de" stroke="#57606a" stroke-width="2" stroke-linejoin="round"/>
 <text x="512" y="20" text-anchor="middle" font-size="14" fill="#57606a">Time</text>
 <line x1="444" y1="34" x2="570" y2="34" stroke="#57606a" stroke-width="2"/>
 <polygon points="570,28 580,34 570,40" fill="#57606a"/>
@@ -36,4 +37,6 @@
 <text x="462" y="155" fill="#1f2328">Activity A</text>
 <rect x="452" y="182" width="120" height="32" rx="6" fill="hsl(147, 100%, 87%)" stroke="hsl(147, 100%, 56%)" stroke-width="2"/>
 <text x="462" y="203" fill="#1f2328">Task 1</text>
+<rect x="452" y="230" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
+<text x="462" y="251" fill="#1f2328">Task 1-1</text>
 </svg>

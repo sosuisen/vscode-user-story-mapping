@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1152" height="648" viewBox="0 0 1152 648" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="14">
-<rect width="1152" height="648" fill="white"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1152" height="696" viewBox="0 0 1152 696" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="14">
+<rect width="1152" height="696" fill="white"/>
 <text x="24" y="20" text-anchor="middle" font-size="14" fill="#57606a">Time</text>
-<line x1="24" y1="34" x2="24" y2="622" stroke="#57606a" stroke-width="2"/>
-<polygon points="18,622 24,632 30,622" fill="#57606a"/>
+<line x1="24" y1="34" x2="24" y2="670" stroke="#57606a" stroke-width="2"/>
+<polygon points="18,670 24,680 30,670" fill="#57606a"/>
 <text x="220" y="40" text-anchor="middle" font-size="16" fill="#57606a">outline.md</text>
-<rect x="40" y="48" width="360" height="584" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+<rect x="40" y="48" width="360" height="632" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
 <text x="56" y="80" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"># Map Title</text>
 <text x="56" y="104" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"></text>
 <text x="56" y="128" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">A note about the map and the user types</text>
@@ -18,21 +18,23 @@
 <text x="56" y="320" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">  - [x] Task 2</text>
 <text x="56" y="344" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - Task 2-1</text>
 <text x="56" y="368" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">      - ^ Task 2-1-1</text>
-<text x="56" y="392" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - Task 2-2</text>
-<text x="56" y="416" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">      - v Task 2-2-1</text>
-<text x="56" y="440" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">- Activity B #player</text>
-<text x="56" y="464" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">  - Task 3</text>
-<text x="56" y="488" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - Task 3-1</text>
-<text x="56" y="512" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">      - // Notes about Task 3-1</text>
-<text x="56" y="536" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - // Task 3-2</text>
-<text x="56" y="560" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">      - Not sure whether to keep this task</text>
-<text x="56" y="584" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"></text>
-<text x="56" y="608" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">A note under the map</text>
-<polygon points="414,334 456,334 456,326 476,340 456,354 456,346 414,346" fill="#d0d7de" stroke="#57606a" stroke-width="2" stroke-linejoin="round"/>
+<text x="56" y="392" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">        - ^ Task 2-1-1-1</text>
+<text x="56" y="416" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">          - Task 2-1-1-1-1</text>
+<text x="56" y="440" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - Task 2-2</text>
+<text x="56" y="464" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">      - v Task 2-2-1</text>
+<text x="56" y="488" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">- Activity B #player</text>
+<text x="56" y="512" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">  - Task 3</text>
+<text x="56" y="536" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - Task 3-1</text>
+<text x="56" y="560" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">      - // Notes about Task 3-1</text>
+<text x="56" y="584" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - // Task 3-2</text>
+<text x="56" y="608" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">      - Not sure whether to keep this task</text>
+<text x="56" y="632" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"></text>
+<text x="56" y="656" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">A note under the map</text>
+<polygon points="414,358 456,358 456,350 476,364 456,378 456,370 414,370" fill="#d0d7de" stroke="#57606a" stroke-width="2" stroke-linejoin="round"/>
 <text x="814" y="20" text-anchor="middle" font-size="14" fill="#57606a">Time</text>
 <line x1="508" y1="34" x2="1110" y2="34" stroke="#57606a" stroke-width="2"/>
 <polygon points="1110,28 1120,34 1110,40" fill="#57606a"/>
-<rect x="492" y="48" width="644" height="406" rx="6" fill="white" stroke="#d0d7de"/>
+<rect x="492" y="48" width="644" height="454" rx="6" fill="white" stroke="#d0d7de"/>
 <text x="508" y="86" font-size="22" font-weight="bold" fill="#1f2328">Map Title</text>
 <text x="508" y="112" fill="#1f2328">A note about the map and the user types
 ("organizer", "player", etc.)</text>
@@ -40,12 +42,12 @@
 <line x1="508" y1="173" x2="1120" y2="173" stroke="hsl(211, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
 <rect x="508" y="174" width="612" height="48" fill="hsl(147, 100%, 94%)"/>
 <line x1="508" y1="221" x2="1120" y2="221" stroke="hsl(147, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
-<rect x="508" y="222" width="612" height="96" fill="hsl(343, 100%, 94%)"/>
-<line x1="508" y1="317" x2="1120" y2="317" stroke="hsl(343, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
-<rect x="508" y="318" width="612" height="48" fill="hsl(37, 100%, 94%)"/>
-<line x1="508" y1="365" x2="1120" y2="365" stroke="hsl(37, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
-<rect x="508" y="366" width="612" height="48" fill="hsl(37, 100%, 98%)"/>
+<rect x="508" y="222" width="612" height="144" fill="hsl(343, 100%, 94%)"/>
+<line x1="508" y1="365" x2="1120" y2="365" stroke="hsl(343, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="508" y="366" width="612" height="48" fill="hsl(37, 100%, 94%)"/>
 <line x1="508" y1="413" x2="1120" y2="413" stroke="hsl(37, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="508" y="414" width="612" height="48" fill="hsl(37, 100%, 98%)"/>
+<line x1="508" y1="461" x2="1120" y2="461" stroke="hsl(37, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
 <rect x="516" y="134" width="164" height="32" rx="6" fill="hsl(211, 100%, 87%)" stroke="hsl(211, 100%, 56%)" stroke-width="2"/>
 <text x="526" y="155" fill="#1f2328">Activity A</text>
 <rect x="600" y="142" width="66" height="16" rx="8" fill="white"/>
@@ -55,20 +57,24 @@
 <text x="526" y="203" fill="#1f2328">⬜ Task 1</text>
 <rect x="516" y="230" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
 <text x="526" y="251" fill="#1f2328">Task 1-1</text>
-<rect x="516" y="326" width="120" height="32" rx="6" fill="hsl(37, 100%, 87%)" stroke="hsl(37, 100%, 56%)" stroke-width="2"/>
-<text x="526" y="347" fill="#1f2328">Task 1-1-1</text>
 <rect x="516" y="374" width="120" height="32" rx="6" fill="hsl(37, 100%, 87%)" stroke="hsl(37, 100%, 56%)" stroke-width="2"/>
-<text x="526" y="395" fill="#1f2328">Task 1-1-1-1</text>
+<text x="526" y="395" fill="#1f2328">Task 1-1-1</text>
+<rect x="516" y="422" width="120" height="32" rx="6" fill="hsl(37, 100%, 87%)" stroke="hsl(37, 100%, 56%)" stroke-width="2"/>
+<text x="526" y="443" fill="#1f2328">Task 1-1-1-1</text>
 <rect x="696" y="182" width="120" height="32" rx="6" fill="hsl(147, 100%, 87%)"/>
 <text x="706" y="203" fill="#1f2328">✅ Task 2</text>
 <rect x="696" y="230" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
 <text x="706" y="251" fill="#1f2328">Task 2-1</text>
 <rect x="696" y="278" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
 <text x="706" y="299" fill="#1f2328">Task 2-1-1</text>
+<rect x="696" y="326" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
+<text x="706" y="347" fill="#1f2328">Task 2-1-1-1</text>
+<rect x="696" y="374" width="120" height="32" rx="6" fill="hsl(37, 100%, 87%)" stroke="hsl(37, 100%, 56%)" stroke-width="2"/>
+<text x="706" y="395" fill="#1f2328">Task 2-1-1-1-1</text>
 <rect x="832" y="230" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
 <text x="842" y="251" fill="#1f2328">Task 2-2</text>
-<rect x="832" y="374" width="120" height="32" rx="6" fill="hsl(37, 100%, 87%)" stroke="hsl(37, 100%, 56%)" stroke-width="2"/>
-<text x="842" y="395" fill="#1f2328">Task 2-2-1</text>
+<rect x="832" y="422" width="120" height="32" rx="6" fill="hsl(37, 100%, 87%)" stroke="hsl(37, 100%, 56%)" stroke-width="2"/>
+<text x="842" y="443" fill="#1f2328">Task 2-2-1</text>
 <rect x="968" y="134" width="144" height="32" rx="6" fill="hsl(211, 100%, 87%)" stroke="hsl(211, 100%, 56%)" stroke-width="2"/>
 <text x="978" y="155" fill="#1f2328">Activity B</text>
 <rect x="1052" y="142" width="48" height="16" rx="8" fill="white"/>
@@ -77,5 +83,5 @@
 <text x="978" y="203" fill="#1f2328">Task 3</text>
 <rect x="968" y="230" width="120" height="32" rx="6" fill="hsl(343, 100%, 87%)" stroke="hsl(343, 100%, 56%)" stroke-width="2"/>
 <text x="978" y="251" fill="#1f2328">Task 3-1</text>
-<text x="508" y="438" fill="#1f2328">A note under the map</text>
+<text x="508" y="486" fill="#1f2328">A note under the map</text>
 </svg>
