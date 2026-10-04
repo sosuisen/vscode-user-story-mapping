@@ -212,8 +212,13 @@ export function renderMap(
 			orderedListSeen = true;
 		} else if (token.type === 'ordered_list_close' && inOrderedList) {
 			inOrderedList = false;
+		} else if (token.type === 'list_item_open' && inOrderedList) {
+			// Every item is a level. An empty item (no inline token follows) stays a level with no label
+			levelTitles.push('');
 		} else if (token.type === 'inline' && inOrderedList) {
-			levelTitles.push(markdown.renderInline(token.content));
+			levelTitles[levelTitles.length - 1] = markdown.renderInline(
+				token.content,
+			);
 		} else if (token.type === 'paragraph_open' && !listSeen && !inOrderedList) {
 			leadingNotes.push(renderNote('leading-note', tokens[i + 1]));
 		} else if (token.type === 'paragraph_open' && listSeen && openLists === 0) {
@@ -297,11 +302,11 @@ export function renderMap(
 		});
 		nextColumn += width;
 	}
-	// Each label sits on the first row of its band. Levels that do not exist get no label.
+	// Each label sits on the first row of its band. Levels that do not exist, and empty labels, get no label element.
 	// Without an ordered list there are no labels at all (ADR 004)
 	levelTitles.forEach((label, level) => {
 		const row = firstRowByLevel[level];
-		if (row !== undefined) {
+		if (row !== undefined && label !== '') {
 			cells.unshift(
 				`<div class="row-label" style="grid-column: 1; grid-row: ${row};">${label}</div>`,
 			);

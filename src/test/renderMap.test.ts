@@ -242,6 +242,37 @@ suite('renderMap', () => {
 		);
 	});
 
+	// 順序付きリストの空の項目は、ラベルのないレベルとして数える。そのレベルにはラベルが出ず、後ろのラベルは詰まらない
+	test('leaves the level of an empty ordered list item without a label', () => {
+		const outline = md`
+			1. First
+			2.
+			3. Third
+
+			- Activity A
+				- Task A1
+					- Task A2
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="row-label" style="grid-column: 1; grid-row: 1;">First</div>',
+			),
+		);
+		assert.ok(
+			!html.includes(
+				'<div class="row-label" style="grid-column: 1; grid-row: 2;">',
+			),
+		);
+		assert.ok(
+			html.includes(
+				'<div class="row-label" style="grid-column: 1; grid-row: 3;">Third</div>',
+			),
+		);
+	});
+
 	// レベルのタイトルは、各帯の先頭行に置かれる。最初の帯が2行なら、2番目のタイトルは3行目、3番目は4行目
 	test('places each level title on the first row of its band', () => {
 		const outline = md`
