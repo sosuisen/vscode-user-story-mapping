@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="884" height="324" viewBox="0 0 884 324" font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="14">
+<rect width="884" height="324" fill="white"/>
+<text x="24" y="20" text-anchor="middle" font-size="14" fill="#57606a">Time</text>
+<line x1="24" y1="34" x2="24" y2="286" stroke="#57606a" stroke-width="2"/>
+<polygon points="18,286 24,296 30,286" fill="#57606a"/>
+<text x="120" y="40" text-anchor="middle" font-size="16" fill="#57606a">outline.md</text>
+<rect x="40" y="48" width="160" height="248" rx="6" fill="#f6f8fa" stroke="#d0d7de"/>
+<text x="56" y="80" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"># Map Title</text>
+<text x="56" y="104" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve"></text>
+<text x="56" y="128" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">- Activity A</text>
+<text x="56" y="152" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">  - Task 1</text>
+<text x="56" y="176" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - ^ Task 1-1</text>
+<text x="56" y="200" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">    - ^ Task 1-2</text>
+<text x="56" y="224" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">  - Task 2</text>
+<text x="56" y="248" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">- Activity B</text>
+<text x="56" y="272" font-family="Consolas, 'Courier New', monospace" fill="#1f2328" xml:space="preserve">  - Task 3</text>
+<polygon points="214,166 256,166 256,158 276,172 256,186 256,178 214,178" fill="#d0d7de" stroke="#57606a" stroke-width="2" stroke-linejoin="round"/>
+<text x="580" y="20" text-anchor="middle" font-size="14" fill="#57606a">Time</text>
+<line x1="308" y1="34" x2="842" y2="34" stroke="#57606a" stroke-width="2"/>
+<polygon points="842,28 852,34 842,40" fill="#57606a"/>
+<rect x="292" y="48" width="576" height="260" rx="6" fill="white" stroke="#d0d7de"/>
+<text x="308" y="86" font-size="22" font-weight="bold" fill="#1f2328">Map Title</text>
+<rect x="308" y="100" width="544" height="48" fill="hsl(211, 100%, 94%)"/>
+<line x1="308" y1="147" x2="852" y2="147" stroke="hsl(211, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="308" y="148" width="544" height="96" fill="hsl(147, 100%, 94%)"/>
+<line x1="308" y1="243" x2="852" y2="243" stroke="hsl(147, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="308" y="244" width="544" height="48" fill="hsl(343, 100%, 94%)"/>
+<line x1="308" y1="291" x2="852" y2="291" stroke="hsl(343, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="316" y="108" width="120" height="32" rx="6" fill="hsl(211, 100%, 87%)" stroke="hsl(211, 100%, 56%)" stroke-width="2"/>
+<text x="326" y="129" fill="#1f2328">Activity A</text>
+<rect x="316" y="156" width="120" height="32" rx="6" fill="hsl(147, 100%, 87%)" stroke="hsl(147, 100%, 56%)" stroke-width="2"/>
+<text x="326" y="177" fill="#1f2328">Task 1</text>
+<rect x="316" y="204" width="120" height="32" rx="6" fill="hsl(147, 100%, 87%)" stroke="hsl(147, 100%, 56%)" stroke-width="2"/>
+<text x="326" y="225" fill="#1f2328">Task 1-1</text>
+<rect x="452" y="204" width="120" height="32" rx="6" fill="hsl(147, 100%, 87%)" stroke="hsl(147, 100%, 56%)" stroke-width="2"/>
+<text x="462" y="225" fill="#1f2328">Task 1-2</text>
+<rect x="588" y="156" width="120" height="32" rx="6" fill="hsl(147, 100%, 87%)" stroke="hsl(147, 100%, 56%)" stroke-width="2"/>
+<text x="598" y="177" fill="#1f2328">Task 2</text>
+<rect x="724" y="108" width="120" height="32" rx="6" fill="hsl(211, 100%, 87%)" stroke="hsl(211, 100%, 56%)" stroke-width="2"/>
+<text x="734" y="129" fill="#1f2328">Activity B</text>
+<rect x="724" y="156" width="120" height="32" rx="6" fill="hsl(147, 100%, 87%)" stroke="hsl(147, 100%, 56%)" stroke-width="2"/>
+<text x="734" y="177" fill="#1f2328">Task 3</text>
+</svg>
