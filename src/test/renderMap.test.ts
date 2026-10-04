@@ -680,7 +680,7 @@ suite('renderMap', () => {
 		assert.ok(titlePosition < html.indexOf('class="map-grid"'));
 	});
 
-	// アウトラインより上のパラグラフは、タイトルの下・グリッドの上に段落（map-note）として表示される
+	// アウトラインより上のパラグラフは、タイトルの下・グリッドの上に段落（leading-note）として表示される
 	test('renders a paragraph above the outline as a note between the title and the grid', () => {
 		const outline = md`
 			# Map Title
@@ -693,7 +693,7 @@ suite('renderMap', () => {
 		const html = renderMap(outline);
 
 		const notePosition = html.indexOf(
-			'<p class="map-note">This map covers the first release.</p>',
+			'<p class="leading-note">This map covers the first release.</p>',
 		);
 		assert.ok(notePosition !== -1);
 		assert.ok(
@@ -718,7 +718,7 @@ suite('renderMap', () => {
 
 		assert.ok(
 			html.includes(
-				'<p class="map-note">First note.</p><p class="map-note">Second note.</p>',
+				'<p class="leading-note">First note.</p><p class="leading-note">Second note.</p>',
 			),
 		);
 	});
@@ -737,7 +737,7 @@ suite('renderMap', () => {
 
 		assert.ok(
 			html.includes(
-				'<p class="map-note">Read <strong>this</strong> first.</p>',
+				'<p class="leading-note">Read <strong>this</strong> first.</p>',
 			),
 		);
 	});
@@ -751,12 +751,12 @@ suite('renderMap', () => {
 		`);
 
 		assert.ok(
-			html.includes('<p class="map-note">A note without a heading.</p>'),
+			html.includes('<p class="leading-note">A note without a heading.</p>'),
 		);
 	});
 
-	// アウトラインより下のパラグラフは、補足事項の段落にはならない
-	test('does not render a paragraph below the outline as a note', () => {
+	// アウトラインより下のパラグラフは、タイトル下の段落（leading-note）にはならない
+	test('does not render a paragraph below the outline as a leading note', () => {
 		const html = renderMap(
 			md`
 			# Map Title
@@ -768,8 +768,74 @@ suite('renderMap', () => {
 		);
 
 		assert.ok(
-			!html.includes('<p class="map-note">A paragraph below the outline.</p>'),
+			!html.includes(
+				'<p class="leading-note">A paragraph below the outline.</p>',
+			),
 		);
+	});
+
+	// アウトラインより下のパラグラフは、グリッドの下に段落（trailing-note）として表示される
+	test('renders a paragraph below the outline as a trailing note under the grid', () => {
+		const outline = md`
+			# Map Title
+
+			- Activity A
+
+			A paragraph below the outline.
+		`;
+
+		const html = renderMap(outline);
+
+		const notePosition = html.indexOf(
+			'<p class="trailing-note">A paragraph below the outline.</p>',
+		);
+		assert.ok(notePosition !== -1);
+		assert.ok(html.indexOf('class="map-grid"') < notePosition);
+	});
+
+	// アウトラインより下のパラグラフが複数あれば、アウトラインの順に段落が並ぶ
+	test('renders several paragraphs below the outline as trailing notes in order', () => {
+		const outline = md`
+			# Map Title
+
+			- Activity A
+
+			First trailing note.
+
+			Second trailing note.
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<p class="trailing-note">First trailing note.</p><p class="trailing-note">Second trailing note.</p>',
+			),
+		);
+	});
+
+	// 「Story Map」見出しの外（次の見出し以降）のパラグラフは、trailing-noteとして表示されない
+	test('does not render a paragraph outside the Story Map section as a trailing note', () => {
+		const outline = md`
+			# Map Title
+
+			## Story Map
+
+			- Activity A
+
+			Inside the section.
+
+			## Notes
+
+			Outside the section.
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes('<p class="trailing-note">Inside the section.</p>'),
+		);
+		assert.ok(!html.includes('Outside the section.'));
 	});
 
 	// 見出しがない場合、空のタイトル領域が表示される
@@ -928,7 +994,7 @@ suite('renderMap', () => {
 				'<div class="row-label" style="grid-column: 1; grid-row: 4;">Fourth</div>',
 			),
 		);
-		assert.ok(!html.includes('<p class="map-note">First</p>'));
+		assert.ok(!html.includes('<p class="leading-note">First</p>'));
 	});
 
 	// Ordered listの項目数より深いレベルには、タイトルがない。タイトルの列は残り、カードは2列目から始まる
@@ -1364,8 +1430,8 @@ suite('renderMap', () => {
 
 		const html = renderMap(outline);
 
-		assert.ok(html.includes('<p class="map-note">About the map.</p>'));
-		assert.ok(!html.includes('<p class="map-note">Before the map.</p>'));
+		assert.ok(html.includes('<p class="leading-note">About the map.</p>'));
+		assert.ok(!html.includes('<p class="leading-note">Before the map.</p>'));
 	});
 
 	// レベル名の順序付きリストは、「Story Map」の見出しより後のものだけを使う。見出しより前の順序付きリストは無視される
@@ -1601,6 +1667,6 @@ suite('renderMap', () => {
 			- Activity A
 		`);
 
-		assert.ok(html.includes('<p class="map-note">// Not a memo</p>'));
+		assert.ok(html.includes('<p class="leading-note">// Not a memo</p>'));
 	});
 });

@@ -90,6 +90,14 @@ const levelColorRules = [1, 2, 3, 4]
 	])
 	.join('\n');
 
+// Render a paragraph of the document as a note with the given class. The inline token holds the text of the paragraph
+function renderNote(
+	className: string,
+	inlineToken: MarkdownIt.Token | undefined,
+): string {
+	return `<p class="${className}">${markdown.renderInline(inlineToken?.content ?? '')}</p>`;
+}
+
 // Render one grid cell as a card
 function renderCell(card: Card, kind: string, position: string): string {
 	const classes =
@@ -160,7 +168,9 @@ export function renderMap(
 	// The map title is the first heading of the whole document, even when it is above the "Story Map" heading
 	const titleText = mapTitle(outline);
 	// Paragraphs above the outline, shown as notes under the title
-	const notes: string[] = [];
+	const leadingNotes: string[] = [];
+	// Paragraphs below the outline, shown as notes under the grid
+	const trailingNotes: string[] = [];
 	let listSeen = false;
 	// The items of the first top-level ordered list, used as the level titles from the top
 	const levelTitles: string[] = [];
@@ -201,9 +211,9 @@ export function renderMap(
 		} else if (token.type === 'inline' && inOrderedList) {
 			levelTitles.push(markdown.renderInline(token.content));
 		} else if (token.type === 'paragraph_open' && !listSeen && !inOrderedList) {
-			notes.push(
-				`<p class="map-note">${markdown.renderInline(tokens[i + 1]?.content ?? '')}</p>`,
-			);
+			leadingNotes.push(renderNote('leading-note', tokens[i + 1]));
+		} else if (token.type === 'paragraph_open' && listSeen && openLists === 0) {
+			trailingNotes.push(renderNote('trailing-note', tokens[i + 1]));
 		} else if (token.type === 'inline' && openLists > 0) {
 			const indentDepth = openLists - 1;
 			const parent = itemByIndentDepth[indentDepth - 1];
@@ -323,6 +333,6 @@ ${levelColorRules}
 .zoom-controls button { width: 32px; border-radius: 50%; font-size: 16px; }
 .save-png { position: fixed; right: 16px; bottom: 16px; padding: 0 12px; border-radius: 16px; font-size: 12px; font-weight: bold; }
 </style>
-<div class="map-zoom" style="zoom: ${zoom};">${title}${notes.join('')}<div class="map-grid">${cells.join('')}</div></div>
+<div class="map-zoom" style="zoom: ${zoom};">${title}${leadingNotes.join('')}<div class="map-grid">${cells.join('')}</div>${trailingNotes.join('')}</div>
 <div class="zoom-controls"><button class="zoom-out">－</button><span class="zoom-level">${formatZoomLevel(zoom)}</span><button class="zoom-in">＋</button></div><button class="save-png">PNG</button>`;
 }
