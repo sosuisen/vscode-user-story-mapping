@@ -61,27 +61,37 @@ The table below refers to this example:
 ```markdown
 # Map Title
 
-A note about the map
+A note about the map and the user types
+("organizer", "player", etc.)
 
-"User type A" A description of user type A\
-"User type B" A description of user type B
-
-- Activity A #admin
-  - [ ] Task 1 +
-    - Task 1b
+- Activity A #organizer
+  - [ ] Task 1
+    - Task 1-1
+      - Task 1-1-1
+        - Task 1-1-1-1
   - [x] Task 2
-    - Task 3
-- Activity B #member
-  - _
-    - Task 4
-- // Not sure whether to keep this activity
-  - Notes for the decision go here
+    - Task 2-1 +
+      - Task 2-1-1
+    - Task 2-2
+      - _
+        - Task 2-2-1
+- Activity B #player
+  - Task 3
+    - Task 3-1
+      - // Notes about Task 3-1
+    - // Task 3-2
+      - Not sure whether to keep this task
+
+A note under the map
 ```
+
+![The syntax example on the left and the map it renders on the right](images/outline-to-map-syntax.png)
 
 | You write | The map shows |
 | --- | --- |
 | The first heading (`#` to `######`) | The map title at the top. If there is no heading, the title area is empty |
 | Paragraphs above the first bullet list | Notes under the title. Use them for remarks about the map or descriptions of the users who appear in it |
+| Paragraphs below the bullet list | Notes under the map. You can write more than one. Use them for remarks about the whole map or for open questions. With a "Story Map" heading, paragraphs after the next heading are not included |
 | A top-level `-` item | An activity. Activities appear in one row on the first level (blue) |
 | A `-` item nested one level | A task. It appears on the second level (green) |
 | A `-` item nested two levels | A task to start first. It appears on the third level (red) |
