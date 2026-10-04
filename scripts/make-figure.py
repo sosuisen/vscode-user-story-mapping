@@ -84,6 +84,9 @@ def parse_map(rendered):
         last = int(rows[1]) - 1 if len(rows) == 2 else first
         bands.append(dict(level=int(m.group(1)), alt=bool(m.group(2)), first=first, last=last))
     ncols = int(re.search(r'grid-column: 1 / (\d+)', rendered).group(1)) - 1
+    labels = []
+    for m in re.finditer(r'<div class="row-label" style="grid-column: 1; grid-row: (\d+);">(.*?)</div>', rendered, re.S):
+        labels.append(dict(row=int(m.group(1)), text=unescape(m.group(2))))
     cards = []
     for m in re.finditer(r'<div class="card level(\d)((?: done| todo)*)" style="grid-column: (\d+); grid-row: (\d+);">(.*?)</div>', rendered, re.S):
         inner = m.group(5)
@@ -91,14 +94,14 @@ def parse_map(rendered):
         text = unescape(re.sub(r'<span class="tag">.*?</span>', '', inner).strip())
         cards.append(dict(level=int(m.group(1)), done='done' in m.group(2), todo='todo' in m.group(2),
                           col=int(m.group(3)), row=int(m.group(4)), text=text, tags=tags))
-    return title, leading, trailing, bands, ncols, cards
+    return title, leading, trailing, bands, ncols, labels, cards
 
 
 def make_svg(md_path, svg_path):
     code = open(md_path, encoding='utf-8').read().rstrip('\n').split('\n')
     rendered = subprocess.run(['node', RENDER_JS, md_path], capture_output=True, text=True,
                               encoding='utf-8', check=True).stdout
-    title, leading, trailing, bands, ncols, cards = parse_map(rendered)
+    title, leading, trailing, bands, ncols, labels, cards = parse_map(rendered)
     nrows = max(b['last'] for b in bands)
 
     # Card and column widths follow the text, with the same minimum width as the CSS (120px + 8px margins)
@@ -108,6 +111,9 @@ def make_svg(md_path, svg_path):
         w += sum(4 + tw for tw in c['tagw'])
         c['w'] = max(120, int(w + 4) // 4 * 4)
     col_w = [max([136] + [c['w'] + 16 for c in cards if c['col'] == i + 1]) for i in range(ncols)]
+    # With level titles, the first column holds the labels and is as wide as the longest one (plus padding and margins)
+    if labels:
+        col_w[0] = int(max(text_width(l['text']) for l in labels) + 32 + 4) // 4 * 4
 
     # Left panel: the outline as code, one line every 24px. Its width follows the longest line
     code_top = 80
@@ -167,6 +173,9 @@ def make_svg(md_path, svg_path):
         h = ROW_H * (b['last'] - b['first'] + 1)
         out.append(f'<rect x="{gx}" y="{y}" width="{band_w}" height="{h}" fill="hsl({hue}, 100%, {light}%)"/>')
         out.append(f'<line x1="{gx}" y1="{y + h - 1}" x2="{grid_right}" y2="{y + h - 1}" stroke="hsl({hue}, 100%, 87%)" stroke-width="2" stroke-dasharray="6 4"/>')
+    # Level titles sit on the first row of their band, in gray, in the first column
+    for l in labels:
+        out.append(f'<text x="{col_x[0] + 16}" y="{row_y[l["row"] - 1] + 29}" fill="#888">{esc(l["text"])}</text>')
     # Cards: fill at 87%, border at 56%. A todo card has a shadow, a done card has no border
     for c in cards:
         hue = HUES[c['level']]
