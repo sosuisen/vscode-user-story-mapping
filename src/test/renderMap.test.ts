@@ -144,87 +144,30 @@ suite('renderMap', () => {
 		assert.ok(/\.done\s*\{[^}]*box-shadow:\s*none/.test(html));
 	});
 
-	// 「_」だけのリスト項目は空白レベルとして扱われ、カードにはならない
-	test('treats an underscore-only list item as a blank level without a card', () => {
-		const outline = md`
-			- Activity A
-				- _
-					- Task A2
-		`;
-
-		const html = renderMap(outline);
-
-		// 空白レベルの下のタスクはレベル2（3行目）に置かれる
-		assert.ok(
-			/<div class="card level3" style="grid-column: 1; grid-row: 3;">Task A2<\/div>/.test(
-				html,
-			),
-		);
-		// 「_」のカードは作られない
-		assert.ok(!/<div class="card[^"]*"[^>]*>_<\/div>/.test(html));
-	});
-
-	// CRLF改行のアウトラインでも、「_」だけのリスト項目は空白レベルとして扱われ、その下のタスクが描画される
-	test('treats an underscore-only list item as a blank level in a CRLF outline', () => {
-		const outline = '- Activity A\r\n\t- _\r\n\t\t- Task A2\r\n';
-
-		const html = renderMap(outline);
-
-		// 空白レベルの下のタスクはレベル2（3行目）に置かれる
-		assert.ok(
-			/<div class="card level3" style="grid-column: 1; grid-row: 3;">Task A2<\/div>/.test(
-				html,
-			),
-		);
-		// 「_」のカードは作られない
-		assert.ok(!/<div class="card[^"]*"[^>]*>_<\/div>/.test(html));
-	});
-
-	// 内容のない「- 」だけの行は空白レベルにならない。その解釈はCommonMarkに任せる（ADR 003）
-	test('does not treat an empty list item as a blank level', () => {
-		// The trailing space after "-" matters, so this stays an explicit string
-		const outline = '- Activity A\n\t- \n\t\t- Task A2';
-
-		const html = renderMap(outline);
-
-		// 空白レベルではないので、Task A2はレベル2（3行目）には置かれない
-		assert.ok(
-			!/<div class="card level3" style="grid-column: 1; grid-row: 3;">Task A2<\/div>/.test(
-				html,
-			),
-		);
-	});
-
-	// 「_」の前後に半角スペースがあっても、空白レベルとして扱われる
-	test('treats an underscore with surrounding spaces as a blank level', () => {
-		// The spaces around "_" matter, so this stays an explicit string
-		const outline = '- Activity A\n\t-  _  \n\t\t- Task A2';
-
-		const html = renderMap(outline);
-
-		// 空白レベルの下のタスクはレベル2（3行目）に置かれる
-		assert.ok(
-			/<div class="card level3" style="grid-column: 1; grid-row: 3;">Task A2<\/div>/.test(
-				html,
-			),
-		);
-		// 「_」のカードは作られない
-		assert.ok(!/<div class="card[^"]*"[^>]*>_<\/div>/.test(html));
-	});
-
-	// テキストに「_」を含むだけのアイテムは、空白レベルではなく通常のカードになる
-	test('renders an item that merely contains an underscore as a normal card', () => {
-		const outline = md`
-			- Activity A
-				- snake_case
-					- Task A2
-		`;
+	// CRLF改行のアウトラインでも、「v 」のマーカーは効き、そのタスクは2つ下の帯に描画される
+	test('applies a v marker in a CRLF outline', () => {
+		const outline = '- Activity A\r\n\t- v Task A2\r\n';
 
 		const html = renderMap(outline);
 
 		assert.ok(
 			html.includes(
-				'<div class="card level2" style="grid-column: 1; grid-row: 2;">snake_case</div>',
+				'<div class="card level3" style="grid-column: 1; grid-row: 3;">Task A2</div>',
+			),
+		);
+	});
+
+	// 内容のない「- 」だけの行に特別な意味はない。その解釈はCommonMarkに任せる（ADR 003）
+	test('gives an empty list item no special meaning', () => {
+		// The trailing space after "-" matters, so this stays an explicit string
+		const outline = '- Activity A\n\t- \n\t\t- Task A2';
+
+		const html = renderMap(outline);
+
+		// 帯を飛ばす印ではないので、Task A2はレベル2（3行目）には置かれない
+		assert.ok(
+			!/<div class="card level3" style="grid-column: 1; grid-row: 3;">Task A2<\/div>/.test(
+				html,
 			),
 		);
 	});
@@ -253,83 +196,11 @@ suite('renderMap', () => {
 		assert.ok(/\.tag\s*\{[^}]*border-radius:/.test(html));
 	});
 
-	// タグの後ろに「+」を付けられる。タグは表示され、子は同じレベルの1つ下の行に置かれる
-	test('accepts a trailing plus after the tags', () => {
-		const outline = md`
-			- Activity A
-				- Task A1 #tag1 +
-					- Task A1b
-		`;
-
-		const html = renderMap(outline);
-
-		assert.ok(
-			html.includes(
-				'<div class="card level2" style="grid-column: 1; grid-row: 2;">Task A1<span class="tag">tag1</span></div>',
-			),
-		);
-		assert.ok(
-			html.includes(
-				'<div class="card level2" style="grid-column: 1; grid-row: 3;">Task A1b</div>',
-			),
-		);
-	});
-
-	// 行末に「+」があるアイテムの子は、次のCSS行に置かれ、親と同じ帯のクラス（level2）を持つ。表示テキストから「+」は消える
-	test('places the child of an item with a trailing plus on the next row in the same band', () => {
-		const outline = md`
-			- Activity A
-				- Task A1 +
-					- Task A1b
-		`;
-
-		const html = renderMap(outline);
-
-		assert.ok(
-			html.includes(
-				'<div class="card level2" style="grid-column: 1; grid-row: 2;">Task A1</div>',
-			),
-		);
-		assert.ok(
-			html.includes(
-				'<div class="card level2" style="grid-column: 1; grid-row: 3;">Task A1b</div>',
-			),
-		);
-	});
-
-	// 「+」が連鎖すると、CSS行が1つずつ下がりながら同じ帯が続く
-	test('keeps the band while trailing pluses chain down the rows', () => {
-		const outline = md`
-			- Activity A
-				- Task A1 +
-					- Task A1b +
-						- Task A1c
-		`;
-
-		const html = renderMap(outline);
-
-		assert.ok(
-			html.includes(
-				'<div class="card level2" style="grid-column: 1; grid-row: 2;">Task A1</div>',
-			),
-		);
-		assert.ok(
-			html.includes(
-				'<div class="card level2" style="grid-column: 1; grid-row: 3;">Task A1b</div>',
-			),
-		);
-		assert.ok(
-			html.includes(
-				'<div class="card level2" style="grid-column: 1; grid-row: 4;">Task A1c</div>',
-			),
-		);
-	});
-
-	// 帯の高さ（CSS行数）は全列でそろう。「+」で2行になったアクティビティ帯に合わせて、「+」のない列のlevel 2も3行目に下がる
+	// 帯の高さ（CSS行数）は全列でそろう。「^」で2行になったアクティビティ帯に合わせて、「^」のない列のlevel 2も3行目に下がる
 	test('aligns band heights across columns so a plain column moves down too', () => {
 		const outline = md`
-			- Activity A +
-				- Activity A2
+			- Activity A
+				- ^ Activity A2
 					- Task A1
 			- Activity B
 				- Task B1
@@ -352,8 +223,8 @@ suite('renderMap', () => {
 	// 帯（row-band）は、そのlevelの行数分の高さになる。2行になったアクティビティ帯は1〜2行目にまたがり、level 2の帯は3行目になる
 	test('stretches a band over all the rows of its level', () => {
 		const outline = md`
-			- Activity A +
-				- Activity A2
+			- Activity A
+				- ^ Activity A2
 					- Task A1
 		`;
 
@@ -378,8 +249,8 @@ suite('renderMap', () => {
 			2. Second
 			3. Third
 
-			- Activity A +
-				- Activity A2
+			- Activity A
+				- ^ Activity A2
 					- Task A1
 						- Task A2
 		`;
@@ -409,8 +280,8 @@ suite('renderMap', () => {
 			- Activity A
 				- Task A1
 					- Task A2
-						- Task A3 +
-							- Task A3b
+						- Task A3
+							- ^ Task A3b
 								- Task A4
 		`;
 
@@ -433,62 +304,12 @@ suite('renderMap', () => {
 		);
 	});
 
-	// 「+」の子の兄弟は、タスクの兄弟と同じく横（隣の列）に並ぶ。帯は親と同じ
-	test('places siblings under an item with a trailing plus side by side in the same band', () => {
+	// 「^」を付けたアクティビティの子は、2行目に列ごとに並び、アクティビティの帯（level1）に入る
+	test('places caret children of an activity on the second row as activities', () => {
 		const outline = md`
 			- Activity A
-				- Task A1 +
-					- Task A1b
-					- Task A1c
-		`;
-
-		const html = renderMap(outline);
-
-		assert.ok(
-			html.includes(
-				'<div class="card level2" style="grid-column: 1; grid-row: 2;">Task A1</div>',
-			),
-		);
-		assert.ok(
-			html.includes(
-				'<div class="card level2" style="grid-column: 1; grid-row: 3;">Task A1b</div>',
-			),
-		);
-		assert.ok(
-			html.includes(
-				'<div class="card level2" style="grid-column: 2; grid-row: 3;">Task A1c</div>',
-			),
-		);
-	});
-
-	// ワード区切りが空白でない言語を考慮して、「+」の直前に空白がなくても、行末の「+」は積む印として扱われる
-	test('treats a trailing plus without a preceding space as the stack mark too', () => {
-		const outline = md`
-			- Activity A
-				- タスクA1+
-					- タスクA1b
-		`;
-
-		const html = renderMap(outline);
-
-		assert.ok(
-			html.includes(
-				'<div class="card level2" style="grid-column: 1; grid-row: 2;">タスクA1</div>',
-			),
-		);
-		assert.ok(
-			html.includes(
-				'<div class="card level2" style="grid-column: 1; grid-row: 3;">タスクA1b</div>',
-			),
-		);
-	});
-
-	// アクティビティの「+」の子は、2行目に列ごとに並び、activityクラスを持つ。列いっぱいに伸びるのは1行目だけ
-	test('places the children of an activity with a trailing plus on the second row as activities', () => {
-		const outline = md`
-			- Activity A +
-				- Activity A1
-				- Activity A2
+				- ^ Activity A1
+				- ^ Activity A2
 		`;
 
 		const html = renderMap(outline);
@@ -510,11 +331,11 @@ suite('renderMap', () => {
 		);
 	});
 
-	// アクティビティの「+」の子の子は、次の帯（Walking Skeleton）に置かれる
-	test('places the grandchild of an activity with a trailing plus in the level 2 band', () => {
+	// 「^」を付けたアクティビティの子の子は、次の帯（level2）に置かれる
+	test('places the child of a caret activity in the level 2 band', () => {
 		const outline = md`
-			- Activity A +
-				- Activity A2
+			- Activity A
+				- ^ Activity A2
 					- Task A1
 		`;
 
@@ -527,18 +348,39 @@ suite('renderMap', () => {
 		);
 	});
 
-	// 「+」のない子は、次のlevel（帯）に置かれる
-	test('places the child of an item without a trailing plus in the next band', () => {
+	// 先頭に「^ 」を付けた子は、親と同じ帯の1つ下の行に置かれる。「^」はカードに表示されない（ADR 005）
+	test('places a child marked with a caret on the next row in the same band as its parent', () => {
 		const outline = md`
 			- Activity A
-				- Task A1 +
-					- Task A1b
+				- Task A1
+					- ^ Task A1b
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="card level2" style="grid-column: 1; grid-row: 2;">Task A1</div>',
+			),
+		);
+		assert.ok(
+			html.includes(
+				'<div class="card level2" style="grid-column: 1; grid-row: 3;">Task A1b</div>',
+			),
+		);
+	});
+
+	// 「^」の子の子（マーカーなし）は、次の帯に置かれる
+	test('places the child of a caret item in the next band', () => {
+		const outline = md`
+			- Activity A
+				- Task A1
+					- ^ Task A1b
 						- Task A1c
 		`;
 
 		const html = renderMap(outline);
 
-		// Task A1b はlevel 2の帯のまま、Task A1c はlevel 3の帯に置かれる
 		assert.ok(
 			html.includes(
 				'<div class="card level2" style="grid-column: 1; grid-row: 3;">Task A1b</div>',
@@ -547,6 +389,316 @@ suite('renderMap', () => {
 		assert.ok(
 			html.includes(
 				'<div class="card level3" style="grid-column: 1; grid-row: 4;">Task A1c</div>',
+			),
+		);
+	});
+
+	// 「^」が連鎖すると、同じ帯のまま行が1つずつ下がる
+	test('keeps the band while carets chain down the rows', () => {
+		const outline = md`
+			- Activity A
+				- Task A1
+					- ^ Task A1b
+						- ^ Task A1c
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="card level2" style="grid-column: 1; grid-row: 2;">Task A1</div>',
+			),
+		);
+		assert.ok(
+			html.includes(
+				'<div class="card level2" style="grid-column: 1; grid-row: 3;">Task A1b</div>',
+			),
+		);
+		assert.ok(
+			html.includes(
+				'<div class="card level2" style="grid-column: 1; grid-row: 4;">Task A1c</div>',
+			),
+		);
+	});
+
+	// 兄弟のうち「^」の付いた子だけが親の帯に入る。付かない子は1つ下の帯に置かれる
+	test('keeps only the caret siblings in the parent band', () => {
+		const outline = md`
+			- Activity A
+				- Task A1
+					- ^ Task A1b
+					- Task A1c
+					- ^ Task A1d
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="card level2" style="grid-column: 1; grid-row: 3;">Task A1b</div>',
+			),
+		);
+		assert.ok(
+			html.includes(
+				'<div class="card level3" style="grid-column: 2; grid-row: 4;">Task A1c</div>',
+			),
+		);
+		assert.ok(
+			html.includes(
+				'<div class="card level2" style="grid-column: 3; grid-row: 3;">Task A1d</div>',
+			),
+		);
+	});
+
+	// 「^」の子の兄弟は、タスクの兄弟と同じく右の列に並ぶ。マーカーは列に影響しない
+	test('places caret siblings side by side in the columns to the right', () => {
+		const outline = md`
+			- Activity A
+				- Task A1
+					- ^ Task A1b
+					- ^ Task A1c
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="card level2" style="grid-column: 1; grid-row: 3;">Task A1b</div>',
+			),
+		);
+		assert.ok(
+			html.includes(
+				'<div class="card level2" style="grid-column: 2; grid-row: 3;">Task A1c</div>',
+			),
+		);
+	});
+
+	// 先頭に「v 」を付けた子は、親の2つ下の帯に置かれる。「v」はカードに表示されない（ADR 005）
+	test('places a child marked with a v two bands below its parent', () => {
+		const outline = md`
+			- Activity A
+				- v Task A1
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="card level3" style="grid-column: 1; grid-row: 3;">Task A1</div>',
+			),
+		);
+	});
+
+	// 「vvv 」を付けた子は、親の4つ下の帯に置かれる。vの数が、あける帯の数になる
+	test('places a child marked with three v four bands below its parent', () => {
+		const outline = md`
+			- Activity A
+				- vvv Task A1
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="card level4" style="grid-column: 1; grid-row: 5;">Task A1</div>',
+			),
+		);
+	});
+
+	// 「v」で飛ばした帯も描画される
+	test('draws the bands skipped by v markers', () => {
+		const outline = md`
+			- Activity A
+				- vvv Task A1
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="row-band level4" style="grid-column: 1 / 2; grid-row: 4;"></div>',
+			),
+		);
+		assert.ok(
+			html.includes(
+				'<div class="row-band level4 alt" style="grid-column: 1 / 2; grid-row: 5;"></div>',
+			),
+		);
+	});
+
+	// 「v」の子の子（マーカーなし）は、さらに1つ下の帯に置かれる
+	test('places the child of a v item in the band below it', () => {
+		const outline = md`
+			- Activity A
+				- v Task A1
+					- Task A2
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="card level3" style="grid-column: 1; grid-row: 3;">Task A1</div>',
+			),
+		);
+		assert.ok(
+			html.includes(
+				'<div class="card level4" style="grid-column: 1; grid-row: 4;">Task A2</div>',
+			),
+		);
+	});
+
+	// チェックボックスの後にマーカーを書く。「- [ ] ^ Task」は⬜とtodoのまま、親の帯に入る
+	test('accepts a caret after an open checkbox', () => {
+		const outline = md`
+			- Activity A
+				- Task A1
+					- [ ] ^ Task A1b
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="card level2 todo" style="grid-column: 1; grid-row: 3;">⬜ Task A1b</div>',
+			),
+		);
+	});
+
+	// 「- [x] v Task」は✅とdoneのまま、2つ下の帯に入る
+	test('accepts a v after a done checkbox', () => {
+		const outline = md`
+			- Activity A
+				- [x] v Task A1
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="card level3 done" style="grid-column: 1; grid-row: 3;">✅ Task A1</div>',
+			),
+		);
+	});
+
+	// マーカーはタグと併用できる。タグは表示され、子は親の帯に入る
+	test('accepts a caret together with trailing tags', () => {
+		const outline = md`
+			- Activity A
+				- Task A1
+					- ^ Task A1b #tag1
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="card level2" style="grid-column: 1; grid-row: 3;">Task A1b<span class="tag">tag1</span></div>',
+			),
+		);
+	});
+
+	// マーカーの直後に空白がなければマーカーではない。「^Task」や「vsCodeを開く」は通常のカードになる
+	test('does not treat a caret or v without a following space as a marker', () => {
+		const outline = md`
+			- Activity A
+				- Task A1
+					- ^Task A1b
+					- vsCodeを開く
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="card level3" style="grid-column: 1; grid-row: 3;">^Task A1b</div>',
+			),
+		);
+		assert.ok(
+			html.includes(
+				'<div class="card level3" style="grid-column: 2; grid-row: 3;">vsCodeを開く</div>',
+			),
+		);
+	});
+
+	// 「^」は繰り返さない。「^^ Task」はマーカーではなく、通常のカードになる
+	test('does not treat a doubled caret as a marker', () => {
+		const outline = md`
+			- Activity A
+				- Task A1
+					- ^^ Task A1b
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="card level3" style="grid-column: 1; grid-row: 3;">^^ Task A1b</div>',
+			),
+		);
+	});
+
+	// トップレベル（アクティビティ）のマーカーは、動かす先がないので外すだけ。既定の位置に置かれる
+	test('strips a marker on an activity and keeps the default position', () => {
+		const outline = md`
+			- ^ Activity A
+			- v Activity B
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="card level1" style="grid-column: 1; grid-row: 1;">Activity A</div>',
+			),
+		);
+		assert.ok(
+			html.includes(
+				'<div class="card level1" style="grid-column: 2; grid-row: 1;">Activity B</div>',
+			),
+		);
+	});
+
+	// 行末の「+」はマーカーではない（ADR 005で廃止）。本文の一部として表示され、子は次の帯に置かれる
+	test('renders a trailing plus as plain text and places the child in the next band', () => {
+		const outline = md`
+			- Activity A
+				- Task A1 +
+					- Task A1b
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="card level2" style="grid-column: 1; grid-row: 2;">Task A1 +</div>',
+			),
+		);
+		assert.ok(
+			html.includes(
+				'<div class="card level3" style="grid-column: 1; grid-row: 3;">Task A1b</div>',
+			),
+		);
+	});
+
+	// 「_」だけのアイテムは空白レベルではない（ADR 005で廃止）。「_」のカードができ、子は次の帯に置かれる
+	test('renders an underscore-only item as a normal card', () => {
+		const outline = md`
+			- Activity A
+				- _
+					- Task A2
+		`;
+
+		const html = renderMap(outline);
+
+		assert.ok(
+			html.includes(
+				'<div class="card level2" style="grid-column: 1; grid-row: 2;">_</div>',
+			),
+		);
+		assert.ok(
+			html.includes(
+				'<div class="card level3" style="grid-column: 1; grid-row: 3;">Task A2</div>',
 			),
 		);
 	});
@@ -1601,13 +1753,13 @@ suite('renderMap', () => {
 		);
 	});
 
-	// メモは行数に影響しない。「+」の下にあるメモは、レベルの行を増やさない
-	test('does not add a row for a // item under an item with a trailing plus', () => {
+	// メモは行数に影響しない。「^」を付けたメモもメモのままで、親の帯の行を増やさない
+	test('does not add a row for a // item marked with a caret', () => {
 		const html = renderMap(
 			md`
 			- Activity A
-				- Task A1 +
-					- // memo
+				- Task A1
+					- ^ // memo
 				- Task A2
 					- Task A3
 		`,

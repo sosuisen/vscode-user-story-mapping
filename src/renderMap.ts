@@ -4,7 +4,7 @@ import { formatZoomLevel } from './zoomLevel';
 const markdown = new MarkdownIt();
 
 type Card = { text: string; done: boolean; todo: boolean; tags: string[] };
-// rowInLevel is the row inside the band of the level: 0 for the first row, 1 for a child placed under a trailing "+", and so on
+// rowInLevel is the row inside the band of the level: 0 for the first row, 1 for a child marked with "^", and so on
 type Cell = { card: Card; level: number; rowInLevel: number };
 
 // Turn a leading [x] / [ ] into a checkbox emoji
@@ -28,9 +28,6 @@ const memoPrefix = '//';
 function isMemo(content: string): boolean {
 	return content.startsWith(memoPrefix);
 }
-
-// Marker for a blank level: an item whose whole text is "_"
-const blankMarker = '_';
 
 // Trailing hashtags such as "#tag1 #tag2" are tags of the item, not part of its text
 const trailingTagsPattern = /(?:\s+#\S+)+$/;
@@ -59,16 +56,24 @@ function cardOf(content: string): Card {
 	};
 }
 
-// A trailing "+" marks an item whose children are stacked into its own cell
-// The space before "+" is optional, for languages that do not separate words with spaces. If present, it is removed together with the "+"
-const trailingPlusPattern = /\s*\+$/;
+// A slice marker at the start of the text, after an optional checkbox, moves the item up or down the slices (ADR 005).
+// "^ " keeps the item in the slice of its parent. "v " skips one slice below the default, "vv " skips two, and so on.
+// The space after the marker is required
+const sliceMarkerPattern = /^(\[[ xX]\] )?(\^|v+) /;
 
-function hasTrailingPlus(content: string): boolean {
-	return trailingPlusPattern.test(content);
+// How many slices the marker moves the item from the default slice (one below the parent):
+// -1 for "^", the number of v's for "v...", and 0 without a marker
+function sliceShiftOf(content: string): number {
+	const marker = sliceMarkerPattern.exec(content)?.[2];
+	if (marker === undefined) {
+		return 0;
+	}
+	return marker === '^' ? -1 : marker.length;
 }
 
-function withoutTrailingPlus(content: string): string {
-	return content.replace(trailingPlusPattern, '');
+// The text without its slice marker. The checkbox, if any, stays
+function withoutSliceMarker(content: string): string {
+	return content.replace(sliceMarkerPattern, '$1');
 }
 
 // A heading whose text is exactly "story map" (any case) starts the story map section
@@ -153,7 +158,6 @@ type IndentItem =
 			isMemo?: false;
 			level: number;
 			rowInLevel: number;
-			stacksChildren?: boolean;
 	  };
 
 export type RenderMapOptions = { zoom?: number };
@@ -187,7 +191,7 @@ export function renderMap(
 	// The bands of level 1 to 3 (0-based 0 to 2) are always drawn, so they start at one row each
 	const rowsByLevel: number[] = [1, 1, 1];
 	// The latest item at each indent depth. Used to decide the level and the rowInLevel of a child
-	// A child of an item with a trailing "+" stays on the same level as the parent, one row further down inside the band
+	// A child marked with "^" stays on the same level as the parent, one row further down inside the band
 	const itemByIndentDepth: IndentItem[] = [];
 	for (let i = 0; i < tokens.length; i++) {
 		const token = tokens[i];
@@ -217,30 +221,29 @@ export function renderMap(
 		} else if (token.type === 'inline' && openLists > 0) {
 			const indentDepth = openLists - 1;
 			const parent = itemByIndentDepth[indentDepth - 1];
-			// A memo item makes no card and does not change the layout. Its children are memos too
-			if (isMemo(token.content) || parent?.isMemo === true) {
+			// A memo item makes no card and does not change the layout. Its children are memos too.
+			// A slice marker in front of the "//" does not change that
+			if (
+				isMemo(withoutSliceMarker(token.content)) ||
+				parent?.isMemo === true
+			) {
 				itemByIndentDepth[indentDepth] = { isMemo: true };
 				continue;
 			}
-			// A child goes one level below its parent. If the parent has a trailing "+",
-			// the child stays on the parent level instead, one row further down inside the band
+			// A child goes one level below its parent. With a "^" marker, the child stays on the parent level instead,
+			// one row further down inside the band. With "v" markers, the child skips that many levels further down
 			let level = 0;
 			let rowInLevel = 0;
-			if (parent !== undefined && parent.stacksChildren === true) {
+			const sliceShift = sliceShiftOf(token.content);
+			if (parent !== undefined && sliceShift === -1) {
 				level = parent.level;
 				rowInLevel = parent.rowInLevel + 1;
 			} else if (parent !== undefined) {
-				level = parent.level + 1;
+				level = parent.level + 1 + sliceShift;
 			}
 			rowsByLevel[level] = Math.max(rowsByLevel[level] ?? 1, rowInLevel + 1);
-			// A blank-level item makes no card. It only adds to the indent depth
-			if (token.content === blankMarker) {
-				itemByIndentDepth[indentDepth] = { level, rowInLevel };
-				continue;
-			}
-			const stacksChildren = hasTrailingPlus(token.content);
-			const card = cardOf(withoutTrailingPlus(token.content));
-			itemByIndentDepth[indentDepth] = { level, rowInLevel, stacksChildren };
+			const card = cardOf(withoutSliceMarker(token.content));
+			itemByIndentDepth[indentDepth] = { level, rowInLevel };
 			if (indentDepth === 0) {
 				columns.push({ activity: card, subColumns: [], lastIndentDepth: 0 });
 			} else {
