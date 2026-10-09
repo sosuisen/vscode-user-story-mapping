@@ -358,7 +358,7 @@ ${levelColorRules}
 .row-label { padding: 4px 8px; margin: 8px; color: #888; white-space: nowrap; }
 .row-band { align-self: stretch; justify-self: stretch; border-bottom: 2px dashed; }
 .row-band.level4.alt { background: hsl(from var(--level4-color) h s calc(l * var(--alt-shade))); }
-.zoom-controls { position: fixed; left: 16px; bottom: 16px; display: flex; align-items: center; gap: 8px; }
+.zoom-controls { position: fixed; right: 16px; top: 16px; display: flex; align-items: center; gap: 8px; }
 .zoom-controls button, .save-png { height: 32px; border: 2px solid #888; background: white; color: black; cursor: pointer; }
 .zoom-controls button { width: 32px; border-radius: 50%; font-size: 16px; }
 .save-png { position: fixed; right: 16px; bottom: 16px; padding: 0 12px; border-radius: 16px; font-size: 12px; font-weight: bold; }

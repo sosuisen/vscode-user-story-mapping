@@ -799,13 +799,13 @@ suite('renderMap', () => {
 		);
 	});
 
-	// ズームUIは画面の左下端にある
-	test('places the zoom controls at the bottom-left corner of the screen', () => {
+	// ズームUIは画面の右上端にある
+	test('places the zoom controls at the top-right corner of the screen', () => {
 		const html = renderMap('- Activity A');
 
 		assert.ok(
 			html.includes(
-				'.zoom-controls { position: fixed; left: 16px; bottom: 16px;',
+				'.zoom-controls { position: fixed; right: 16px; top: 16px;',
 			),
 		);
 	});
