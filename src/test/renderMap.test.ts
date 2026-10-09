@@ -846,7 +846,31 @@ suite('renderMap', () => {
 	test('renders the map element at the given zoom', () => {
 		const html = renderMap('- Activity A', { zoom: 1.44 });
 
-		assert.ok(html.includes('<div class="map-zoom" style="zoom: 1.44;">'));
+		assert.ok(html.includes('<div class="map-zoom" style="zoom: 1.44;"'));
+	});
+
+	// 渡されたスクロール位置を、マップ要素の data-scroll-x / data-scroll-y に出力する
+	// （再描画後にWebviewがこの位置へ戻るための持ち越し）
+	test('renders the given scroll position on the map element', () => {
+		const html = renderMap('- Activity A', { scroll: { x: 120, y: 340 } });
+
+		assert.ok(
+			/<div class="map-zoom"[^>]*data-scroll-x="120" data-scroll-y="340"/.test(
+				html,
+			),
+		);
+	});
+
+	// スクロール位置を渡さないと、先頭（0, 0）が出力される
+	// （注: 既定値はスクロール位置対応と同時に入ったため、このテストは仕様の記録としてRedを経ずに置いたもの）
+	test('renders scroll position 0, 0 when no scroll position is given', () => {
+		const html = renderMap('- Activity A');
+
+		assert.ok(
+			/<div class="map-zoom"[^>]*data-scroll-x="0" data-scroll-y="0"/.test(
+				html,
+			),
+		);
 	});
 
 	// ズーム値を渡さないと、マップは等倍で描画される
@@ -854,7 +878,7 @@ suite('renderMap', () => {
 	test('renders the map at zoom 1 when no zoom is given', () => {
 		const html = renderMap('- Activity A');
 
-		assert.ok(html.includes('<div class="map-zoom" style="zoom: 1;">'));
+		assert.ok(html.includes('<div class="map-zoom" style="zoom: 1;"'));
 	});
 
 	// フローティングの保存ボタンが表示される

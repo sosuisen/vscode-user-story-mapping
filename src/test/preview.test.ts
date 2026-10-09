@@ -88,7 +88,31 @@ suite('openPreview', () => {
 		await vscode.workspace.applyEdit(edit);
 
 		assert.ok(
-			panel.webview.html.includes('<div class="map-zoom" style="zoom: 1.44;">'),
+			panel.webview.html.includes('<div class="map-zoom" style="zoom: 1.44;"'),
+		);
+	});
+
+	// Webviewからスクロール位置が通知された後にドキュメントを編集すると、再描画後のHTMLにもその位置が入っている
+	test('keeps the scroll position reported by the webview when the document changes', async () => {
+		const document = await vscode.workspace.openTextDocument({
+			content: '- Activity A',
+		});
+		const panel = createFakePanel();
+		openPreview(document, getExtensionUri(), panel);
+		panel.receiveMessage({ type: 'scroll', x: 120, y: 340 });
+
+		const edit = new vscode.WorkspaceEdit();
+		edit.insert(
+			document.uri,
+			document.positionAt(document.getText().length),
+			'\n- Activity B',
+		);
+		await vscode.workspace.applyEdit(edit);
+
+		assert.ok(
+			/<div class="map-zoom"[^>]*data-scroll-x="120" data-scroll-y="340"/.test(
+				panel.webview.html,
+			),
 		);
 	});
 
@@ -110,7 +134,7 @@ suite('openPreview', () => {
 		await vscode.workspace.applyEdit(edit);
 
 		assert.ok(
-			panel.webview.html.includes('<div class="map-zoom" style="zoom: 1;">'),
+			panel.webview.html.includes('<div class="map-zoom" style="zoom: 1;"'),
 		);
 	});
 
@@ -144,12 +168,12 @@ suite('openPreview', () => {
 
 		assert.ok(
 			zoomedPanel.webview.html.includes(
-				'<div class="map-zoom" style="zoom: 1.44;">',
+				'<div class="map-zoom" style="zoom: 1.44;"',
 			),
 		);
 		assert.ok(
 			otherPanel.webview.html.includes(
-				'<div class="map-zoom" style="zoom: 1;">',
+				'<div class="map-zoom" style="zoom: 1;"',
 			),
 		);
 	});

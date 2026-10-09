@@ -179,13 +179,16 @@ type IndentItem =
 			rowInLevel: number;
 	  };
 
-export type RenderMapOptions = { zoom?: number };
+export type ScrollPosition = { x: number; y: number };
+
+export type RenderMapOptions = { zoom?: number; scroll?: ScrollPosition };
 
 export function renderMap(
 	outline: string,
 	options: RenderMapOptions = {},
 ): string {
 	const zoom = options.zoom ?? 1;
+	const scroll = options.scroll ?? { x: 0, y: 0 };
 	const allTokens = parseOutline(outline);
 	const tokens = storyMapTokens(allTokens);
 	// The map title is the first heading of the whole document, even when it is above the "Story Map" heading
@@ -360,6 +363,6 @@ ${levelColorRules}
 .zoom-controls button { width: 32px; border-radius: 50%; font-size: 16px; }
 .save-png { position: fixed; right: 16px; bottom: 16px; padding: 0 12px; border-radius: 16px; font-size: 12px; font-weight: bold; }
 </style>
-<div class="map-zoom" style="zoom: ${zoom};">${title}${leadingNotes.join('')}<div class="map-grid">${cells.join('')}</div>${trailingNotes.join('')}</div>
+<div class="map-zoom" style="zoom: ${zoom};" data-scroll-x="${scroll.x}" data-scroll-y="${scroll.y}">${title}${leadingNotes.join('')}<div class="map-grid">${cells.join('')}</div>${trailingNotes.join('')}</div>
 <div class="zoom-controls"><button class="zoom-out">－</button><span class="zoom-level">${formatZoomLevel(zoom)}</span><button class="zoom-in">＋</button></div><button class="save-png">PNG</button>`;
 }

@@ -26,6 +26,29 @@ if (mapZoom instanceof HTMLElement) {
 		?.addEventListener('click', () => setZoom(zoomOut(zoom)));
 }
 
+// Scroll: go back to the position carried on the map element, then report every scroll to the extension
+// (the extension puts the position into the next render, so that it survives a redraw)
+if (mapZoom instanceof HTMLElement) {
+	const restoreScroll = () => {
+		window.scrollTo(
+			parseFloat(mapZoom.dataset.scrollX ?? '0') || 0,
+			parseFloat(mapZoom.dataset.scrollY ?? '0') || 0,
+		);
+	};
+	// Restore right away so that the map does not flash at the top.
+	// Restore again on load, because the VS Code webview host resets the scroll position
+	// before load when the vertical position is 0 (that reset also drops the horizontal position)
+	restoreScroll();
+	window.addEventListener('load', restoreScroll);
+}
+window.addEventListener('scroll', () => {
+	vscodeApi.postMessage({
+		type: 'scroll',
+		x: window.scrollX,
+		y: window.scrollY,
+	});
+});
+
 document.querySelector('.save-png')?.addEventListener('click', () => {
 	const map = document.querySelector('.map-zoom');
 	if (!(map instanceof HTMLElement)) {

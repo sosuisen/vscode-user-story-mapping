@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { renderMap } from './renderMap';
+import { renderMap, ScrollPosition } from './renderMap';
 import { dataUrlToPngBuffer, defaultPngFileName } from './savePng';
 
 // The subset of the panel features that openPreview uses (tests can pass a fake panel)
@@ -12,7 +12,13 @@ export type PreviewPanel = {
 	dispose(): void;
 };
 
-type WebviewMessage = { type?: string; dataUrl?: string; zoom?: number };
+type WebviewMessage = {
+	type?: string;
+	dataUrl?: string;
+	zoom?: number;
+	x?: number;
+	y?: number;
+};
 
 function createPanel(): PreviewPanel {
 	return vscode.window.createWebviewPanel(
@@ -32,8 +38,9 @@ export function openPreview(
 		vscode.Uri.joinPath(extensionUri, 'dist', 'webview.js'),
 	);
 	let zoom = 1;
+	let scroll: ScrollPosition = { x: 0, y: 0 };
 	const buildHtml = () =>
-		`${renderMap(document.getText(), { zoom })}<script src="${scriptUri}"></script>`;
+		`${renderMap(document.getText(), { zoom, scroll })}<script src="${scriptUri}"></script>`;
 	panel.webview.html = buildHtml();
 	const subscription = vscode.workspace.onDidChangeTextDocument(event => {
 		if (event.document === document) {
@@ -43,6 +50,13 @@ export function openPreview(
 	panel.webview.onDidReceiveMessage(async (message: WebviewMessage) => {
 		if (message.type === 'zoom' && typeof message.zoom === 'number') {
 			zoom = message.zoom;
+		}
+		if (
+			message.type === 'scroll' &&
+			typeof message.x === 'number' &&
+			typeof message.y === 'number'
+		) {
+			scroll = { x: message.x, y: message.y };
 		}
 		if (message.type === 'savePng' && typeof message.dataUrl === 'string') {
 			const fileName = defaultPngFileName(document.getText());
