@@ -157,17 +157,42 @@ suite('renderMap', () => {
 		);
 	});
 
-	// 内容のない「- 」だけの行に特別な意味はない。その解釈はCommonMarkに任せる（ADR 003）
-	test('gives an empty list item no special meaning', () => {
+	// 内容のない「- 」だけの行は、本文のない空欄のカードになる。子はその1つ下の帯に置かれる
+	test('renders an empty list item as a blank card', () => {
 		// The trailing space after "-" matters, so this stays an explicit string
-		const outline = '- Activity A\n\t- \n\t\t- Task A2';
+		const outline = '- Activity A\n\t- Task A1\n\t\t- \n\t\t\t- Task A2';
 
 		const html = renderMap(outline);
 
-		// 帯を飛ばす印ではないので、Task A2はレベル2（3行目）には置かれない
 		assert.ok(
-			!/<div class="card level3" style="grid-column: 1; grid-row: 3;">Task A2<\/div>/.test(
-				html,
+			html.includes(
+				'<div class="card level3" style="grid-column: 1; grid-row: 3;"></div>',
+			),
+		);
+		assert.ok(
+			html.includes(
+				'<div class="card level4" style="grid-column: 1; grid-row: 4;">Task A2</div>',
+			),
+		);
+	});
+
+	// CommonMarkは段落直後の「- 」だけの行をsetext見出しの下線と読む。その見出しでストーリーマップが途切れないこと
+	test('keeps the map going after an empty list item that follows a parent item', () => {
+		const outline =
+			'# Title\n\n## Story map\n\n- Activity A\n\t- Task A1\n\t\t- \n- Activity B';
+
+		const html = renderMap(outline);
+
+		// 親のTask A1は見出しではなくカードのまま
+		assert.ok(
+			html.includes(
+				'<div class="card level2" style="grid-column: 1; grid-row: 2;">Task A1</div>',
+			),
+		);
+		// 後ろのアクティビティも描画される
+		assert.ok(
+			html.includes(
+				'<div class="card level1" style="grid-column: 2; grid-row: 1;">Activity B</div>',
 			),
 		);
 	});

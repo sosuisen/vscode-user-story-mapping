@@ -47,7 +47,7 @@ function withoutTrailingTags(content: string): string {
 }
 
 function cardOf(content: string): Card {
-	const text = withoutTrailingTags(content);
+	const text = withoutEmptyItemPlaceholder(withoutTrailingTags(content));
 	return {
 		text: markdown.renderInline(withCheckboxEmoji(text)),
 		done: isDone(text),
@@ -79,9 +79,28 @@ function withoutSliceMarker(content: string): string {
 // A heading whose text is exactly "story map" (any case) starts the story map section
 const storyMapHeadingPattern = /^story\s+map$/i;
 
+// A line with only a "-" marker is an item with no text. CommonMark does not read it that way:
+// right after a paragraph, it is the underline of a setext heading, so the parent item turns into a heading,
+// and the story map section ends there. A zero-width space in the item keeps it a list item.
+// The placeholder is removed again from the card text, so the card is blank
+const emptyItemPlaceholder = '​';
+const emptyItemLinePattern = /^([ \t]*-)[ \t]*$/gm;
+
+function withEmptyItemPlaceholder(outline: string): string {
+	return outline.replace(emptyItemLinePattern, `$1 ${emptyItemPlaceholder}`);
+}
+
+function withoutEmptyItemPlaceholder(content: string): string {
+	return content.replaceAll(emptyItemPlaceholder, '');
+}
+
+function parseOutline(outline: string): MarkdownIt.Token[] {
+	return markdown.parse(withEmptyItemPlaceholder(outline), {});
+}
+
 // Return the first heading of the outline as the map title (empty string if none)
 export function mapTitle(outline: string): string {
-	const tokens = markdown.parse(outline, {});
+	const tokens = parseOutline(outline);
 	const headingIndex = tokens.findIndex(token => token.type === 'heading_open');
 	return headingIndex === -1 ? '' : (tokens[headingIndex + 1]?.content ?? '');
 }
@@ -167,7 +186,7 @@ export function renderMap(
 	options: RenderMapOptions = {},
 ): string {
 	const zoom = options.zoom ?? 1;
-	const allTokens = markdown.parse(outline, {});
+	const allTokens = parseOutline(outline);
 	const tokens = storyMapTokens(allTokens);
 	// The map title is the first heading of the whole document, even when it is above the "Story Map" heading
 	const titleText = mapTitle(outline);
