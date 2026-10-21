@@ -58,7 +58,7 @@ The table below refers to this example.
 | You write | The map shows |
 | --- | --- |
 | `# ` The first heading | The title at the top of the map. Without a heading, the title area is empty. |
-| Paragraphs above the first list | Notes under the title. Use them for remarks about the map or for descriptions of the user types that appear in it. |
+| Paragraphs above the first list | Notes under the title. Use them for remarks about the map or for descriptions of the user types (personas) that appear in it. |
 | Paragraphs below the list | Notes under the map. Use them for remarks about the whole map or for open questions. |
 | `- ` (a list item) | The deeper the indent, the lower the row on the map. |
 | Two or more `- ` items at the same depth | The second and later items move to the next inner column on the right (Task 2 in the example). |
