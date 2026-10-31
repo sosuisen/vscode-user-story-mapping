@@ -10,5 +10,5 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
-storymap = { git = "https://github.com/sosuisen/storymap", tag = "v0.2.0", features = ["html"] }
+storymap = { version = "0.2.1", features = ["html"] }
 wasm-bindgen = "0.2.130"
