@@ -140,3 +140,21 @@ Search for "Story Mapping" in the Extensions view of VSCode and install it from 
 
 You can also download the `.vsix` file from the GitHub releases page and install it by hand.
 
+
+## Development
+
+The core of the extension is a Rust library. It reads the outline and lays out the map.
+The extension calls it through WebAssembly, so the `.vsix` works on every OS.
+
+- `crates/story-map-core`: The Rust library. Other Rust apps can use it too.
+  - `parse` turns an outline into a `StoryMap`. The `StoryMap` holds only data, and its texts stay raw Markdown.
+  - The `html` feature (on by default) renders a `StoryMap` as HTML.
+- `crates/story-map-wasm`: Thin WebAssembly bindings for the extension.
+- `src`: The VSCode extension in TypeScript (the preview panel, zoom, and PNG export).
+
+To build, you need these tools besides Node.js:
+
+- Rust, with the `wasm32-unknown-unknown` target: `rustup target add wasm32-unknown-unknown`
+- [wasm-pack](https://github.com/drager/wasm-pack): `cargo install wasm-pack`
+
+`npm run compile` and `npm test` build the WebAssembly first. Run the Rust tests with `cargo test`.

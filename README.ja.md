@@ -140,3 +140,21 @@ Task 1-1-1 は、黄のスライスを飛ばしてその下のスライスに置
 VSCode の拡張機能ビューで「Story Mapping」を検索し、VSCode Marketplace からインストールしてください。
 
 GitHub のリリースページから `.vsix` ファイルをダウンロードして、手動でインストールすることもできます。
+
+## 開発
+
+拡張機能のコアは、Rustのライブラリです。アウトラインを読み、マップを配置します。
+拡張機能はこれをWebAssembly経由で呼びます。そのため、`.vsix`はどのOSでも動きます。
+
+- `crates/story-map-core`: Rustのライブラリです。ほかのRustアプリからも使えます。
+  - `parse`は、アウトラインを`StoryMap`に変換します。`StoryMap`はデータだけを持ち、テキストは生のMarkdownのままです。
+  - `html` feature（既定で有効）は、`StoryMap`をHTMLとして描画します。
+- `crates/story-map-wasm`: 拡張機能向けの、薄いWebAssemblyバインディングです。
+- `src`: TypeScriptで書いたVSCode拡張機能です（プレビューパネル、ズーム、PNG出力）。
+
+ビルドには、Node.jsのほかに次のツールが必要です。
+
+- Rustと`wasm32-unknown-unknown`ターゲット: `rustup target add wasm32-unknown-unknown`
+- [wasm-pack](https://github.com/drager/wasm-pack): `cargo install wasm-pack`
+
+`npm run compile`と`npm test`は、先にWebAssemblyをビルドします。Rustのテストは`cargo test`で実行します。
