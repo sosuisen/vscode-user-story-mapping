@@ -146,10 +146,10 @@ You can also download the `.vsix` file from the GitHub releases page and install
 The core of the extension is a Rust library. It reads the outline and lays out the map.
 The extension calls it through WebAssembly, so the `.vsix` works on every OS.
 
-- [story-map-core](https://github.com/sosuisen/story-map-core): The Rust library, in its own repository. Other Rust apps can use it too.
+- [storymap](https://github.com/sosuisen/storymap): The Rust library, in its own repository. Other Rust apps can use it too.
   - `parse` turns an outline into a `StoryMap`. The `StoryMap` holds only data, and its texts stay raw Markdown.
   - The `html` feature (on by default) renders a `StoryMap` as HTML.
-- `crates/story-map-wasm`: Thin WebAssembly bindings for the extension. It uses story-map-core by a Git tag.
+- `crates/story-map-wasm`: Thin WebAssembly bindings for the extension. It uses storymap by a Git tag.
 - `src`: The VSCode extension in TypeScript (the preview panel, zoom, and PNG export).
 
 To build, you need these tools besides Node.js:
@@ -158,7 +158,7 @@ To build, you need these tools besides Node.js:
 - [wasm-pack](https://github.com/drager/wasm-pack): `cargo install wasm-pack`
 
 `npm run compile` and `npm test` build the WebAssembly first.
-The Rust tests of the core live in the story-map-core repository.
+The Rust tests of the core live in the storymap repository.
 
-To use a new version of the core, push a new tag in story-map-core.
+To use a new version of the core, push a new tag in storymap.
 Then change the `tag` in `crates/story-map-wasm/Cargo.toml`.

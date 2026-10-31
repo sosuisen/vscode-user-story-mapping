@@ -1,6 +1,6 @@
-//! The functions of story-map-core that the VS Code extension calls through WebAssembly
+//! The functions of storymap that the VS Code extension calls through WebAssembly
 
-use story_map_core::html;
+use storymap::html;
 use wasm_bindgen::prelude::wasm_bindgen;
 
 /// The CSS rules that give the map its look
@@ -12,11 +12,11 @@ pub fn map_css() -> String {
 /// The HTML of the map that the outline describes: the title, the notes, and the grid of cards
 #[wasm_bindgen(js_name = renderMapContent)]
 pub fn render_map_content(outline: &str) -> String {
-    html::render_map_content(&story_map_core::parse(outline))
+    html::render_map_content(&storymap::parse(outline))
 }
 
 /// The raw text of the first heading of the outline (empty string if none)
 #[wasm_bindgen(js_name = mapTitle)]
 pub fn map_title(outline: &str) -> String {
-    story_map_core::parse(outline).title
+    storymap::parse(outline).title
 }

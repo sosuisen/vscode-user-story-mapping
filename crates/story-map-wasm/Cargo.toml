@@ -1,7 +1,7 @@
 [package]
 name = "story-map-wasm"
 version = "0.1.0"
-description = "WebAssembly bindings of story-map-core for the VS Code extension"
+description = "WebAssembly bindings of storymap for the VS Code extension"
 edition.workspace = true
 license.workspace = true
 publish = false
@@ -10,5 +10,5 @@ publish = false
 crate-type = ["cdylib"]
 
 [dependencies]
-story-map-core = { git = "https://github.com/sosuisen/story-map-core", tag = "v0.1.0", features = ["html"] }
+storymap = { git = "https://github.com/sosuisen/storymap", tag = "v0.2.0", features = ["html"] }
 wasm-bindgen = "0.2.130"
