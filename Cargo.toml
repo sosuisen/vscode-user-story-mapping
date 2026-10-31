@@ -1,0 +1,13 @@
+[workspace]
+resolver = "3"
+members = ["crates/story-map-core", "crates/story-map-wasm"]
+
+[workspace.package]
+edition = "2024"
+license = "MIT"
+
+# The extension ships the WebAssembly build, so a small file matters more than speed
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
