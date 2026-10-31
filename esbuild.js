@@ -1,4 +1,10 @@
 const esbuild = require('esbuild');
+const fs = require('fs');
+const path = require('path');
+
+// The generated wasm-bindgen glue reads the .wasm file next to the bundled script, so the file is copied into dist
+const wasmFile = 'story_map_wasm_bg.wasm';
+const wasmSource = path.join('crates', 'story-map-wasm', 'pkg', wasmFile);
 
 const production = process.argv.includes('--production');
 const watch = process.argv.includes('--watch');
@@ -32,6 +38,8 @@ async function main() {
 		logLevel: 'warning',
 		plugins: [esbuildProblemMatcherPlugin],
 	});
+	fs.mkdirSync('dist', { recursive: true });
+	fs.copyFileSync(wasmSource, path.join('dist', wasmFile));
 	if (watch) {
 		await Promise.all([extensionCtx.watch(), webviewCtx.watch()]);
 	} else {

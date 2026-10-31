@@ -16,3 +16,7 @@ images/*.clip
 images/*.svg
 images/*.md
 scripts/**
+crates/**
+target/**
+Cargo.toml
+Cargo.lock
