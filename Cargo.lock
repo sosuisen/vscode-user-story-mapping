@@ -242,6 +242,7 @@ checksum = "d0d5d4b1981b8bbbb7aed204cae5726d683d5d6ac7e74ec54122ea28f315e7c8"
 [[package]]
 name = "story-map-core"
 version = "0.1.0"
+source = "git+https://github.com/sosuisen/story-map-core?tag=v0.1.0#6d8801f1f870c95406bc8d2d2a0af03ee6c5feab"
 dependencies = [
  "comrak",
  "regex",
