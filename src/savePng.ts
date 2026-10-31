@@ -2,7 +2,6 @@ import { mapTitle } from './renderMap';
 
 // Replace characters that are not allowed in file names on Windows, macOS, or Linux (symbols and control characters) with _
 function sanitizeFileName(name: string): string {
-	// eslint-disable-next-line no-control-regex
 	const replaced = name
 		.replace(/[\\/:*?"<>|\u0000-\u001f]/g, '_')
 		.replace(/[. ]+$/, '');
