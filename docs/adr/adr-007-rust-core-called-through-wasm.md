@@ -4,6 +4,8 @@
 
 Accepted
 
+Amended by ADR 008（クレートの置き場所。`story-map-core`は独立したリポジトリに移った）
+
 ## Context
 
 この拡張機能のロジックは、`src/renderMap.ts`の1ファイルに集まっている。アウトラインのMarkdownを読み、カードを格子に配置し、HTML文字列を返す純関数である。VS CodeのAPIを使うのは、Webviewの生成、保存ダイアログ、ズーム、PNG化の部分だけである。そのため、コアとVS Code固有の部分の境界は、はっきり引ける。

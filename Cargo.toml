@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/story-map-core", "crates/story-map-wasm"]
+members = ["crates/story-map-wasm"]
 
 [workspace.package]
 edition = "2024"
