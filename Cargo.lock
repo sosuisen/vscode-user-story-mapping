@@ -240,20 +240,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d0d5d4b1981b8bbbb7aed204cae5726d683d5d6ac7e74ec54122ea28f315e7c8"
 
 [[package]]
-name = "story-map-core"
-version = "0.1.0"
-source = "git+https://github.com/sosuisen/story-map-core?tag=v0.1.0#6d8801f1f870c95406bc8d2d2a0af03ee6c5feab"
-dependencies = [
- "comrak",
- "regex",
-]
-
-[[package]]
 name = "story-map-wasm"
 version = "0.1.0"
 dependencies = [
- "story-map-core",
+ "storymap",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "storymap"
+version = "0.2.0"
+source = "git+https://github.com/sosuisen/storymap?tag=v0.2.0#a6aec3fbb81cdee24f639111aed1f1e9d98d3b6b"
+dependencies = [
+ "comrak",
+ "regex",
 ]
 
 [[package]]

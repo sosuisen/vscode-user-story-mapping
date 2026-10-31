@@ -1,4 +1,4 @@
-// The map itself comes from the Rust core (crates/story-map-core) through WebAssembly.
+// The map itself comes from the Rust library storymap through WebAssembly.
 // The zoom wrapper and the controls belong to the preview, so they stay here
 import {
 	mapCss,
