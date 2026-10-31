@@ -149,7 +149,7 @@ GitHub のリリースページから `.vsix` ファイルをダウンロード�
 - [storymap](https://github.com/sosuisen/storymap): Rustのライブラリです。別のリポジトリにあります。ほかのRustアプリからも使えます。
   - `parse`は、アウトラインを`StoryMap`に変換します。`StoryMap`はデータだけを持ち、テキストは生のMarkdownのままです。
   - `html` feature（既定で有効）は、`StoryMap`をHTMLとして描画します。
-- `crates/story-map-wasm`: 拡張機能向けの、薄いWebAssemblyバインディングです。storymapを、Gitのタグで参照します。
+- `crates/story-map-wasm`: 拡張機能向けの、薄いWebAssemblyバインディングです。storymapを、crates.ioから参照します。
 - `src`: TypeScriptで書いたVSCode拡張機能です（プレビューパネル、ズーム、PNG出力）。
 
 ビルドには、Node.jsのほかに次のツールが必要です。
@@ -160,5 +160,5 @@ GitHub のリリースページから `.vsix` ファイルをダウンロード�
 `npm run compile`と`npm test`は、先にWebAssemblyをビルドします。
 コアのRustのテストは、storymapのリポジトリにあります。
 
-新しい版のコアを使うときは、storymapで新しいタグをpushします。
-そのあと、`crates/story-map-wasm/Cargo.toml`の`tag`を書き換えます。
+新しい版のコアを使うときは、storymapのリポジトリからcrates.ioに公開します。
+そのあと、`crates/story-map-wasm/Cargo.toml`の`storymap`の`version`を書き換えます。
