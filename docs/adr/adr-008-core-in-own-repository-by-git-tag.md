@@ -4,6 +4,8 @@
 
 Accepted
 
+Amended by ADR 009（コアの参照の方法。Gitのタグではなく、crates.ioの版で参照する。クレート名も`storymap`に変わった）
+
 ## Context
 
 ADR 007で、コアをRustのライブラリにした。そのとき、`story-map-core`と`story-map-wasm`の2つのクレートを、拡張機能のリポジトリのCargoワークスペースに置いた。
